@@ -3,346 +3,216 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Research Paper Builder</title>
-<script>try{if(localStorage.getItem("rpb-theme")==="dark")document.documentElement.dataset.theme="dark";else document.documentElement.dataset.theme="light"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<title>Paper Build · Research papers in any journal format</title>
+<meta name="description" content="Write your research paper once and get it formatted for IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago or Harvard. Live preview and PDF download.">
+<meta name="theme-color" content="#f6efe1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("pb-theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=DM+Mono:wght@400;500&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* VOICE: editorial and friendly, like a well-made resources site, but a working tool
-   IDEA: a paper's parts as coloured index bands you open one by one; the typeset proof beside them
-   PICTURE: the live IEEE sheet on a cream desk, framed in hairline black
-   COLOUR and TYPE: cream ground, black 1.5px rules, bands in sky, sage, mustard, navy, orange; Inter Tight display, DM Mono labels, Tinos page
-   LAYOUT: logo bar, huge headline, bands | sticky preview; under 900px a bottom bar switches Write / Preview / PDF */
-:root{color-scheme:light;--bg:#f6efe1;--paper2:#fbf7ee;--ink:#2a2620;--mute:#6f6756;--rule:#a99e88;--soft:#d6ccb6;--field:#fffcf5;--desk:#efe6d3;
+/* VOICE: editorial, warm and plain-spoken, for students and researchers
+   IDEA: a library index — each standard is a coloured band you can pull out and use
+   PICTURE: a fanned stack of real page layouts (IEEE, APA, LNCS) on a cream desk
+   COLOUR and TYPE: cream ground, soft beige rules, sky / sage / mustard / lavender / orange bands; Libertinus display, Inter Tight text, DM Mono labels
+   LAYOUT: nav, hero (headline + page stack), standards bands, three steps, pricing, app install, FAQ, footer */
+@font-face{font-family:"Libertinus Serif";src:url(fonts/LibertinusSerif-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Libertinus Serif";src:url(fonts/LibertinusSerif-Italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+:root{color-scheme:light;--bg:#f6efe1;--paper2:#fbf7ee;--ink:#2a2620;--mute:#6f6756;--soft:#d6ccb6;--field:#fffcf5;--desk:#efe6d3;
   --sky:#8cb8e3;--sage:#b4c47e;--mustard:#ecd97a;--lav:#bcaee6;--orange:#f47a3c;--bw:1.5px}
-:root[data-theme=dark]{color-scheme:dark;--bg:#25221c;--paper2:#2d2a23;--ink:#efe8d8;--mute:#b0a793;--rule:#6f6757;--soft:#4c463a;--field:#2f2c25;--desk:#2a271f}
+:root[data-theme=dark]{color-scheme:dark;--bg:#25221c;--paper2:#2d2a23;--ink:#efe8d8;--mute:#b0a793;--soft:#4c463a;--field:#2f2c25;--desk:#2a271f}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Inter Tight",system-ui,sans-serif;overflow-x:clip}
-.mono{font-family:"DM Mono",ui-monospace,monospace}
-header{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px max(3vw,14px);background:var(--bg);border-bottom:var(--bw) solid var(--rule)}
-.logo{font-size:21px;font-weight:500;letter-spacing:-.02em;display:flex;align-items:center;gap:2px}
-.logo svg{width:18px;height:18px;margin:0 1px}
-header .sp{flex:1}
-.pill{font:500 13px "DM Mono",monospace;background:var(--sage);color:#16200a;border-radius:99px;padding:4px 12px;white-space:nowrap}
-button{font:inherit;cursor:pointer;min-height:44px;padding:0 16px;border:var(--bw) solid var(--soft);border-radius:4px;background:var(--field);color:var(--ink)}
-button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
-button:disabled{opacity:.35;cursor:default}
-.cta{background:var(--orange);border-color:var(--orange);color:#2a1004;font-weight:600;white-space:nowrap}
-.theme{min-width:44px;padding:0 12px;background:transparent;display:flex;align-items:center;gap:6px;font-size:14px}
-.theme svg{width:18px;height:18px}
-.ghost{border-style:dashed;width:100%;background:transparent}
-.mini{min-height:36px;min-width:36px;padding:0 10px;font-size:14px;background:transparent}
-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:start}
-.edit{padding-bottom:60px}
-.hero{padding:clamp(24px,4vw,44px) max(3vw,14px) 22px}
-.hero h1{font-size:clamp(52px,9vw,104px);line-height:.95;font-weight:500;letter-spacing:-.045em;margin:0 0 14px}
-.hero p{margin:0;max-width:46ch;color:var(--mute);font-size:17px}
-.hero .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
-.hero .row span{font:13px "DM Mono",monospace;color:var(--mute)}
-details.band{border-top:var(--bw) solid var(--bg)}
-details.band:last-of-type{border-bottom:0}
-summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:8px;padding:12px max(3vw,14px);font-size:clamp(22px,3.2vw,28px);letter-spacing:-.02em;line-height:1.15}
-summary::-webkit-details-marker{display:none}
-summary sup{font:12px "DM Mono",monospace;position:relative;top:-.6em}
-summary .arr{margin-left:auto;align-self:center;width:24px;height:24px;border:1.5px solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:13px;transition:transform .2s;flex:none}
-details[open] .arr{transform:rotate(180deg)}
-.b1 summary{background:var(--sky);color:#0d1b2a}.b2 summary{background:var(--sage);color:#16200a}
-.b3 summary{background:var(--mustard);color:#241f05}.b4 summary{background:var(--lav);color:#221a3d}.b5 summary{background:var(--orange);color:#1a0a02}
-.body{padding:18px max(3vw,14px) 22px;display:grid;gap:14px}
-label{display:grid;gap:5px;font:13px "DM Mono",monospace;color:var(--mute)}
-input,textarea{font:16px/1.5 "Inter Tight",system-ui,sans-serif;color:var(--ink);background:var(--field);border:var(--bw) solid var(--soft);border-radius:4px;padding:10px 12px;width:100%;min-height:44px}
-textarea{resize:vertical}
-.hint{font:13px/1.5 "DM Mono",monospace;color:var(--mute);margin:0}
-.card{display:grid;grid-template-columns:52px minmax(0,1fr);border:var(--bw) solid var(--soft);border-radius:6px;overflow:hidden;background:var(--paper2)}
-.strip{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0;color:#fff;font:500 15px "Tinos",serif}
-.strip i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
-.card .in{padding:12px;display:grid;gap:10px}
-.card .top{display:flex;gap:6px;align-items:center;justify-content:flex-end}
-.card .top b{margin-right:auto;font:13px "DM Mono",monospace;color:var(--mute);font-weight:400}
-.ref{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start}
-.ref span{font:15px "Tinos",serif;padding-top:11px}
-.pro ul{margin:0;padding:0;list-style:none;display:grid}
-.pro li{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--soft)}
-.pro li span{font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
-.view{position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto;padding:22px max(3vw,14px) 40px;border-left:var(--bw) solid var(--rule)}
-.meta{display:flex;justify-content:space-between;font:13px "DM Mono",monospace;color:var(--mute);margin:0 auto 10px;max-width:816px}
-.frame{border:var(--bw) solid var(--soft);border-radius:6px;padding:clamp(8px,2vw,16px);background:var(--desk);max-width:850px;margin:0 auto}
-.sheet{container-type:inline-size;background:#fff;color:#111;padding:clamp(18px,6%,54px) clamp(16px,6%,46px);font:13px/1.32 "Tinos","Times New Roman",serif;min-height:600px;box-shadow:0 1px 0 rgba(0,0,0,.08)}
-.sheet .pt{font:400 clamp(20px,4.4cqi,30px)/1.15 "Tinos",serif;text-align:center;margin:0 0 14px;text-wrap:balance}
-.sheet .pa{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin-bottom:18px;text-align:center}
-.sheet .pa div{display:grid;flex:0 1 220px;font-size:12.5px}
-.sheet .pa b{font-weight:400;font-size:14px}
-.sheet p{margin:0 0 6px;text-align:justify;text-indent:1.2em;hyphens:auto;overflow-wrap:anywhere}
-.sheet .ab{font-size:12px}
-.sheet h3{font:400 13px "Tinos",serif;font-variant:small-caps;text-align:center;margin:14px 0 6px;letter-spacing:.02em;break-after:avoid}
-.sheet .refs{list-style:none;margin:0;padding:0;font-size:11px}
-.sheet .refs li{display:grid;grid-template-columns:28px minmax(0,1fr);margin-bottom:3px;text-align:justify}
-.sheet .empty{color:#888;font-style:italic;text-indent:0}
-@container (min-width:600px){.sheet .cols{columns:2;column-gap:22px}}
-.nav{display:none}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;font-size:15px;display:flex;gap:12px;align-items:center;transition:.25s;pointer-events:none;z-index:9;max-width:calc(100vw - 28px)}
-.toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
-.toast button{min-height:34px;background:transparent;color:inherit;border-color:currentColor}
-@media(prefers-reduced-motion:reduce){.toast,.arr{transition:none}}
-@media(max-width:900px){
-  main{display:block}
-  header .cta{display:none}
-  .view{position:static;height:auto;border:0;display:none;padding-bottom:100px}
-  body.show-p .view{display:block}body.show-p .edit{display:none}
-  .edit{padding-bottom:100px}
-  .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--bg);border-top:var(--bw) solid var(--rule)}
-  .nav button{border:0;border-radius:0;background:transparent;min-height:60px;display:grid;place-items:center;gap:2px;font-size:13px;padding:6px 0}
-  .nav button+button{border-left:var(--bw) solid var(--rule)}
-  .nav button[aria-current=true]{color:var(--orange);font-weight:600}
-  .nav svg{width:22px;height:22px}
-  .nav .dl{background:var(--orange);color:#2a1004;font-weight:600}
-  .theme span{display:none}
-  .toast{bottom:80px}
-}
-@media(max-width:520px){.pill{display:none}}
+[hidden]{display:none!important}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Inter Tight",system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+nav.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:var(--bw) solid var(--soft)}
+nav.top .wrap{display:flex;align-items:center;gap:18px;min-height:64px;flex-wrap:wrap}
+.logo{line-height:0;color:var(--ink)}.logo svg{height:24px;width:auto}
+.links{display:flex;gap:18px;margin-left:auto;font-size:15px;flex-wrap:wrap}
+.links a{text-decoration:none;padding:10px 0}
+.links a:hover{text-decoration:underline}
+.btn{font:inherit;font-size:16px;cursor:pointer;min-height:46px;padding:0 18px;border:var(--bw) solid var(--soft);border-radius:4px;background:var(--field);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn.cta{background:var(--orange);border-color:var(--orange);color:#2a1004;font-weight:600}
+.theme{min-width:46px;padding:0 12px;background:transparent}.theme svg{width:18px;height:18px}
+:is(a,button):focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;padding-top:clamp(36px,6vw,80px);padding-bottom:clamp(36px,6vw,72px)}
+.hero h1{font:400 clamp(46px,7.2vw,96px)/.98 "Libertinus Serif",Georgia,serif;letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance}
+.hero h1 em{font-style:italic}
+.hero p{font-size:clamp(17px,1.6vw,20px);color:var(--mute);max-width:44ch;margin:0 0 24px}
+.hero .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero .small{font:13px "DM Mono",monospace;color:var(--mute);margin-top:14px}
+.stack{position:relative;aspect-ratio:1/0.92;background:var(--desk);border:var(--bw) solid var(--soft);border-radius:8px;overflow:hidden}
+.pg{position:absolute;width:42%;filter:drop-shadow(0 6px 14px rgba(0,0,0,.14));transition:transform .5s}
+.pg svg{width:100%;height:auto;display:block}
+.pg span{position:absolute;left:0;bottom:-28px;font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
+.pg.a{left:6%;top:12%;transform:rotate(-6deg)}.pg.b{left:29%;top:6%;transform:rotate(1deg);z-index:2}.pg.c{left:52%;top:14%;transform:rotate(7deg)}
+.stack:hover .pg.a{transform:rotate(-9deg) translateX(-6px)}.stack:hover .pg.c{transform:rotate(10deg) translateX(6px)}
+.tag{position:absolute;z-index:3;font:500 13px "DM Mono",monospace;padding:4px 10px;border-radius:99px;color:#221a12}
+.tag.t1{left:5%;bottom:9%;background:var(--sky)}.tag.t2{left:38%;bottom:5%;background:var(--sage)}.tag.t3{right:5%;bottom:11%;background:var(--mustard)}
+h2{font:400 clamp(34px,4.6vw,56px)/1.05 "Libertinus Serif",Georgia,serif;letter-spacing:-.015em;margin:0 0 10px}
+.lead{color:var(--mute);max-width:56ch;margin:0 0 28px}
+section{padding:clamp(40px,6vw,80px) 0}
+.bands{border-top:var(--bw) solid var(--soft)}
+.bandrow{display:grid;grid-template-columns:48px minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px max(4vw,16px);text-decoration:none;border-bottom:var(--bw) solid var(--bg)}
+.bandrow:hover .go{transform:translateX(4px)}
+.bandrow sup{font:12px "DM Mono",monospace;align-self:start;padding-top:8px}
+.bandrow b{font-size:clamp(22px,2.6vw,30px);font-weight:400;letter-spacing:-.02em;line-height:1.1}
+.bandrow b small{display:block;font:13px "DM Mono",monospace;letter-spacing:0;opacity:.75;margin-top:4px}
+.bandrow .u{font-size:15px;line-height:1.4}
+.bandrow .s{font:13px/1.45 "DM Mono",monospace;opacity:.85}
+.go{width:30px;height:30px;border:1.5px solid currentColor;border-radius:50%;display:grid;place-items:center;transition:transform .2s}
+.c0{background:var(--sky);color:#0d1b2a}.c1{background:var(--sage);color:#16200a}.c2{background:var(--mustard);color:#241f05}.c3{background:var(--lav);color:#221a3d}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.step{display:grid;grid-template-columns:52px minmax(0,1fr);border:var(--bw) solid var(--soft);border-radius:8px;overflow:hidden;background:var(--paper2)}
+.step .strip{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 0;color:#fff;font:400 22px "Libertinus Serif",serif}
+.step .strip i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.step div+div{padding:16px}
+.step h3{margin:0 0 6px;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.step p{margin:0;color:var(--mute);font-size:16px}
+.price{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:900px}
+.plan{border:var(--bw) solid var(--soft);border-radius:8px;background:var(--paper2);padding:22px;display:grid;gap:12px;align-content:start}
+.plan.pro{border-color:var(--orange)}
+.plan h3{margin:0;font:400 30px "Libertinus Serif",serif}
+.plan .p{font:500 15px "DM Mono",monospace;color:var(--mute)}
+.plan ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.plan li{padding-left:22px;position:relative;font-size:16px}
+.plan li::before{content:"";position:absolute;left:2px;top:.6em;width:10px;height:2px;background:var(--orange)}
+.badge{display:inline-block;background:var(--orange);color:#2a1004;font:500 12px "DM Mono",monospace;border-radius:4px;padding:2px 8px;vertical-align:middle;margin-left:8px}
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;background:var(--paper2);border:var(--bw) solid var(--soft);border-radius:8px;padding:clamp(20px,4vw,40px)}
+.app ol{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--mute)}
+.phone{justify-self:center;width:min(220px,60%);aspect-ratio:9/18;border:6px solid var(--ink);border-radius:28px;background:var(--bg);display:grid;grid-template-rows:auto 1fr;overflow:hidden}
+.phone .bar{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--soft)}
+.phone .bar img{width:26px;height:26px;border-radius:6px}
+.phone .bar span{font:400 15px "Libertinus Serif",serif}
+.phone .pv{padding:10px;display:grid;place-items:start center}
+.phone .pv svg{width:90%;height:auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.12))}
+.faq{max-width:820px;border-top:var(--bw) solid var(--soft)}
+.faq details{border-bottom:var(--bw) solid var(--soft)}
+.faq summary{cursor:pointer;list-style:none;padding:16px 0;font-size:19px;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 22px "DM Mono",monospace;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:0 0 16px;color:var(--mute);max-width:65ch}
+footer{border-top:var(--bw) solid var(--soft);padding:28px 0 40px;font-size:14px;color:var(--mute)}
+footer .wrap{display:grid;gap:10px}
+@media(prefers-reduced-motion:reduce){.pg,.go{transition:none}}
+@media(max-width:900px){.hero .wrap,.app{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:minmax(0,1fr)}.bandrow{grid-template-columns:36px minmax(0,1fr) auto}.bandrow .u,.bandrow .s{grid-column:2/3}.bandrow .go{grid-row:1;grid-column:3}.links .hide{display:none}}
+@media(max-width:600px){.price{grid-template-columns:minmax(0,1fr)}.links{display:none}nav.top .wrap{flex-wrap:nowrap;gap:8px}nav.top .logo svg{height:19px}nav.top .cta{padding:0 12px;font-size:15px}nav.top .theme{margin-left:auto}.stack{aspect-ratio:1/1.05}.pg{width:46%}.pg.a{left:3%}.pg.c{left:51%}}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">Paper<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v18M1 10h18M3.6 3.6l12.8 12.8M16.4 3.6 3.6 16.4" stroke="var(--orange)" stroke-width="3" stroke-linecap="round"/></svg>Build</div>
-  <span class="sp"></span>
-  <span class="pill">IEEE format</span>
-  <button class="theme" id="theme" type="button" aria-label="Switch to dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Dark</span></button>
-  <button class="cta" id="pdf">Download PDF</button>
-</header>
-<main>
-  <section class="edit" id="form">
-    <div class="hero">
-      <h1>Your paper</h1>
-      <p>Fill in each band below. The page typesets itself in IEEE conference style, ready to download as a PDF.</p>
-      <div class="row"><span>Sample content shown.</span><button class="mini" data-act="blank" type="button">Start blank</button></div>
-    </div>
-    <details class="band b1" open>
-      <summary><sup>01</sup>Title &amp; authors<span class="arr" aria-hidden="true">↓</span></summary>
-      <div class="body">
-        <label>Paper title<textarea id="title" rows="2" data-f="title"></textarea></label>
-        <div id="authors" style="display:grid;gap:12px"></div>
-        <button class="ghost" data-act="add" data-list="authors" type="button">+ Add author</button>
-      </div>
-    </details>
-    <details class="band b2">
-      <summary><sup>02</sup>Abstract &amp; keywords<span class="arr" aria-hidden="true">↓</span></summary>
-      <div class="body">
-        <label><span>Abstract · <span id="abWc"></span></span><textarea id="abstract" rows="7" data-f="abstract"></textarea></label>
-        <p class="hint">IEEE suggests 150–250 words in one paragraph.</p>
-        <label>Keywords (Index Terms), comma-separated<input id="keywords" data-f="keywords"></label>
-      </div>
-    </details>
-    <details class="band b3">
-      <summary><sup>03</sup>Sections<span class="arr" aria-hidden="true">↓</span></summary>
-      <div class="body">
-        <div id="sections" style="display:grid;gap:12px"></div>
-        <button class="ghost" data-act="add" data-list="sections" type="button">+ Add section</button>
-        <p class="hint">Numbered I, II, III… automatically. Leave an empty line between paragraphs.</p>
-      </div>
-    </details>
-    <details class="band b4">
-      <summary><sup>04</sup>References<span class="arr" aria-hidden="true">↓</span></summary>
-      <div class="body">
-        <div id="refs" style="display:grid;gap:8px"></div>
-        <button class="ghost" data-act="add" data-list="refs" type="button">+ Add reference</button>
-        <p class="hint">Cite in your text as [1], [2]… in the order listed here.</p>
-      </div>
-    </details>
-    <details class="band b5 pro">
-      <summary><sup>05</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
-      <div class="body">
-        <ul>
-          <li>Word (.docx) export<span>Coming soon</span></li>
-          <li>APA, Springer, Elsevier templates<span>Coming soon</span></li>
-          <li>Figures &amp; tables with captions<span>Coming soon</span></li>
-          <li>Grammar &amp; clarity suggestions<span>Coming soon</span></li>
-        </ul>
-      </div>
-    </details>
-  </section>
-  <section class="view">
-    <div class="meta"><span>Live preview</span><span id="wc"></span></div>
-    <div class="frame"><article class="sheet" id="pv"></article></div>
-  </section>
-</main>
-<nav class="nav" aria-label="Views">
-  <button id="nW" aria-current="true" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>Write</button>
-  <button id="nP" aria-current="false" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Preview</button>
-  <button id="nD" class="dl" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF</button>
-</nav>
-<div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
+<nav class="top" aria-label="Main"><div class="wrap">
+  <a class="logo" href="index.html" aria-label="Paper Build home"><svg viewBox="-12 -676 5588 710" role="img" aria-label="Paper Build"><path fill="currentColor" d="M104 -523V-122C104 -39 87 -34 17 -31C11 -25 11 -4 17 2C62 1 111 0 147 0C182 0 241 1 291 2C297 -4 297 -25 291 -31C213 -35 189 -39 189 -122V-292C211 -285 235 -282 270 -282C452 -282 507 -401 507 -486C507 -545 468 -652 283 -652C245 -652 186 -645 146 -645C109 -645 57 -646 17 -647C11 -641 11 -620 17 -614C87 -611 104 -606 104 -523ZM189 -554C189 -583 204 -618 276 -618C345 -618 414 -595 414 -468C414 -360 362 -316 265 -316C240 -316 200 -318 189 -321Z M651 -105C631 -61 619 -36 566 -31C560 -25 560 -4 566 2C584 1 606 0 632 0C659 0 697 1 728 2C734 -4 734 -25 728 -31C674 -35 667 -48 690 -98L709 -141C712 -149 715 -152 731 -152H918L939 -98C961 -44 962 -36 908 -31C902 -25 902 -4 908 2C943 1 982 0 1014 0C1044 0 1073 1 1102 2C1108 -4 1108 -25 1102 -31C1049 -38 1046 -46 1022 -104L868 -481C853 -473 834 -465 814 -462ZM906 -186H755C735 -186 737 -199 745 -219L819 -388L826 -389Z M1346 -122V-196C1364 -188 1384 -184 1409 -184C1543 -184 1584 -280 1584 -340C1584 -392 1554 -462 1412 -462C1375 -462 1333 -460 1306 -460C1277 -460 1235 -461 1195 -462C1189 -456 1189 -435 1195 -429C1256 -425 1267 -421 1267 -338V-122C1267 -39 1256 -36 1195 -31C1189 -25 1189 -4 1195 2C1228 1 1263 0 1307 0C1350 0 1385 1 1418 2C1424 -4 1424 -25 1418 -31C1357 -35 1346 -39 1346 -122ZM1346 -384C1346 -416 1358 -429 1406 -429C1465 -429 1497 -398 1497 -328C1497 -256 1471 -217 1411 -217C1391 -217 1366 -220 1346 -228Z M1911 -225C1977 -225 1978 -206 1980 -169C1985 -164 2003 -164 2008 -169C2007 -192 2006 -226 2006 -242C2006 -256 2007 -288 2008 -313C2003 -318 1985 -318 1980 -313C1978 -268 1976 -257 1911 -257H1854V-399C1854 -416 1867 -427 1886 -427H1943C2025 -427 2038 -394 2056 -337C2066 -336 2075 -338 2083 -342C2079 -376 2067 -454 2065 -461C2065 -463 2064 -464 2062 -464C2048 -461 2038 -460 2021 -460H1814C1785 -460 1739 -461 1703 -462C1697 -456 1697 -435 1703 -429C1764 -425 1775 -421 1775 -338V-122C1775 -39 1764 -36 1703 -31C1697 -25 1697 -4 1703 2C1739 1 1783 0 1815 0H1969C2009 0 2075 2 2075 2C2087 -39 2098 -94 2105 -136C2096 -141 2088 -143 2077 -140C2061 -81 2032 -31 1949 -31H1906C1864 -31 1854 -42 1854 -75V-225Z M2376 -122V-209H2431C2469 -209 2483 -176 2496 -139L2518 -79C2541 -17 2575 7 2618 7C2633 7 2664 4 2681 0C2684 -10 2682 -20 2675 -28C2639 -28 2620 -34 2600 -86L2571 -161C2559 -192 2547 -209 2534 -222V-224C2568 -236 2619 -277 2619 -346C2619 -429 2567 -464 2448 -464C2423 -464 2366 -460 2336 -460C2307 -460 2265 -461 2225 -462C2219 -456 2219 -435 2225 -429C2286 -425 2297 -421 2297 -338V-122C2297 -39 2286 -36 2225 -31C2219 -25 2219 -4 2225 2C2263 1 2304 0 2337 0C2368 0 2401 1 2433 2C2439 -4 2439 -25 2433 -31C2386 -34 2376 -39 2376 -122ZM2532 -346C2532 -267 2509 -238 2420 -238H2376V-368C2376 -421 2386 -431 2442 -431C2512 -431 2532 -406 2532 -346Z M3114.0 -645C3078.0 -645 3024.0 -646 2985.0 -647C2979.0 -641 2979.0 -620 2985.0 -614C3055.0 -611 3072.0 -606 3072.0 -523V-122C3072.0 -39 3055.0 -34 2985.0 -31C2979.0 -25 2979.0 -4 2985.0 2C3024.0 1 3078.0 0 3115.0 0C3151.0 0 3177.0 2 3261.0 2C3460.0 2 3513.0 -98 3513.0 -184C3513.0 -280 3446.0 -335 3359.0 -360V-362C3409.0 -387 3454.0 -439 3454.0 -493C3454.0 -560 3425.0 -647 3239.0 -647C3204.0 -647 3150.0 -645 3114.0 -645ZM3157.0 -332H3226.0C3363.0 -332 3420.0 -255 3420.0 -165C3420.0 -92 3392.0 -31 3240.0 -31C3170.0 -31 3157.0 -57 3157.0 -118ZM3157.0 -550C3157.0 -603 3157.0 -613 3244.0 -613C3300.0 -613 3373.0 -583 3373.0 -481C3373.0 -396 3314.0 -366 3231.0 -366H3157.0Z M4004.0 -338V-211C4004.0 -125 4004.0 -31 3872.0 -31C3773.0 -31 3752.0 -109 3752.0 -202V-338C3752.0 -421 3763.0 -424 3824.0 -429C3830.0 -435 3830.0 -456 3824.0 -462C3785.0 -461 3745.0 -460 3712.0 -460C3676.0 -460 3637.0 -461 3601.0 -462C3595.0 -456 3595.0 -435 3601.0 -429C3662.0 -425 3673.0 -421 3673.0 -338V-181C3673.0 -31 3746.0 10 3855.0 10C4010.0 10 4051.0 -78 4051.0 -224V-338C4051.0 -421 4062.0 -424 4123.0 -429C4129.0 -435 4129.0 -456 4123.0 -462C4093.0 -461 4057.0 -460 4027.0 -460C3997.0 -460 3962.0 -461 3932.0 -462C3926.0 -456 3926.0 -435 3932.0 -429C3993.0 -425 4004.0 -421 4004.0 -338Z M4385.0 -338C4385.0 -421 4396.0 -424 4457.0 -429C4463.0 -435 4463.0 -456 4457.0 -462C4419.0 -461 4376.0 -460 4345.0 -460C4315.0 -460 4273.0 -461 4234.0 -462C4228.0 -456 4228.0 -435 4234.0 -429C4295.0 -425 4306.0 -421 4306.0 -338V-122C4306.0 -39 4295.0 -36 4234.0 -31C4228.0 -25 4228.0 -4 4234.0 2C4271.0 1 4312.0 0 4346.0 0C4378.0 0 4422.0 1 4457.0 2C4463.0 -4 4463.0 -25 4457.0 -31C4396.0 -35 4385.0 -39 4385.0 -122Z M4925.0 0C4925.0 0 4948.0 -96 4955.0 -138C4946.0 -143 4938.0 -145 4927.0 -142C4911.0 -83 4882.0 -34 4819.0 -34H4774.0C4751.0 -34 4737.0 -50 4737.0 -69V-338C4737.0 -421 4748.0 -424 4809.0 -429C4815.0 -435 4815.0 -456 4809.0 -462C4772.0 -461 4731.0 -460 4697.0 -460C4666.0 -460 4623.0 -461 4586.0 -462C4580.0 -456 4580.0 -435 4586.0 -429C4647.0 -425 4658.0 -421 4658.0 -338V-122C4658.0 -39 4656.0 -34 4586.0 -31C4580.0 -25 4580.0 -4 4586.0 2C4635.0 1 4701.0 0 4701.0 0Z M5170.0 -460C5143.0 -460 5098.0 -461 5059.0 -462C5053.0 -456 5053.0 -435 5059.0 -429C5120.0 -425 5131.0 -421 5131.0 -338V-122C5131.0 -39 5120.0 -36 5059.0 -31C5053.0 -25 5053.0 -4 5059.0 2C5097.0 1 5142.0 0 5171.0 0C5197.0 0 5237.0 2 5317.0 2C5428.0 2 5552.0 -50 5552.0 -225C5552.0 -358 5470.0 -462 5303.0 -462C5235.0 -462 5199.0 -460 5170.0 -460ZM5210.0 -76V-398C5210.0 -423 5235.0 -429 5274.0 -429C5442.0 -429 5465.0 -312 5465.0 -208C5465.0 -68 5403.0 -31 5293.0 -31C5217.0 -31 5210.0 -48 5210.0 -76Z"/></svg></a>
+  <div class="links"><a href="#standards">Standards</a><a class="hide" href="#how">How it works</a><a class="hide" href="#pricing">Pricing</a><a href="#app">App</a></div>
+  <button class="btn theme" id="theme" type="button" aria-label="Switch to dark mode"></button>
+  <a class="btn cta" href="app.html">Open editor</a>
+</div></nav>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<header class="hero"><div class="wrap">
+  <div>
+    <h1>Write your paper once. Format it for <em>any</em> journal.</h1>
+    <p>Fill in simple boxes for your title, sections and references. Paper Build lays it out in IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago or Harvard style and gives you a ready PDF.</p>
+    <div class="row"><a class="btn cta" href="app.html">Start writing, it's free</a><button class="btn" id="install" type="button" hidden>Install app</button></div>
+    <p class="small">No sign-up. Works on phone and laptop.</p>
+  </div>
+  <div class="stack" aria-label="Example page layouts: IEEE, APA and Springer LNCS" role="img">
+    <div class="pg a" id="thA"></div><div class="pg b" id="thB"></div><div class="pg c" id="thC"></div>
+    <span class="tag t1">APA 7th</span><span class="tag t2">IEEE</span><span class="tag t3">Springer LNCS</span>
+  </div>
+</div></header>
+
+<section id="standards" aria-labelledby="stdH">
+  <div class="wrap"><h2 id="stdH">Pick your standard</h2><p class="lead">Each standard changes the page size, columns, fonts, heading numbers, and how citations and references are written. Switch any time; your content stays the same.</p></div>
+  <div class="bands" id="bands"></div>
+  <div class="wrap"><p class="small" style="font:13px 'DM Mono',monospace;color:var(--mute);margin-top:16px">These follow each standard's general layout. Always check your target journal's own author guidelines too.</p></div>
+</section>
+
+<section id="how" aria-labelledby="howH"><div class="wrap">
+  <h2 id="howH">How it works</h2><p class="lead">Three steps, no LaTeX, no fighting with margins.</p>
+  <div class="steps">
+    <div class="step"><div class="strip" style="background:#2f5d46">1<i></i></div><div><h3>Choose the standard</h3><p>Pick the journal or university style from the gallery. You can change it later.</p></div></div>
+    <div class="step"><div class="strip" style="background:#6c5a9c">2<i></i></div><div><h3>Fill in the bands</h3><p>Title, authors, abstract, sections and references. Cite with [1] and it becomes (Author, Year) where needed.</p></div></div>
+    <div class="step"><div class="strip" style="background:#c8662e">3<i></i></div><div><h3>Download the PDF</h3><p>The preview is the real PDF, so what you see is exactly what you submit.</p></div></div>
+  </div>
+</div></section>
+
+<section id="pricing" aria-labelledby="prH"><div class="wrap">
+  <h2 id="prH">Pricing</h2><p class="lead">Everything you need to finish a paper is free.</p>
+  <div class="price">
+    <div class="plan"><h3>Free</h3><div class="p">₹0 · forever</div><ul><li>All 8 standards</li><li>Live PDF preview</li><li>Unlimited PDF downloads</li><li>Auto-formatted references and citations</li></ul><a class="btn cta" href="app.html">Open editor</a></div>
+    <div class="plan pro"><h3>Pro <span class="badge">Coming soon</span></h3><div class="p">Price to be announced</div><ul><li>Word (.docx) export</li><li>Figures and tables with captions</li><li>Subsections and equations</li><li>Grammar and clarity suggestions</li></ul></div>
+  </div>
+</div></section>
+
+<section id="app" aria-labelledby="appH"><div class="wrap">
+  <div class="app">
+    <div>
+      <h2 id="appH">Use it as an app</h2>
+      <p class="lead" style="margin-bottom:16px">Paper Build installs on your phone or laptop like a normal app, with its own icon, and opens even when you're offline.</p>
+      <ol><li>Open this site in Chrome on Android.</li><li>Tap <b>Install app</b> above, or open the ⋮ menu and choose <b>Add to Home screen</b>.</li><li>Open Paper Build from your home screen.</li></ol>
+      <div class="row" style="display:flex;gap:10px;margin-top:18px"><button class="btn cta" id="install2" type="button" hidden>Install app</button><a class="btn" href="app.html">Open in browser</a></div>
+    </div>
+    <div class="phone" aria-hidden="true"><div class="bar"><img src="assets/icon-192.png" alt=""><span>Paper Build</span></div><div class="pv" id="thP"></div></div>
+  </div>
+</div></section>
+
+<section aria-labelledby="faqH"><div class="wrap">
+  <h2 id="faqH">Questions</h2>
+  <div class="faq">
+    <details><summary>Is this accepted by journals?</summary><p>Paper Build follows the general layout of each standard. Journals and conferences often add their own rules, such as page limits or figure formats, so always read their author guidelines before you submit.</p></details>
+    <details><summary>Where is my paper saved?</summary><p>Your draft is saved in your own browser on this device. It isn't uploaded anywhere, so download your PDF and keep a copy. Clearing browser data will remove the draft.</p></details>
+    <details><summary>Can I switch standards after writing?</summary><p>Yes. Your text stays the same; the layout, headings, citations and reference list are rebuilt for the new standard instantly.</p></details>
+    <details><summary>Does it write the paper for me?</summary><p>No. Paper Build formats your own writing. Colleges treat AI-written papers as plagiarism, so the writing stays yours.</p></details>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="logo" style="color:var(--mute)"><svg viewBox="-12 -676 5588 710" role="img" aria-label="Paper Build"><path fill="currentColor" d="M104 -523V-122C104 -39 87 -34 17 -31C11 -25 11 -4 17 2C62 1 111 0 147 0C182 0 241 1 291 2C297 -4 297 -25 291 -31C213 -35 189 -39 189 -122V-292C211 -285 235 -282 270 -282C452 -282 507 -401 507 -486C507 -545 468 -652 283 -652C245 -652 186 -645 146 -645C109 -645 57 -646 17 -647C11 -641 11 -620 17 -614C87 -611 104 -606 104 -523ZM189 -554C189 -583 204 -618 276 -618C345 -618 414 -595 414 -468C414 -360 362 -316 265 -316C240 -316 200 -318 189 -321Z M651 -105C631 -61 619 -36 566 -31C560 -25 560 -4 566 2C584 1 606 0 632 0C659 0 697 1 728 2C734 -4 734 -25 728 -31C674 -35 667 -48 690 -98L709 -141C712 -149 715 -152 731 -152H918L939 -98C961 -44 962 -36 908 -31C902 -25 902 -4 908 2C943 1 982 0 1014 0C1044 0 1073 1 1102 2C1108 -4 1108 -25 1102 -31C1049 -38 1046 -46 1022 -104L868 -481C853 -473 834 -465 814 -462ZM906 -186H755C735 -186 737 -199 745 -219L819 -388L826 -389Z M1346 -122V-196C1364 -188 1384 -184 1409 -184C1543 -184 1584 -280 1584 -340C1584 -392 1554 -462 1412 -462C1375 -462 1333 -460 1306 -460C1277 -460 1235 -461 1195 -462C1189 -456 1189 -435 1195 -429C1256 -425 1267 -421 1267 -338V-122C1267 -39 1256 -36 1195 -31C1189 -25 1189 -4 1195 2C1228 1 1263 0 1307 0C1350 0 1385 1 1418 2C1424 -4 1424 -25 1418 -31C1357 -35 1346 -39 1346 -122ZM1346 -384C1346 -416 1358 -429 1406 -429C1465 -429 1497 -398 1497 -328C1497 -256 1471 -217 1411 -217C1391 -217 1366 -220 1346 -228Z M1911 -225C1977 -225 1978 -206 1980 -169C1985 -164 2003 -164 2008 -169C2007 -192 2006 -226 2006 -242C2006 -256 2007 -288 2008 -313C2003 -318 1985 -318 1980 -313C1978 -268 1976 -257 1911 -257H1854V-399C1854 -416 1867 -427 1886 -427H1943C2025 -427 2038 -394 2056 -337C2066 -336 2075 -338 2083 -342C2079 -376 2067 -454 2065 -461C2065 -463 2064 -464 2062 -464C2048 -461 2038 -460 2021 -460H1814C1785 -460 1739 -461 1703 -462C1697 -456 1697 -435 1703 -429C1764 -425 1775 -421 1775 -338V-122C1775 -39 1764 -36 1703 -31C1697 -25 1697 -4 1703 2C1739 1 1783 0 1815 0H1969C2009 0 2075 2 2075 2C2087 -39 2098 -94 2105 -136C2096 -141 2088 -143 2077 -140C2061 -81 2032 -31 1949 -31H1906C1864 -31 1854 -42 1854 -75V-225Z M2376 -122V-209H2431C2469 -209 2483 -176 2496 -139L2518 -79C2541 -17 2575 7 2618 7C2633 7 2664 4 2681 0C2684 -10 2682 -20 2675 -28C2639 -28 2620 -34 2600 -86L2571 -161C2559 -192 2547 -209 2534 -222V-224C2568 -236 2619 -277 2619 -346C2619 -429 2567 -464 2448 -464C2423 -464 2366 -460 2336 -460C2307 -460 2265 -461 2225 -462C2219 -456 2219 -435 2225 -429C2286 -425 2297 -421 2297 -338V-122C2297 -39 2286 -36 2225 -31C2219 -25 2219 -4 2225 2C2263 1 2304 0 2337 0C2368 0 2401 1 2433 2C2439 -4 2439 -25 2433 -31C2386 -34 2376 -39 2376 -122ZM2532 -346C2532 -267 2509 -238 2420 -238H2376V-368C2376 -421 2386 -431 2442 -431C2512 -431 2532 -406 2532 -346Z M3114.0 -645C3078.0 -645 3024.0 -646 2985.0 -647C2979.0 -641 2979.0 -620 2985.0 -614C3055.0 -611 3072.0 -606 3072.0 -523V-122C3072.0 -39 3055.0 -34 2985.0 -31C2979.0 -25 2979.0 -4 2985.0 2C3024.0 1 3078.0 0 3115.0 0C3151.0 0 3177.0 2 3261.0 2C3460.0 2 3513.0 -98 3513.0 -184C3513.0 -280 3446.0 -335 3359.0 -360V-362C3409.0 -387 3454.0 -439 3454.0 -493C3454.0 -560 3425.0 -647 3239.0 -647C3204.0 -647 3150.0 -645 3114.0 -645ZM3157.0 -332H3226.0C3363.0 -332 3420.0 -255 3420.0 -165C3420.0 -92 3392.0 -31 3240.0 -31C3170.0 -31 3157.0 -57 3157.0 -118ZM3157.0 -550C3157.0 -603 3157.0 -613 3244.0 -613C3300.0 -613 3373.0 -583 3373.0 -481C3373.0 -396 3314.0 -366 3231.0 -366H3157.0Z M4004.0 -338V-211C4004.0 -125 4004.0 -31 3872.0 -31C3773.0 -31 3752.0 -109 3752.0 -202V-338C3752.0 -421 3763.0 -424 3824.0 -429C3830.0 -435 3830.0 -456 3824.0 -462C3785.0 -461 3745.0 -460 3712.0 -460C3676.0 -460 3637.0 -461 3601.0 -462C3595.0 -456 3595.0 -435 3601.0 -429C3662.0 -425 3673.0 -421 3673.0 -338V-181C3673.0 -31 3746.0 10 3855.0 10C4010.0 10 4051.0 -78 4051.0 -224V-338C4051.0 -421 4062.0 -424 4123.0 -429C4129.0 -435 4129.0 -456 4123.0 -462C4093.0 -461 4057.0 -460 4027.0 -460C3997.0 -460 3962.0 -461 3932.0 -462C3926.0 -456 3926.0 -435 3932.0 -429C3993.0 -425 4004.0 -421 4004.0 -338Z M4385.0 -338C4385.0 -421 4396.0 -424 4457.0 -429C4463.0 -435 4463.0 -456 4457.0 -462C4419.0 -461 4376.0 -460 4345.0 -460C4315.0 -460 4273.0 -461 4234.0 -462C4228.0 -456 4228.0 -435 4234.0 -429C4295.0 -425 4306.0 -421 4306.0 -338V-122C4306.0 -39 4295.0 -36 4234.0 -31C4228.0 -25 4228.0 -4 4234.0 2C4271.0 1 4312.0 0 4346.0 0C4378.0 0 4422.0 1 4457.0 2C4463.0 -4 4463.0 -25 4457.0 -31C4396.0 -35 4385.0 -39 4385.0 -122Z M4925.0 0C4925.0 0 4948.0 -96 4955.0 -138C4946.0 -143 4938.0 -145 4927.0 -142C4911.0 -83 4882.0 -34 4819.0 -34H4774.0C4751.0 -34 4737.0 -50 4737.0 -69V-338C4737.0 -421 4748.0 -424 4809.0 -429C4815.0 -435 4815.0 -456 4809.0 -462C4772.0 -461 4731.0 -460 4697.0 -460C4666.0 -460 4623.0 -461 4586.0 -462C4580.0 -456 4580.0 -435 4586.0 -429C4647.0 -425 4658.0 -421 4658.0 -338V-122C4658.0 -39 4656.0 -34 4586.0 -31C4580.0 -25 4580.0 -4 4586.0 2C4635.0 1 4701.0 0 4701.0 0Z M5170.0 -460C5143.0 -460 5098.0 -461 5059.0 -462C5053.0 -456 5053.0 -435 5059.0 -429C5120.0 -425 5131.0 -421 5131.0 -338V-122C5131.0 -39 5120.0 -36 5059.0 -31C5053.0 -25 5053.0 -4 5059.0 2C5097.0 1 5142.0 0 5171.0 0C5197.0 0 5237.0 2 5317.0 2C5428.0 2 5552.0 -50 5552.0 -225C5552.0 -358 5470.0 -462 5303.0 -462C5235.0 -462 5199.0 -460 5170.0 -460ZM5210.0 -76V-398C5210.0 -423 5235.0 -429 5274.0 -429C5442.0 -429 5465.0 -312 5465.0 -208C5465.0 -68 5403.0 -31 5293.0 -31C5217.0 -31 5210.0 -48 5210.0 -76Z"/></svg></div>
+  <div>Paper Build is not affiliated with IEEE, ACM, Springer, Elsevier, the APA, the MLA or the University of Chicago Press. Style names are used only to describe formats.</div>
+  <div>© 2026 Paper Build</div>
+</div></footer>
+
 <script>
 {
-const K='rpb-v1';
-const SAMPLE={
-  title:'Low-Cost Moisture Monitoring for Stored Grain Using Capacitive Sensors',
-  authors:[
-    {name:'A. Patil',aff:'Dept. of Electronics, Example Institute of Technology, Pune, India',email:'a.patil@example.edu'},
-    {name:'S. Kulkarni',aff:'Dept. of Electronics, Example Institute of Technology, Pune, India',email:'s.kulkarni@example.edu'}
-  ],
-  abstract:'Moisture is the main cause of spoilage in stored grain, yet small warehouses rarely monitor it because commercial meters are expensive and need manual readings. This paper presents a low-cost monitoring system that uses capacitive probes, a microcontroller and a mobile dashboard to report moisture levels continuously. We describe the probe design, the calibration procedure and the alert logic, and we compare readings against a laboratory oven-drying method. The system is intended for small storage units where a full commercial installation is not affordable.',
-  keywords:'grain storage, capacitive sensing, moisture measurement, IoT, low-cost sensors',
-  sections:[
-    {h:'Introduction',b:'Post-harvest losses remain a serious problem for small storage units. Moisture above safe limits encourages mould and insect activity, and the damage is often found only after it has spread [1].\n\nThis work aims to give storage owners a simple, affordable way to watch moisture levels without manual sampling.'},
-    {h:'Related Work',b:'Earlier studies have used resistive and capacitive methods to estimate grain moisture [2]. Commercial systems achieve good accuracy but are priced for large silos. Our approach focuses on cost and ease of installation.'},
-    {h:'System Design',b:'Each probe consists of two parallel copper plates embedded in a PVC tube. The microcontroller measures the charge time of the probe, which changes with the dielectric constant of the surrounding grain.\n\nReadings are sent every ten minutes to a mobile dashboard, which raises an alert when moisture crosses a set threshold.'},
-    {h:'Calibration and Testing',b:'Probe readings were compared with the oven-drying method on samples prepared at different moisture levels. Write your measured results and error figures here.'},
-    {h:'Conclusion',b:'The proposed system shows that continuous moisture monitoring can be built from low-cost parts. Future work includes temperature compensation and field trials across a full storage season.'}
-  ],
-  refs:[
-    'A. Author and B. Author, “Title of the cited paper,” in Proc. Int. Conf. Name, City, Country, 2024, pp. 1–6.',
-    'C. Author, “Title of the journal article,” Journal Name, vol. 12, no. 3, pp. 45–52, 2023.'
-  ]
-};
-const BLANK={title:'',authors:[{name:'',aff:'',email:''}],abstract:'',keywords:'',sections:[{h:'Introduction',b:''},{h:'Conclusion',b:''}],refs:['']};
-const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:''}),refs:()=>''};
-const STRIPS=['#2f5d46','#6c5a9c','#c8662e','#3a6ea5'];
-const clone=o=>JSON.parse(JSON.stringify(o));
 const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const words=t=>(String(t||'').match(/\S+/g)||[]).length;
-const paras=t=>String(t||'').split(/\n\s*\n/).map(p=>p.replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);
-const roman=n=>{let r='';for(const[v,s]of[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(n>=v){r+=s;n-=v}return r};
+const STDS=[
+ {id:'ieee',name:'IEEE Conference',org:'IEEE',use:'Engineering, electronics and computer science conferences',spec:'US Letter · 2 columns · 10 pt · [1]'},
+ {id:'acm',name:'ACM Conference',org:'ACM (sigconf)',use:'Computing conferences and ACM proceedings',spec:'US Letter · 2 columns · 9 pt · [1]'},
+ {id:'lncs',name:'Springer LNCS',org:'Springer',use:'Lecture Notes in Computer Science and Springer proceedings',spec:'A4 · narrow column · 10 pt · [1]'},
+ {id:'elsevier',name:'Elsevier',org:'Elsevier (elsarticle preprint)',use:'Submissions to Elsevier journals',spec:'A4 · 1 column · 12 pt · [1]'},
+ {id:'apa',name:'APA 7th',org:'American Psychological Association',use:'Psychology, education, nursing and social sciences',spec:'Double-spaced · (Author, Year)'},
+ {id:'mla',name:'MLA 9th',org:'Modern Language Association',use:'Literature, languages and humanities',spec:'Double-spaced · (Author) · Works Cited'},
+ {id:'chicago',name:'Chicago 18th',org:'University of Chicago Press · author-date',use:'History, business and social sciences',spec:'Double-spaced · (Author Year)'},
+ {id:'harvard',name:'Harvard',org:'Cite Them Right style',use:'Many UK, Australian and Indian universities',spec:'A4 · 1.5 spacing · (Author, Year)'}
+];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+$('#bands').innerHTML=STDS.map((s,i)=>`<a class="bandrow c${i%4}" href="app.html?std=${s.id}"><sup>${String(i+1).padStart(2,'0')}</sup><b>${esc(s.name)}<small>${esc(s.org)}</small></b><span class="u">${esc(s.use)}</span><span class="s">${esc(s.spec)}</span><span class="go" aria-hidden="true">→</span></a>`).join('');
 
-let S=load(),undoState=null,tTimer=null;
-function load(){try{const v=JSON.parse(localStorage.getItem(K));if(v&&Array.isArray(v.sections)&&Array.isArray(v.authors)&&Array.isArray(v.refs))return v}catch(e){}return clone(SAMPLE)}
-function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function thumb(t){const w=100,h=Math.round(w*t.r),L=[];const m=t.narrow?20:t.student?12:9,cw=w-2*m;let y=t.student?h*0.3:10;
+  const bar=(x,yy,ww,hh=2.2,c='#9a917f')=>L.push(`<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${Math.max(ww,2).toFixed(1)}" height="${hh}" rx="1" fill="${c}"/>`);
+  const tw=cw*.75;bar(w/2-tw/2,y,tw,3.6,'#2a2620');y+=t.student?10:8;
+  if(t.student){bar(w/2-cw*.2,y,cw*.4);y+=6;bar(w/2-cw*.25,y,cw*.5);return `<svg viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="#fff"/>${L.join('')}</svg>`}
+  const n=t.cols;for(let k=0;k<n;k++){const bw=cw/n;bar(m+bw*k+bw*.2,y,bw*.6)}y+=7;
+  const step=3.6,gap=n>1?5:0,ccw=(cw-gap*(n-1))/n;const y0=y;
+  for(let c=0;c<n;c++){let yy=y0,k=0;while(yy<h-m){if(k%9===0&&k>0){bar(m+c*(ccw+gap)+(n===2?ccw*.25:0),yy,ccw*(n===2?.5:.4),2.2,'#2a2620');yy+=step+1;k++;continue}bar(m+c*(ccw+gap)+(k%4===1?3:0),yy,ccw-(k%4===1?3:0)-(k%4===0?ccw*.25:0),1.6,'#c7bea9');yy+=step;k++}}
+  return `<svg viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="#fff"/>${L.join('')}</svg>`}
+$('#thA').innerHTML=thumb({r:1.294,cols:1,student:true});$('#thB').innerHTML=thumb({r:1.294,cols:2});$('#thC').innerHTML=thumb({r:1.414,cols:1,narrow:true});$('#thP').innerHTML=thumb({r:1.294,cols:2});
 
-function renderLists(){
-  $('#title').value=S.title;$('#abstract').value=S.abstract;$('#keywords').value=S.keywords;
-  const n=S.authors.length;
-  $('#authors').innerHTML=S.authors.map((a,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[i%4]}">${i+1}<i></i></div><div class="in"><div class="top"><b>Author ${i+1}</b>
-    ${n>1?`<button class="mini" type="button" data-act="del" data-list="authors" data-i="${i}" aria-label="Remove author ${i+1}">Remove</button>`:''}</div>
-    <label>Name<input data-list="authors" data-i="${i}" data-k="name" value="${esc(a.name)}"></label>
-    <label>Department, institution, city, country<input data-list="authors" data-i="${i}" data-k="aff" value="${esc(a.aff)}"></label>
-    <label>Email<input type="email" data-list="authors" data-i="${i}" data-k="email" value="${esc(a.email)}"></label></div></div>`).join('');
-  $('[data-act=add][data-list=authors]').hidden=n>=6;
-  const m=S.sections.length;
-  $('#sections').innerHTML=S.sections.map((s,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[i%4]}">${roman(i+1)}<i></i></div><div class="in"><div class="top"><b>Section ${roman(i+1)}</b>
-    <button class="mini" type="button" data-act="up" data-list="sections" data-i="${i}" ${i?'':'disabled'} aria-label="Move up">↑</button>
-    <button class="mini" type="button" data-act="down" data-list="sections" data-i="${i}" ${i<m-1?'':'disabled'} aria-label="Move down">↓</button>
-    ${m>1?`<button class="mini" type="button" data-act="del" data-list="sections" data-i="${i}">Remove</button>`:''}</div>
-    <label>Heading<input data-list="sections" data-i="${i}" data-k="h" value="${esc(s.h)}"></label>
-    <label>Text<textarea rows="6" data-list="sections" data-i="${i}" data-k="b">${esc(s.b)}</textarea></label></div></div>`).join('');
-  $('#refs').innerHTML=S.refs.map((r,i)=>`<div class="ref"><span>[${i+1}]</span>
-    <textarea rows="2" data-list="refs" data-i="${i}" aria-label="Reference ${i+1}" placeholder="Author, “Title,” Journal or conference, year, pages.">${esc(r)}</textarea>
-    <button class="mini" type="button" data-act="del" data-list="refs" data-i="${i}" aria-label="Remove reference ${i+1}">✕</button></div>`).join('');
-}
-
-function renderPreview(){
-  const refs=S.refs.map(r=>r.trim()).filter(Boolean);
-  const au=S.authors.filter(a=>a.name||a.aff||a.email);
-  $('#pv').innerHTML=`<h2 class="pt">${esc(S.title)||'Untitled paper'}</h2>
-  ${au.length?`<div class="pa">${au.map(a=>`<div><b>${esc(a.name)}</b><i>${esc(a.aff)}</i><span>${esc(a.email)}</span></div>`).join('')}</div>`:''}
-  <div class="cols">
-    <p class="ab"><b><i>Abstract</i>—${esc(S.abstract)||'<span class="empty">Write your abstract.</span>'}</b></p>
-    ${S.keywords.trim()?`<p class="ab"><b><i>Index Terms</i>—${esc(S.keywords)}</b></p>`:''}
-    ${S.sections.map((s,i)=>`<h3>${roman(i+1)}. ${esc(s.h)}</h3>${paras(s.b).map(p=>`<p>${esc(p)}</p>`).join('')||'<p class="empty">Empty section.</p>'}`).join('')}
-    ${refs.length?`<h3>References</h3><ol class="refs">${refs.map((r,i)=>`<li><span>[${i+1}]</span><span>${esc(r)}</span></li>`).join('')}</ol>`:''}
-  </div>`;
-  const total=words(S.abstract)+S.sections.reduce((t,s)=>t+words(s.b),0);
-  $('#wc').textContent=`${total.toLocaleString()} words`;
-  $('#abWc').textContent=`${words(S.abstract)} words`;
-}
-
-let pvT=null;
-function changed(){save();clearTimeout(pvT);pvT=setTimeout(renderPreview,120)}
-function all(){renderLists();renderPreview();save()}
-
-$('#form').addEventListener('input',e=>{
-  const t=e.target;
-  if(t.dataset.f){S[t.dataset.f]=t.value}
-  else if(t.dataset.list){const L=S[t.dataset.list],i=+t.dataset.i;if(t.dataset.list==='refs')L[i]=t.value;else L[i][t.dataset.k]=t.value}
-  else return;
-  changed();
-});
-$('#form').addEventListener('click',e=>{
-  const b=e.target.closest('[data-act]');if(!b)return;
-  const act=b.dataset.act,L=S[b.dataset.list],i=+b.dataset.i;
-  if(act==='blank'){undoState=clone(S);S=clone(BLANK);all();toast('Started a blank paper',true);return}
-  if(act==='add'){L.push(NEW[b.dataset.list]())}
-  else if(act==='del'){undoState=clone(S);L.splice(i,1);if(b.dataset.list==='refs'&&!L.length)L.push('');all();toast('Removed',true);return}
-  else if(act==='up'&&i>0){[L[i-1],L[i]]=[L[i],L[i-1]]}
-  else if(act==='down'&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]]}
-  all();
-  if(act==='add'){const box=$('#'+b.dataset.list);const f=box.lastElementChild&&box.lastElementChild.querySelector('input,textarea');if(f)f.focus()}
-});
-
-function toast(msg,undo){
-  $('#tMsg').textContent=msg;$('#tUndo').hidden=!undo;$('#toast').classList.add('on');
-  clearTimeout(tTimer);tTimer=setTimeout(()=>$('#toast').classList.remove('on'),undo?6000:3000);
-}
-$('#tUndo').addEventListener('click',()=>{if(undoState){S=undoState;undoState=null;all()}$('#toast').classList.remove('on')});
-
-function tab(p){document.body.classList.toggle('show-p',p);$('#nW').setAttribute('aria-current',!p);$('#nP').setAttribute('aria-current',p);window.scrollTo(0,0)}
-$('#nW').addEventListener('click',()=>tab(false));
-$('#nP').addEventListener('click',()=>tab(true));
-
-/* ---- PDF: IEEE conference layout on US Letter ---- */
-function buildPDF(){
-  const d=new window.jspdf.jsPDF({unit:'pt',format:'letter'});
-  const W=612,H=792,ML=45,MR=45,MT=54,MB=72,G=18,FW=W-ML-MR,CW=(FW-G)/2;
-  let y=MT,col=0,top=MT;
-  const x=()=>ML+col*(CW+G);
-  const need=h=>{if(y+h>H-MB){if(col===0){col=1;y=top}else{d.addPage();col=0;top=MT;y=MT}}};
-  const wrap=(text,w,ind)=>{const ws=String(text).split(/\s+/).filter(Boolean),out=[];let cur='',lim=w-ind;
-    for(const q of ws){const t=cur?cur+' '+q:q;if(d.getTextWidth(t)>lim&&cur){out.push(cur);cur=q;lim=w}else cur=t}
-    if(cur)out.push(cur);return out};
-  const line=(l,xx,yy,w,just)=>{const ws=l.split(' ');if(!just||ws.length<2){d.text(l,xx,yy);return}
-    const tot=ws.reduce((s,q)=>s+d.getTextWidth(q),0),gap=(w-tot)/(ws.length-1);let cx=xx;
-    ws.forEach(q=>{d.text(q,cx,yy);cx+=d.getTextWidth(q)+gap})};
-  const para=(text,o={})=>{const{font='normal',size=10,lh=11.5,ind=10}=o;d.setFont('times',font);d.setFontSize(size);
-    const ls=wrap(text,CW,ind);ls.forEach((l,i)=>{need(lh);y+=lh;const off=i?0:ind;line(l,x()+off,y,CW-off,i<ls.length-1)});y+=2};
-  const heading=t=>{d.setFont('times','normal');d.setFontSize(10);const ls=d.splitTextToSize(t,CW);need(ls.length*12+30);y+=10;
-    ls.forEach(l=>{y+=12;d.text(l,x()+CW/2,y,{align:'center'})});y+=4};
-
-  d.setFont('times','normal');d.setFontSize(24);
-  d.splitTextToSize(S.title||'Untitled paper',FW).forEach(l=>{y+=26;d.text(l,W/2,y,{align:'center'})});
-  y+=14;
-  const au=S.authors.filter(a=>a.name||a.aff||a.email),per=Math.min(3,au.length||1);
-  for(let r=0;r<au.length;r+=per){
-    const row=au.slice(r,r+per),bw=FW/row.length;let maxy=y;
-    row.forEach((a,j)=>{let yy=y;const cx=ML+bw*j+bw/2;
-      const put=(t,f,s,lh)=>{if(!t)return;d.setFont('times',f);d.setFontSize(s);d.splitTextToSize(t,bw-12).forEach(l=>{yy+=lh;d.text(l,cx,yy,{align:'center'})})};
-      put(a.name,'normal',11,13);put(a.aff,'italic',10,11.5);put(a.email,'normal',10,11.5);maxy=Math.max(maxy,yy)});
-    y=maxy+12;
-  }
-  y+=8;top=y;
-  para('Abstract—'+(S.abstract||''),{font:'bold',size:9,lh:10.5});
-  if(S.keywords.trim()){y+=3;para('Index Terms—'+S.keywords,{font:'bold',size:9,lh:10.5})}
-  S.sections.forEach((s,i)=>{heading(`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`);paras(s.b).forEach(p=>para(p))});
-  const refs=S.refs.map(r=>r.trim()).filter(Boolean);
-  if(refs.length){heading('REFERENCES');d.setFont('times','normal');d.setFontSize(8);
-    refs.forEach((r,i)=>{const ls=wrap(r,CW-20,0);ls.forEach((l,k)=>{need(9.5);y+=9.5;if(!k)d.text(`[${i+1}]`,x(),y);line(l,x()+20,y,CW-20,k<ls.length-1)});y+=2})}
-  return d.output('blob');
-}
-
-const dlP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(undefined);
-async function download(){
-  if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
-  let blob;try{blob=buildPDF()}catch(e){toast('Could not build the PDF.');return}
-  const name=(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'.pdf';
-  const dl=await dlP;
-  if(dl){
-    try{await dl.save({filename:name,data:blob});toast('PDF saved')}
-    catch(e){const c=e&&e.code;toast(c==='declined'?'Download cancelled':c==='host_unavailable'?'This app can’t save files here. Open the page in a browser to download.':'Download isn’t available in this view.')}
-    return;
-  }
-  if(dl===null){toast('Download isn’t available in this view.');return}
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
-}
-$('#pdf').addEventListener('click',download);
-$('#nD').addEventListener('click',download);
-
-const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Dark</span>';
-const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Light</span>';
-function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme');b.innerHTML=t==='dark'?SUN:MOON;b.setAttribute('aria-label',t==='dark'?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('rpb-theme',t)}catch(e){}}
+const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme');b.innerHTML=t==='dark'?SUN:MOON;b.setAttribute('aria-label',t==='dark'?'Switch to light mode':'Switch to dark mode');document.querySelector('meta[name=theme-color]').content=t==='dark'?'#25221c':'#f6efe1';try{localStorage.setItem('pb-theme',t)}catch(e){}}
 $('#theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
 setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
-renderLists();renderPreview();
+
+let deferred=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('#install').hidden=false;$('#install2').hidden=false});
+const inst=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;$('#install').hidden=true;$('#install2').hidden=true};
+$('#install').addEventListener('click',inst);$('#install2').addEventListener('click',inst);
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 }
 </script>
 </body>

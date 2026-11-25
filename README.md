@@ -1,11 +1,23 @@
-# PaperBuild
+# Paper Build
 
-Research paper builder: fill in your title, authors, abstract, sections and references, see a live IEEE-style preview, and download a two-column PDF.
+Write a research paper once and format it for any of 8 standards, with a live preview that is the real PDF.
 
-- Single-page web app (`index.html`), no build step
-- PDF generated in the browser with jsPDF
-- Drafts are kept in the browser's local storage
-- Light and dark themes
+**Standards:** IEEE Conference, ACM Conference (sigconf), Springer LNCS, Elsevier (preprint), APA 7th, MLA 9th, Chicago 18th (author-date), Harvard.
+
+## What's here
+| File | What it is |
+|---|---|
+| `index.html` | Landing website (standards list, how it works, pricing, app install) |
+| `app.html` | The editor: standard gallery, form bands, live PDF preview, PDF download |
+| `manifest.webmanifest`, `sw.js` | Makes it an installable app (PWA) that also works offline |
+| `assets/` | Logo (Libertinus Serif small caps), app icons |
+| `fonts/` | Libertinus Serif (SIL Open Font License, see `fonts/OFL.txt`) |
+
+## How it works
+- Each standard has its own layout function that draws the PDF with jsPDF (page size, columns, fonts, heading numbering, abstract style, page numbers).
+- References are entered as structured fields and formatted per standard; in-text `[1]` citations become `(Author, Year)` etc. for author-date styles.
+- The preview renders the generated PDF with pdf.js, so the preview and the download are identical.
+- Drafts are saved in the browser's local storage. No server.
 
 ## Run locally
-Open `index.html` in a browser.
+Open `index.html` in a browser. Install-as-app and offline mode need the site served over HTTPS (e.g. GitHub Pages).
