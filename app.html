@@ -80,6 +80,15 @@ textarea{resize:vertical}
 .std span{font-size:14px;color:var(--mute);line-height:1.35}
 .std small{font:12px/1.4 "DM Mono",monospace;color:var(--mute)}
 .galnav{display:flex;gap:8px;justify-content:flex-end}
+.chk{display:flex;align-items:center;gap:10px;font:15px "Inter Tight",sans-serif;color:var(--ink);min-height:44px}
+.chk input{width:22px;height:22px;min-height:0;accent-color:var(--orange)}
+.dflt{font:12px "DM Mono",monospace;color:var(--mute);opacity:.85}
+.changed input,.changed select{border-color:var(--orange)}
+.figs{display:grid;gap:10px}
+.fig{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;border:1px dashed var(--soft);border-radius:6px;padding:8px;background:var(--field)}
+.fig img{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:4px;border:1px solid var(--soft)}
+.fig .fi{display:grid;gap:8px}
+.fig .fi .top{display:flex;justify-content:space-between;align-items:center;font:13px "DM Mono",monospace;color:var(--mute)}
 .pro ul{margin:0;padding:0;list-style:none;display:grid}
 .pro li{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--soft)}
 .pro li span{font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
@@ -133,8 +142,16 @@ textarea{resize:vertical}
         <p class="hint">These are the general layouts of each standard. Always check your target journal's author guidelines for extra rules such as word limits or figure sizes.</p>
       </div>
     </details>
+    <details class="band b5">
+      <summary><sup>02</sup>Page &amp; text<span class="now" id="fmtNow"></span><span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <p class="hint">Starts with the standard's own settings. Change anything your journal or college asks for; the grey value under each box is the standard's default.</p>
+        <div id="fmt" class="grid2"></div>
+        <div><button class="mini" type="button" data-act="fmtreset" id="fmtReset">Reset to standard</button></div>
+      </div>
+    </details>
     <details class="band b1" open>
-      <summary><sup>02</sup>Title &amp; authors<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>03</sup>Title &amp; authors<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <label>Paper title<textarea id="title" rows="2" data-f="title"></textarea></label>
         <div id="authors" style="display:grid;gap:12px"></div>
@@ -147,7 +164,7 @@ textarea{resize:vertical}
       </div>
     </details>
     <details class="band b2">
-      <summary><sup>03</sup>Abstract &amp; keywords<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>04</sup>Abstract &amp; keywords<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <p class="note" id="absNote" hidden>MLA papers don't use an abstract or keywords, so they're left out of the PDF.</p>
         <label><span>Abstract · <span id="abWc"></span></span><textarea id="abstract" rows="7" data-f="abstract"></textarea></label>
@@ -155,15 +172,15 @@ textarea{resize:vertical}
       </div>
     </details>
     <details class="band b3">
-      <summary><sup>04</sup>Sections<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>05</sup>Sections<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <div id="sections" style="display:grid;gap:12px"></div>
         <button class="ghost" data-act="add" data-list="sections" type="button">+ Add section</button>
-        <p class="hint">Numbering follows the standard. Leave an empty line between paragraphs. Cite as [1], [2] or [1, 3]: author-date styles turn these into (Name, Year) automatically. Use *italic* and **bold**.</p>
+        <p class="hint">Numbering follows the standard. Leave an empty line between paragraphs. Cite as [1], [2] or [1, 3]: author-date styles turn these into (Name, Year) automatically. Use *italic* and **bold**. Add figures to any section; they're numbered and captioned the way the standard wants.</p>
       </div>
     </details>
     <details class="band b4">
-      <summary><sup>05</sup>References<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>06</sup>References<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <div id="refs" style="display:grid;gap:12px"></div>
         <button class="ghost" data-act="add" data-list="refs" type="button">+ Add reference</button>
@@ -171,11 +188,11 @@ textarea{resize:vertical}
       </div>
     </details>
     <details class="band b5 pro">
-      <summary><sup>06</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>07</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <ul>
           <li>Word (.docx) export<span>Coming soon</span></li>
-          <li>Figures &amp; tables with captions<span>Coming soon</span></li>
+          <li>Tables with captions<span>Coming soon</span></li>
           <li>Subsections and equations<span>Coming soon</span></li>
           <li>Grammar &amp; clarity suggestions<span>Coming soon</span></li>
         </ul>
@@ -192,6 +209,7 @@ textarea{resize:vertical}
   <button id="nP" aria-current="false" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Preview</button>
   <button id="nD" class="dl" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF</button>
 </nav>
+<input type="file" id="figFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 <div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -222,7 +240,7 @@ const STD=id=>STDS.find(s=>s.id===id)||STDS[0];
 
 /* ================= Data ================= */
 const K='pb-v2';
-const SAMPLE={std:'ieee',
+const SAMPLE={std:'ieee',fmt:{},
   title:'Low-Cost Moisture Monitoring for Stored Grain Using Capacitive Sensors',
   authors:[
     {name:'Amit Patil',aff:'Dept. of Electronics, Example Institute of Technology, Pune, India',email:'a.patil@example.edu'},
@@ -243,9 +261,9 @@ const SAMPLE={std:'ieee',
     {type:'conference',authors:'Iyer, Neha',year:'2024',title:'Title of the cited conference paper',source:'Proceedings of the International Conference on Example Topics',volume:'',issue:'',pages:'1-6',doi:'',publisher:'',url:''},
     {type:'book',authors:'Joshi, Arun; Mehta, Priya; Nair, Vivek',year:'2022',title:'Title of the Cited Book',source:'',volume:'',issue:'',pages:'',doi:'',publisher:'Example Publishing House',url:''}
   ]};
-const BLANK={std:'ieee',title:'',authors:[{name:'',aff:'',email:''}],course:'',instructor:'',date:'',abstract:'',keywords:'',sections:[{h:'Introduction',b:''},{h:'Conclusion',b:''}],refs:[]};
+const BLANK={std:'ieee',fmt:{},title:'',authors:[{name:'',aff:'',email:''}],course:'',instructor:'',date:'',abstract:'',keywords:'',sections:[{h:'Introduction',b:''},{h:'Conclusion',b:''}],refs:[]};
 const NEWREF=()=>({type:'journal',authors:'',year:'',title:'',source:'',volume:'',issue:'',pages:'',doi:'',publisher:'',url:''});
-const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:''}),refs:NEWREF};
+const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:'',figs:[]}),refs:NEWREF};
 const STRIPS=['#2f5d46','#6c5a9c','#c8662e','#3a6ea5'];
 const REFTYPES={journal:'Journal article',conference:'Conference paper',book:'Book',web:'Website'};
 const REFFIELDS={
@@ -264,7 +282,7 @@ const roman=n=>{let r='';for(const[v,s]of[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,
 
 let S=load(),undoState=null,tTimer=null;
 function valid(v){return v&&typeof v==='object'&&Array.isArray(v.sections)&&Array.isArray(v.authors)&&Array.isArray(v.refs)}
-function load(){try{const v=JSON.parse(localStorage.getItem(K));if(valid(v))return Object.assign(clone(BLANK),v)}catch(e){}return clone(SAMPLE)}
+function load(){try{const v=JSON.parse(localStorage.getItem(K));if(valid(v)){const o=Object.assign(clone(BLANK),v);if(!o.fmt||typeof o.fmt!=='object')o.fmt={};return o}}catch(e){}return clone(SAMPLE)}
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 
 /* ================= Reference formatting ================= */
@@ -357,21 +375,51 @@ function citeText(std,nums){
 function cites(std,text){return String(text).replace(/\[(\s*\d+(?:\s*[,–-]\s*\d+)*\s*)\]/g,(m,inner)=>{const nums=[];inner.split(',').forEach(part=>{const r=part.split(/[–-]/).map(x=>parseInt(x,10));if(r.length===2&&r[1]>=r[0]&&r[1]-r[0]<50){for(let k=r[0];k<=r[1];k++)nums.push(k)}else if(!isNaN(r[0]))nums.push(r[0])});return nums.length?citeText(std,nums):m})}
 function md(text,base='n'){const out=[];const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/g;let last=0,m;while((m=re.exec(text))){if(m.index>last)out.push({t:text.slice(last,m.index),s:base});const b=m[0].startsWith('**');out.push({t:m[0].slice(b?2:1,b?-2:-1),s:b?(base==='i'?'bi':'b'):(base==='b'?'bi':'i')});last=m.index+m[0].length}if(last<text.length)out.push({t:text.slice(last),s:base});return out}
 
+/* ================= Formatting defaults (inches unless noted) ================= */
+const DEF={
+ ieee:{page:'letter',fam:'times',size:10,spacing:1.15,mt:.75,mb:1,ml:.625,mr:.625,cols:2,gap:.25,ind:.14,align:'justify',pspace:1,pn:false,noFirstInd:false},
+ acm:{page:'letter',fam:'times',size:9,spacing:1.22,mt:.75,mb:.83,ml:.75,mr:.75,cols:2,gap:.33,ind:.14,align:'justify',pspace:1,pn:false,noFirstInd:true},
+ lncs:{page:'a4',fam:'times',size:10,spacing:1.2,mt:1.94,mb:2.15,ml:1.73,mr:1.73,cols:1,gap:.25,ind:.21,align:'justify',pspace:0,pn:false,noFirstInd:true},
+ elsevier:{page:'a4',fam:'times',size:12,spacing:1.5,mt:1,mb:1,ml:1,mr:1,cols:1,gap:.25,ind:.25,align:'justify',pspace:0,pn:true,noFirstInd:true},
+ apa:{page:'letter',fam:'times',size:12,spacing:2,mt:1,mb:1,ml:1,mr:1,cols:1,gap:.25,ind:.5,align:'left',pspace:0,pn:true,noFirstInd:false},
+ mla:{page:'letter',fam:'times',size:12,spacing:2,mt:1,mb:1,ml:1,mr:1,cols:1,gap:.25,ind:.5,align:'left',pspace:0,pn:true,noFirstInd:false},
+ chicago:{page:'letter',fam:'times',size:12,spacing:2,mt:1,mb:1,ml:1,mr:1,cols:1,gap:.25,ind:.5,align:'left',pspace:0,pn:true,noFirstInd:false},
+ harvard:{page:'a4',fam:'times',size:12,spacing:1.5,mt:1,mb:1,ml:1,mr:1,cols:1,gap:.25,ind:0,align:'left',pspace:9,pn:true,noFirstInd:false}
+};
+function cfg(std){const o=(S.fmt&&S.fmt[std])||{};const C={...DEF[std]};for(const k in o){if(o[k]!==''&&o[k]!=null&&k in C)C[k]=o[k]}
+  ['size','spacing','mt','mb','ml','mr','gap','ind','pspace'].forEach(k=>{C[k]=Number(C[k]);if(!isFinite(C[k]))C[k]=DEF[std][k]});
+  C.size=Math.min(16,Math.max(7,C.size));C.spacing=Math.min(3,Math.max(.9,C.spacing));C.cols=Number(C.cols)===2?2:1;
+  ['mt','mb','ml','mr'].forEach(k=>{C[k]=Math.min(3,Math.max(.25,C[k]))});C.k=C.size/DEF[std].size;return C}
+const CAP={
+ ieee:{lab:n=>`Fig. ${n}. `,ls:'n',size:8,align:'center'},
+ acm:{lab:n=>`Figure ${n}: `,ls:'b',size:8,align:'center',fam:'helvetica'},
+ lncs:{lab:n=>`Fig. ${n}. `,ls:'b',size:9,align:'center'},
+ elsevier:{lab:n=>`Figure ${n}: `,ls:'n',size:10,align:'center'},
+ apa:{above:true},
+ mla:{lab:n=>`Fig. ${n}. `,ls:'n',size:11,align:'left'},
+ chicago:{lab:n=>`Figure ${n}. `,ls:'n',size:11,align:'left'},
+ harvard:{lab:n=>`Figure ${n}: `,ls:'b',size:11,align:'left'}
+};
+
 /* ================= PDF engine ================= */
 const FS={n:'normal',i:'italic',b:'bold',bi:'bolditalic'};
-function Engine(fmt,M,fam='times'){
-  const d=new window.jspdf.jsPDF({unit:'pt',format:fmt});
+const IN=72;
+function Engine(C,cap){
+  const M={t:C.mt*IN,b:C.mb*IN,l:C.ml*IN,r:C.mr*IN};
+  const d=new window.jspdf.jsPDF({unit:'pt',format:C.page});
   const W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight();
-  const E={d,W,H,M,cols:1,gap:0,col:0,y:M.t,top:M.t,fam};
+  const E={d,W,H,M,C,cols:1,gap:0,col:0,y:M.t,top:M.t,fam:C.fam,cap,figN:0};
   E.cw=()=>E.cols===1?W-M.l-M.r:(W-M.l-M.r-E.gap*(E.cols-1))/E.cols;
   E.x=()=>M.l+E.col*(E.cw()+E.gap);
   E.setCols=(n,g=0)=>{E.cols=n;E.gap=g;E.col=0;E.top=E.y};
+  E.body=()=>{if(C.cols===2)E.setCols(2,C.gap*IN);else E.setCols(1)};
   E.newPage=()=>{d.addPage();E.col=0;E.y=M.t;E.top=M.t};
-  E.need=h=>{if(E.y+h>H-M.b){if(E.col<E.cols-1){E.col++;E.y=E.top}else E.newPage()}};
+  E.limit=()=>(E.cap&&d.getNumberOfPages()===E.cap.page)?E.cap.y:H-M.b;
+  E.need=h=>{if(E.y+h>E.limit()){if(E.col<E.cols-1){E.col++;E.y=E.top}else E.newPage()}};
   E.space=h=>{E.y+=h};
   E.rule=(w=.6)=>{d.setLineWidth(w);d.setDrawColor(0);d.line(E.x(),E.y,E.x()+E.cw(),E.y)};
   E.text=(segs,o={})=>{
-    const size=o.size||10,lead=o.lead||size*1.2,fm=o.fam||E.fam,al=o.align||'justify';
+    const size=o.size||C.size,lead=o.lead||size*1.2,fm=o.fam||E.fam,al=o.align||'justify';
     const sf=st=>d.setFont(fm,FS[st]||'normal');d.setFontSize(size);
     const li=o.li||0,ri=o.ri||0,base=E.cw()-li-ri,ind=o.ind||0,hang=o.hang||0;
     let wordsL=[],cur=[];
@@ -383,7 +431,7 @@ function Engine(fmt,M,fam='times'){
     sf('n');const sp=d.getTextWidth(' ');
     const lines=[];let line=[],lw=0;
     const avail=()=>base-(lines.length===0?ind:hang);
-    for(const w of fixed){const wid=ww(w),add=line.length?sp+wid:wid;if(line.length&&lw+add>avail()){lines.push({ws:line,w:lw,wids:null});line=[w];lw=wid}else{line.push(w);lw+=add}}
+    for(const w of fixed){const wid=ww(w),add=line.length?sp+wid:wid;if(line.length&&lw+add>avail()){lines.push({ws:line,w:lw});line=[w];lw=wid}else{line.push(w);lw+=add}}
     if(line.length)lines.push({ws:line,w:lw});
     if(o.keep)E.need(lead*Math.min(lines.length,o.keep));
     lines.forEach((L,k)=>{
@@ -403,110 +451,143 @@ function Engine(fmt,M,fam='times'){
         put(a.name,o.nameFam||E.fam,o.nameSt||'n',o.nameSize||11,(o.nameSize||11)*1.2);put(a.aff,E.fam,o.affSt||'i',o.affSize||10,(o.affSize||10)*1.15);put(a.email,E.fam,'n',o.affSize||10,(o.affSize||10)*1.15);maxy=Math.max(maxy,yy)});
       E.y=maxy+(o.rowGap||10)}
   };
-  E.pageNums=fn=>{const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);fn(i,n)}};
+  E.figure=(std,f)=>{
+    const img=IMG[f.id];if(!img||!f.iw||!f.ih)return;
+    const n=++E.figN,cp=CAP[std],k=C.k;
+    let w=E.cw()*Math.min(100,Math.max(25,Number(f.w)||100))/100,h=w*f.ih/f.iw;
+    const maxH=(E.limit()-E.top)*0.6,pageH=(H-M.t-M.b)*0.6;const mh=Math.max(60,Math.min(pageH,E.cap?pageH:pageH));if(h>mh){h=mh;w=h*f.iw/f.ih}
+    const cap=String(f.cap||'').trim();
+    if(cp.above){const lead=C.size*C.spacing;E.need(lead*2+h+lead);E.text([{t:`Figure ${n}`,s:'b'}],{size:C.size,lead,align:'left'});if(cap)E.text([{t:cap,s:'i'}],{size:C.size,lead,align:'left'});E.space(6)}
+    else{const cs=cp.size*k;E.need(h+cs*2.6+14);E.space(6)}
+    if(E.y+h>E.limit()){E.need(h)}
+    try{d.addImage(img,'JPEG',E.x()+(E.cw()-w)/2,E.y,w,h,f.id)}catch(e){}
+    E.y+=h;
+    if(!cp.above){const cs=cp.size*k;E.space(2);E.text(cat({t:cp.lab(n),s:cp.ls},md(cap)),{size:cs,lead:cs*1.2,align:cp.align,fam:cp.fam||E.fam,after:8})}
+    else E.space(C.size*C.spacing*.5);
+  };
+  E.pageNums=fn=>{if(!C.pn)return;const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFont(E.fam,'normal');fn(i,n)}};
   return E;
 }
 const authorsOf=()=>S.authors.filter(a=>(a.name||'').trim()||(a.aff||'').trim()||(a.email||'').trim());
 const kwList=()=>String(S.keywords||'').split(',').map(s=>s.trim()).filter(Boolean);
-const lastName=n=>{const A=names(String(n||'').includes(',')?n:n);return A[0]?A[0].last:''};
+const lastName=n=>{const A=names(String(n||''));return A[0]?A[0].last:''};
 const uniq=a=>[...new Set(a.filter(Boolean))];
+/* body text of one section, with its figures placed after the chosen paragraph */
+function sectionBody(E,std,s){
+  const C=E.C,ps=paras(s.b),figs=(s.figs||[]).filter(f=>IMG[f.id]);
+  const B={size:C.size,lead:C.size*C.spacing,align:C.align,after:C.pspace};
+  ps.forEach((p,i)=>{E.text(md(cites(std,p)),{...B,ind:(i===0&&C.noFirstInd)?0:C.ind*IN});figs.filter(f=>Number(f.after)===i+1).forEach(f=>E.figure(std,f))});
+  figs.filter(f=>!(Number(f.after)>=1&&Number(f.after)<=ps.length)).forEach(f=>E.figure(std,f));
+}
 
 const R={
- ieee(){const E=Engine('letter',{t:54,b:72,l:45,r:45});
-  E.text([{t:S.title||'Untitled paper'}],{size:24,lead:28,align:'center'});E.space(14);
-  E.authorBlocks(authorsOf(),{nameSize:11,affSize:10});E.space(6);E.setCols(2,18);
-  if(S.abstract)E.text(cat({t:'Abstract',s:'bi'},{t:'—',s:'b'},md(S.abstract,'b')),{size:9,lead:10.5,ind:10,after:3});
-  if(kwList().length)E.text(cat({t:'Index Terms',s:'bi'},{t:'—'+kwList().join(', '),s:'b'}),{size:9,lead:10.5,ind:10,after:2});
-  S.sections.forEach((s,i)=>{E.need(40);E.space(8);E.text([{t:`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`}],{size:10,lead:12,align:'center',after:3});
-    paras(s.b).forEach(p=>E.text(md(cites('ieee',p)),{size:10,lead:11.5,ind:10,after:1}))});
-  const L=refList('ieee');if(L.length){E.need(40);E.space(8);E.text([{t:'REFERENCES'}],{size:10,lead:12,align:'center',after:3});
-    L.forEach((o,k)=>E.text(fmtRef('ieee',o.r),{size:8,lead:9.5,li:20,label:`[${k+1}]`,after:1}))}
+ ieee(C,cap){const E=Engine(C,cap),k=C.k;
+  E.text([{t:S.title||'Untitled paper'}],{size:24*k,lead:28*k,align:'center'});E.space(14*k);
+  E.authorBlocks(authorsOf(),{nameSize:11*k,affSize:10*k});E.space(6);E.body();
+  if(S.abstract)E.text(cat({t:'Abstract',s:'bi'},{t:'—',s:'b'},md(S.abstract,'b')),{size:9*k,lead:9*k*C.spacing*.92,ind:10,align:C.align,after:3});
+  if(kwList().length)E.text(cat({t:'Index Terms',s:'bi'},{t:'—'+kwList().join(', '),s:'b'}),{size:9*k,lead:9*k*C.spacing*.92,ind:10,align:C.align,after:2});
+  S.sections.forEach((s,i)=>{E.need(40*k);E.space(8*k);E.text([{t:`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`}],{size:C.size,lead:C.size*1.2,align:'center',after:3});sectionBody(E,'ieee',s)});
+  const L=refList('ieee');if(L.length){E.need(40*k);E.space(8*k);E.text([{t:'REFERENCES'}],{size:C.size,lead:C.size*1.2,align:'center',after:3});
+    L.forEach((o,j)=>E.text(fmtRef('ieee',o.r),{size:8*k,lead:9.5*k,li:20*k,label:`[${j+1}]`,align:C.align,after:1}))}
+  E.pageNums(i=>{E.d.setFontSize(9);E.d.text(String(i),E.W/2,E.H-30,{align:'center'})});
   return E},
- acm(){const E=Engine('letter',{t:54,b:60,l:54,r:54});
-  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:14.4,lead:18,fam:'helvetica',align:'center'});E.space(10);
-  E.authorBlocks(authorsOf(),{nameSize:11,nameFam:'helvetica',affSize:9,affSt:'n'});E.space(4);E.setCols(2,24);
-  const H=t=>{E.need(36);E.space(8);E.text([{t,s:'b'}],{size:9,lead:11,fam:'helvetica',align:'left',after:2})};
-  if(S.abstract){H('ABSTRACT');E.text(md(S.abstract),{size:9,lead:11,after:2})}
-  if(kwList().length){H('KEYWORDS');E.text([{t:kwList().join(', ')}],{size:9,lead:11,after:2})}
-  S.sections.forEach((s,i)=>{H(`${i+1} ${String(s.h||'').toUpperCase()}`);paras(s.b).forEach((p,k)=>E.text(md(cites('acm',p)),{size:9,lead:11,ind:k?10:0,after:1}))});
-  const L=refList('acm');if(L.length){H('REFERENCES');L.forEach((o,k)=>E.text(fmtRef('acm',o.r),{size:7,lead:8.5,li:16,label:`[${k+1}]`,after:1}))}
+ acm(C,cap){const E=Engine(C,cap),k=C.k;
+  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:14.4*k,lead:18*k,fam:'helvetica',align:'center'});E.space(10);
+  E.authorBlocks(authorsOf(),{nameSize:11*k,nameFam:'helvetica',affSize:9*k,affSt:'n'});E.space(4);E.body();
+  const Hd=t=>{E.need(36*k);E.space(8*k);E.text([{t,s:'b'}],{size:C.size,lead:C.size*1.2,fam:'helvetica',align:'left',after:2})};
+  if(S.abstract){Hd('ABSTRACT');E.text(md(S.abstract),{size:C.size,lead:C.size*C.spacing,align:C.align,after:2})}
+  if(kwList().length){Hd('KEYWORDS');E.text([{t:kwList().join(', ')}],{size:C.size,lead:C.size*C.spacing,align:C.align,after:2})}
+  S.sections.forEach((s,i)=>{Hd(`${i+1} ${String(s.h||'').toUpperCase()}`);sectionBody(E,'acm',s)});
+  const L=refList('acm');if(L.length){Hd('REFERENCES');L.forEach((o,j)=>E.text(fmtRef('acm',o.r),{size:7*k,lead:8.5*k,li:16*k,label:`[${j+1}]`,align:C.align,after:1}))}
+  E.pageNums(i=>{E.d.setFontSize(8);E.d.text(String(i),E.W/2,E.H-30,{align:'center'})});
   return E},
- lncs(){const E=Engine('a4',{t:140,b:155,l:124.5,r:124.5});
-  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:14,lead:17,align:'center'});E.space(12);
+ lncs(C,cap){const E=Engine(C,cap),k=C.k;
+  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:14*k,lead:17*k,align:'center'});E.space(12*k);
   const au=authorsOf();
-  if(au.length){E.text([{t:andList(au.map(a=>a.name).filter(Boolean),', ',', and ',' and ')}],{size:10,lead:12,align:'center',after:6});
-    uniq(au.map(a=>a.aff)).forEach(a=>E.text([{t:a}],{size:9,lead:11,align:'center'}));
-    const em=au.map(a=>a.email).filter(Boolean);if(em.length)E.text([{t:em.join(', ')}],{size:9,lead:11,align:'center'})}
-  E.space(16);
-  if(S.abstract)E.text(cat({t:'Abstract. ',s:'b'},md(S.abstract)),{size:9,lead:11,li:28,ri:28,after:6});
-  if(kwList().length)E.text(cat({t:'Keywords: ',s:'b'},kwList().join(' · ')),{size:9,lead:11,li:28,ri:28,align:'left'});
-  E.space(10);
-  S.sections.forEach((s,i)=>{E.need(44);E.space(14);E.text([{t:`${i+1}  ${s.h||''}`,s:'b'}],{size:12,lead:15,align:'left',after:5});
-    paras(s.b).forEach((p,k)=>E.text(md(cites('lncs',p)),{size:10,lead:12,ind:k?15:0}))});
-  const L=refList('lncs');if(L.length){E.need(44);E.space(14);E.text([{t:'References',s:'b'}],{size:12,lead:15,align:'left',after:5});
-    L.forEach((o,k)=>E.text(fmtRef('lncs',o.r),{size:9,lead:11,li:16,label:`${k+1}.`,after:1}))}
+  if(au.length){E.text([{t:andList(au.map(a=>a.name).filter(Boolean),', ',', and ',' and ')}],{size:10*k,lead:12*k,align:'center',after:6});
+    uniq(au.map(a=>a.aff)).forEach(a=>E.text([{t:a}],{size:9*k,lead:11*k,align:'center'}));
+    const em=au.map(a=>a.email).filter(Boolean);if(em.length)E.text([{t:em.join(', ')}],{size:9*k,lead:11*k,align:'center'})}
+  E.space(16*k);
+  if(S.abstract)E.text(cat({t:'Abstract. ',s:'b'},md(S.abstract)),{size:9*k,lead:11*k,li:28,ri:28,align:C.align,after:6});
+  if(kwList().length)E.text(cat({t:'Keywords: ',s:'b'},kwList().join(' · ')),{size:9*k,lead:11*k,li:28,ri:28,align:'left'});
+  E.space(10*k);E.body();
+  S.sections.forEach((s,i)=>{E.need(44*k);E.space(14*k);E.text([{t:`${i+1}  ${s.h||''}`,s:'b'}],{size:12*k,lead:15*k,align:'left',after:5});sectionBody(E,'lncs',s)});
+  const L=refList('lncs');if(L.length){E.need(44*k);E.space(14*k);E.text([{t:'References',s:'b'}],{size:12*k,lead:15*k,align:'left',after:5});
+    L.forEach((o,j)=>E.text(fmtRef('lncs',o.r),{size:9*k,lead:11*k,li:16*k,label:`${j+1}.`,align:C.align,after:1}))}
+  E.pageNums(i=>{E.d.setFontSize(9);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
   return E},
- elsevier(){const E=Engine('a4',{t:72,b:72,l:72,r:72});
-  E.text([{t:S.title||'Untitled paper'}],{size:17,lead:21,align:'center',after:10});
+ elsevier(C,cap){const E=Engine(C,cap),k=C.k;
+  E.text([{t:S.title||'Untitled paper'}],{size:17*k,lead:21*k,align:'center',after:10});
   const au=authorsOf();
-  if(au.length){E.text([{t:au.map(a=>a.name).filter(Boolean).join(', ')}],{size:12,lead:15,align:'center',after:4});
-    uniq(au.map(a=>a.aff)).forEach(a=>E.text([{t:a,s:'i'}],{size:10,lead:12,align:'center'}));
-    const em=au.map(a=>a.email).filter(Boolean);if(em.length)E.text(cat({t:'Email addresses: ',s:'i'},em.join(', ')),{size:9,lead:11,align:'center'})}
+  if(au.length){E.text([{t:au.map(a=>a.name).filter(Boolean).join(', ')}],{size:12*k,lead:15*k,align:'center',after:4});
+    uniq(au.map(a=>a.aff)).forEach(a=>E.text([{t:a,s:'i'}],{size:10*k,lead:12*k,align:'center'}));
+    const em=au.map(a=>a.email).filter(Boolean);if(em.length)E.text(cat({t:'Email addresses: ',s:'i'},em.join(', ')),{size:9*k,lead:11*k,align:'center'})}
   E.space(14);E.rule();E.space(4);
-  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{size:12,lead:15,align:'left',after:2});E.text(md(S.abstract),{size:11,lead:14,after:6})}
-  if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{size:11,lead:14,align:'left',after:2});
-  E.space(6);E.rule();E.space(6);
-  S.sections.forEach((s,i)=>{E.need(50);E.space(14);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{size:12,lead:15,align:'left',after:4});
-    paras(s.b).forEach((p,k)=>E.text(md(cites('elsevier',p)),{size:12,lead:18,ind:k?18:0}))});
-  const L=refList('elsevier');if(L.length){E.need(50);E.space(16);E.text([{t:'References',s:'b'}],{size:12,lead:15,align:'left',after:4});
-    L.forEach((o,k)=>E.text(fmtRef('elsevier',o.r),{size:10,lead:12.5,li:22,label:`[${k+1}]`,after:2}))}
-  E.pageNums((i)=>{E.d.setFont('times','normal');E.d.setFontSize(10);E.d.text(String(i),E.W/2,E.H-40,{align:'center'})});
+  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{size:12*k,lead:15*k,align:'left',after:2});E.text(md(S.abstract),{size:11*k,lead:14*k,align:C.align,after:6})}
+  if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{size:11*k,lead:14*k,align:'left',after:2});
+  E.space(6);E.rule();E.space(6);E.body();
+  S.sections.forEach((s,i)=>{E.need(50*k);E.space(14*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{size:C.size,lead:C.size*1.25,align:'left',after:4});sectionBody(E,'elsevier',s)});
+  const L=refList('elsevier');if(L.length){E.need(50*k);E.space(16*k);E.text([{t:'References',s:'b'}],{size:C.size,lead:C.size*1.25,align:'left',after:4});
+    L.forEach((o,j)=>E.text(fmtRef('elsevier',o.r),{size:10*k,lead:12.5*k,li:22*k,label:`[${j+1}]`,align:C.align,after:2}))}
+  E.pageNums(i=>{E.d.setFontSize(10);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
   return E},
- apa(){const E=Engine('letter',{t:72,b:72,l:72,r:72});const o={size:12,lead:24};
-  const au=authorsOf();E.space(24*3);
-  E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center',after:24});
+ apa(C,cap){const E=Engine(C,cap);const o={size:C.size,lead:C.size*C.spacing};
+  const au=authorsOf();E.space(o.lead*3);
+  E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center',after:o.lead});
   const ln=t=>t&&E.text([{t}],{...o,align:'center'});
   ln(andList(au.map(a=>a.name).filter(Boolean)));ln(uniq(au.map(a=>a.aff)).join('; '));ln(S.course);ln(S.instructor);ln(S.date);
   if(S.abstract||kwList().length){E.newPage();E.text([{t:'Abstract',s:'b'}],{...o,align:'center'});
-    if(S.abstract)E.text(md(S.abstract),{...o,align:'left'});
-    if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{...o,align:'left',ind:36})}
-  E.newPage();E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center'});
-  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});paras(s.b).forEach(p=>E.text(md(cites('apa',p)),{...o,align:'left',ind:36}))});
-  const L=refList('apa');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('apa',x.r),{...o,align:'left',hang:36}))}
-  E.pageNums(i=>{E.d.setFont('times','normal');E.d.setFontSize(12);E.d.text(String(i),E.W-72,48,{align:'right'})});
+    if(S.abstract)E.text(md(S.abstract),{...o,align:C.align});
+    if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{...o,align:'left',ind:C.ind*IN})}
+  E.newPage();E.body();E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center'});
+  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'apa',s)});
+  const L=refList('apa');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('apa',x.r),{...o,align:'left',hang:C.ind*IN||36}))}
+  E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text(String(i),E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
   return E},
- mla(){const E=Engine('letter',{t:72,b:72,l:72,r:72});const o={size:12,lead:24};
+ mla(C,cap){const E=Engine(C,cap);const o={size:C.size,lead:C.size*C.spacing};
   const au=authorsOf();
   [au.map(a=>a.name).filter(Boolean).join(', '),S.instructor,S.course,S.date].filter(Boolean).forEach(t=>E.text([{t}],{...o,align:'left'}));
-  E.text([{t:S.title||'Untitled paper'}],{...o,align:'center'});
-  S.sections.forEach(s=>{if(s.h)E.text([{t:s.h,s:'b'}],{...o,align:'left',keep:3});paras(s.b).forEach(p=>E.text(md(cites('mla',p)),{...o,align:'left',ind:36}))});
-  const L=refList('mla');if(L.length){E.newPage();E.text([{t:'Works Cited'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('mla',x.r),{...o,align:'left',hang:36}))}
+  E.text([{t:S.title||'Untitled paper'}],{...o,align:'center'});E.body();
+  S.sections.forEach(s=>{if(s.h)E.text([{t:s.h,s:'b'}],{...o,align:'left',keep:3});sectionBody(E,'mla',s)});
+  const L=refList('mla');if(L.length){E.newPage();E.text([{t:'Works Cited'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('mla',x.r),{...o,align:'left',hang:C.ind*IN||36}))}
   const ln=au[0]?lastName(au[0].name):'';
-  E.pageNums(i=>{E.d.setFont('times','normal');E.d.setFontSize(12);E.d.text((ln?ln+' ':'')+i,E.W-72,48,{align:'right'})});
+  E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text((ln?ln+' ':'')+i,E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
   return E},
- chicago(){const E=Engine('letter',{t:72,b:72,l:72,r:72});const o={size:12,lead:24};
+ chicago(C,cap){const E=Engine(C,cap);const o={size:C.size,lead:C.size*C.spacing};
   const au=authorsOf();
   E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center'});
-  [andList(au.map(a=>a.name).filter(Boolean)),S.course,S.instructor,S.date].filter(Boolean).forEach(t=>E.text([{t}],{size:12,lead:16,align:'center'}));
-  E.space(18);
-  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'center'});E.text(md(S.abstract),{...o,align:'left',ind:36})}
-  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});paras(s.b).forEach(p=>E.text(md(cites('chicago',p)),{...o,align:'left',ind:36}))});
-  const L=refList('chicago');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center',after:12});L.forEach(x=>E.text(fmtRef('chicago',x.r),{size:12,lead:14.5,align:'left',hang:36,after:12}))}
-  E.pageNums(i=>{E.d.setFont('times','normal');E.d.setFontSize(12);E.d.text(String(i),E.W-72,48,{align:'right'})});
+  [andList(au.map(a=>a.name).filter(Boolean)),S.course,S.instructor,S.date].filter(Boolean).forEach(t=>E.text([{t}],{size:C.size,lead:C.size*1.35,align:'center'}));
+  E.space(18);E.body();
+  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'center'});E.text(md(S.abstract),{...o,align:C.align,ind:C.ind*IN})}
+  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'chicago',s)});
+  const L=refList('chicago');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center',after:12});L.forEach(x=>E.text(fmtRef('chicago',x.r),{size:C.size,lead:C.size*1.2,align:'left',hang:C.ind*IN||36,after:12}))}
+  E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text(String(i),E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
   return E},
- harvard(){const E=Engine('a4',{t:72,b:72,l:72,r:72});const o={size:12,lead:18};
+ harvard(C,cap){const E=Engine(C,cap),k=C.k;const o={size:C.size,lead:C.size*C.spacing};
   const au=authorsOf();
-  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:16,lead:20,align:'center',after:8});
+  E.text([{t:S.title||'Untitled paper',s:'b'}],{size:16*k,lead:20*k,align:'center',after:8});
   [andList(au.map(a=>a.name).filter(Boolean)),uniq(au.map(a=>a.aff)).join('; '),S.course,S.date].filter(Boolean).forEach(t=>E.text([{t}],{...o,align:'center'}));
   E.space(16);
-  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'left',after:4});E.text(md(S.abstract),{...o,align:'left',after:9})}
+  if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'left',after:4});E.text(md(S.abstract),{...o,align:C.align,after:9})}
   if(kwList().length)E.text(cat({t:'Keywords: ',s:'b'},kwList().join(', ')),{...o,align:'left',after:9});
-  S.sections.forEach((s,i)=>{E.need(60);E.space(8);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{...o,align:'left',after:4});paras(s.b).forEach(p=>E.text(md(cites('harvard',p)),{...o,align:'left',after:9}))});
-  const L=refList('harvard');if(L.length){E.need(60);E.space(8);E.text([{t:'Reference list',s:'b'}],{...o,align:'left',after:6});L.forEach(x=>E.text(fmtRef('harvard',x.r),{size:12,lead:15,align:'left',after:8}))}
-  E.pageNums(i=>{E.d.setFont('times','normal');E.d.setFontSize(11);E.d.text(String(i),E.W/2,E.H-40,{align:'center'})});
+  E.body();
+  S.sections.forEach((s,i)=>{E.need(60*k);E.space(8*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{...o,align:'left',after:4});sectionBody(E,'harvard',s)});
+  const L=refList('harvard');if(L.length){E.need(60*k);E.space(8*k);E.text([{t:'Reference list',s:'b'}],{...o,align:'left',after:6});L.forEach(x=>E.text(fmtRef('harvard',x.r),{size:C.size,lead:C.size*1.25,align:'left',after:8}))}
+  E.pageNums(i=>{E.d.setFontSize(C.size-1);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
   return E}
 };
-function build(){return R[STD(S.std).id]().d}
+/* build, then for 2-column layouts balance the columns on the last page (like real IEEE/ACM papers) */
+function build(){
+  const std=STD(S.std).id,C=cfg(std);
+  const E=R[std](C,null);
+  if(C.cols!==2||E.cols!==2)return E.d;
+  const P=E.d.getNumberOfPages(),topP=E.top;
+  let lo=topP+C.size*3,hi=E.H-E.M.b,best=null;
+  if(lo>=hi)return E.d;
+  for(let it=0;it<11;it++){const mid=(lo+hi)/2,E2=R[std](C,{page:P,y:mid});if(E2.d.getNumberOfPages()===P&&E2.y<=mid+1){best=E2;hi=mid}else lo=mid}
+  return (best||E).d;
+}
+
 
 /* ================= UI ================= */
 function thumb(t){const w=100,h=Math.round(w*t.r),L=[];const m=t.narrow?20:t.student?12:9,cw=w-2*m;let y=t.student&&!t.mla?h*0.3:10;
@@ -527,6 +608,7 @@ function renderStd(){
   $('#stdNow').textContent=cur.name;$('#stdNote').textContent=cur.note;$('#pvName').textContent=cur.name+' · '+cur.org;
   $('#student').hidden=!['apa','mla','chicago','harvard'].includes(cur.id);
   $('#absNote').hidden=cur.id!=='mla';
+  renderFmt();
 }
 function refPreview(r){return fmtRef(STD(S.std).id,r).map(x=>x.s==='i'?`<i>${esc(x.t)}</i>`:x.s==='b'?`<b>${esc(x.t)}</b>`:esc(x.t)).join('')}
 function renderLists(){
@@ -544,13 +626,76 @@ function renderLists(){
     <button class="mini" type="button" data-act="down" data-list="sections" data-i="${i}" ${i<m-1?'':'disabled'} aria-label="Move down">↓</button>
     ${m>1?`<button class="mini" type="button" data-act="del" data-list="sections" data-i="${i}">Remove</button>`:''}</div>
     <label>Heading<input data-list="sections" data-i="${i}" data-k="h" value="${esc(s.h)}"></label>
-    <label>Text<textarea rows="6" data-list="sections" data-i="${i}" data-k="b">${esc(s.b)}</textarea></label></div></div>`).join('');
+    <label>Text<textarea rows="6" data-list="sections" data-i="${i}" data-k="b">${esc(s.b)}</textarea></label>
+    ${figsUI(s,i)}
+    <button class="ghost mini" type="button" data-act="addfig" data-i="${i}">+ Add figure</button></div></div>`).join('');
   $('#refs').innerHTML=S.refs.length?S.refs.map((r,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[(i+2)%4]}">${i+1}<i></i></div><div class="in"><div class="top"><b>Cite as [${i+1}]</b>
     <button class="mini" type="button" data-act="del" data-list="refs" data-i="${i}" aria-label="Remove reference ${i+1}">Remove</button></div>
     <label>Type<select data-list="refs" data-i="${i}" data-k="type">${Object.entries(REFTYPES).map(([k,v])=>`<option value="${k}" ${r.type===k?'selected':''}>${v}</option>`).join('')}</select></label>
     <div class="grid2">${(REFFIELDS[r.type]||REFFIELDS.journal).map(([k,l])=>`<label style="${WIDE[k]?'grid-column:1/-1':''}">${l}<input data-list="refs" data-i="${i}" data-k="${k}" value="${esc(r[k])}" ${k==='authors'?'placeholder="Lastname, Firstname; Lastname, Firstname"':''}></label>`).join('')}</div>
     <p class="fmt" id="rf${i}">${refPreview(r)}</p></div></div>`).join(''):'<p class="hint">No references yet.</p>';
 }
+
+/* ---- figures: images kept in IndexedDB, metadata in the paper ---- */
+const IMG={};let dbP=null;
+function idb(){if(dbP)return dbP;dbP=new Promise(res=>{try{const r=indexedDB.open('paperbuild',1);r.onupgradeneeded=()=>r.result.createObjectStore('img');r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}});return dbP}
+async function idbPut(k,v){const d=await idb();if(!d)return false;return new Promise(r=>{try{const t=d.transaction('img','readwrite');t.objectStore('img').put(v,k);t.oncomplete=()=>r(true);t.onerror=()=>r(false)}catch(e){r(false)}})}
+async function idbGet(k){const d=await idb();if(!d)return null;return new Promise(r=>{try{const q=d.transaction('img').objectStore('img').get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})}
+async function loadImgs(){const ids=S.sections.flatMap(s=>(s.figs||[]).map(f=>f.id)).filter(id=>!IMG[id]);if(!ids.length)return false;await Promise.all(ids.map(async id=>{const v=await idbGet(id);if(v)IMG[id]=v}));return true}
+function figsUI(s,i){const f=s.figs||[];if(!f.length)return '';const np=paras(s.b).length;let n=S.sections.slice(0,i).reduce((t,x)=>t+(x.figs||[]).filter(g=>IMG[g.id]).length,0);
+  return `<div class="figs">${f.map((g,j)=>{const ok=!!IMG[g.id];if(ok)n++;return `<div class="fig">${ok?`<img src="${esc(IMG[g.id])}" alt="Figure ${n} preview">`:'<img alt="Image not found on this device">'}<div class="fi"><div class="top"><span>${ok?'Figure '+n:'Image missing on this device'}</span><button class="mini" type="button" data-act="delfig" data-i="${i}" data-j="${j}">Remove</button></div>
+  <label>Caption<input data-fig="${i}" data-j="${j}" data-k="cap" value="${esc(g.cap)}" placeholder="What the figure shows"></label>
+  <div class="grid2"><label>Width<select data-fig="${i}" data-j="${j}" data-k="w">${[[100,'Full column'],[75,'75%'],[50,'Half']].map(([v,l])=>`<option value="${v}" ${Number(g.w)===v?'selected':''}>${l}</option>`).join('')}</select></label>
+  <label>Place<select data-fig="${i}" data-j="${j}" data-k="after"><option value="0">End of section</option>${Array.from({length:np},(_,k)=>`<option value="${k+1}" ${Number(g.after)===k+1?'selected':''}>After paragraph ${k+1}</option>`).join('')}</select></label></div></div></div>`}).join('')}</div>`}
+async function toJpeg(file){const url=URL.createObjectURL(file);try{const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url});
+  const max=1600,sc=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*sc)),h=Math.max(1,Math.round(img.naturalHeight*sc));
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);return{src:c.toDataURL('image/jpeg',.88),w,h}}finally{URL.revokeObjectURL(url)}}
+let figTarget=0;
+$('#figFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
+  try{const {src,w,h}=await toJpeg(file);const id='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);IMG[id]=src;
+    const kept=await idbPut(id,src);const s=S.sections[figTarget];if(!s)return;(s.figs=s.figs||[]).push({id,iw:w,ih:h,cap:'',w:100,after:0});
+    renderLists();changed(true);toast(kept?'Figure added':'Figure added (it won’t be remembered after you close this page)')}
+  catch(err){toast('Could not read that image')}});
+
+/* ---- page & text settings ---- */
+const FMTF=[
+ ['page','Page size','sel',[['a4','A4 (21 × 29.7 cm)'],['letter','US Letter (8.5 × 11 in)']]],
+ ['fam','Font','sel',[['times','Times New Roman'],['helvetica','Arial / Helvetica']]],
+ ['size','Body text size (pt)','num',{min:7,max:16,step:.5}],
+ ['spacing','Line spacing','sp'],
+ ['pspace','Space after paragraph (pt)','num',{min:0,max:24,step:1}],
+ ['align','Text alignment','sel',[['justify','Justified'],['left','Left']]],
+ ['ind','First-line indent (cm)','cm',{min:0,max:3,step:.05}],
+ ['cols','Columns','sel',[['1','1 column'],['2','2 columns']]],
+ ['gap','Column gap (cm)','cm',{min:.2,max:2,step:.05}],
+ ['mt','Top margin (cm)','cm',{min:.6,max:7,step:.05}],
+ ['mb','Bottom margin (cm)','cm',{min:.6,max:7,step:.05}],
+ ['ml','Left margin (cm)','cm',{min:.6,max:7,step:.05}],
+ ['mr','Right margin (cm)','cm',{min:.6,max:7,step:.05}],
+ ['pn','Page numbers','chk']];
+const cmOf=i=>Math.round(i*2.54*100)/100;
+const show=(k,v)=>k==='page'?(v==='a4'?'A4':'US Letter'):k==='fam'?(v==='times'?'Times':'Arial'):k==='align'?(v==='justify'?'Justified':'Left'):k==='cols'?v+' col':k==='pn'?(v?'On':'Off'):['ind','gap','mt','mb','ml','mr'].includes(k)?cmOf(v)+' cm':k==='spacing'?v:v+' pt';
+function renderFmt(){const std=STD(S.std).id,D=DEF[std],C=cfg(std),o=(S.fmt&&S.fmt[std])||{};
+  $('#fmt').innerHTML=FMTF.map(([k,l,t,a])=>{if(k==='gap'&&C.cols!==2)return '';const ch=(k in o)&&String(o[k])!==String(D[k]);const dv=`<span class="dflt">standard: ${esc(show(k,D[k]))}</span>`;
+    if(t==='chk')return `<div class="${ch?'changed':''}"><label class="chk"><input type="checkbox" data-fmt="${k}" ${C[k]?'checked':''}> ${l}</label>${dv}</div>`;
+    if(t==='sel')return `<label class="${ch?'changed':''}">${l}<select data-fmt="${k}">${a.map(([v,n])=>`<option value="${v}" ${String(C[k])===v?'selected':''}>${n}</option>`).join('')}</select>${dv}</label>`;
+    if(t==='sp'){const opts=[...new Set([1,1.15,1.5,2,D.spacing,C.spacing].map(Number))].sort((x,y)=>x-y);return `<label class="${ch?'changed':''}">${l}<select data-fmt="spacing">${opts.map(v=>`<option value="${v}" ${C.spacing===v?'selected':''}>${v===1?'1.0 (single)':v===2?'2.0 (double)':v}</option>`).join('')}</select>${dv}</label>`}
+    const val=t==='cm'?cmOf(C[k]):C[k];
+    return `<label class="${ch?'changed':''}">${l}<input type="number" inputmode="decimal" data-fmt="${k}" data-u="${t}" min="${a.min}" max="${a.max}" step="${a.step}" value="${val}">${dv}</label>`}).join('');
+  $('#fmtNow').textContent=`${C.fam==='times'?'Times':'Arial'} ${C.size} pt · ${C.spacing}× · ${C.cols} col`;
+  $('#fmtReset').textContent=`Reset to ${STD(S.std).name} defaults`;
+  $('#fmtReset').disabled=!Object.keys(o).length;
+}
+function setFmt(el){const std=STD(S.std).id,k=el.dataset.fmt;let v=el.type==='checkbox'?el.checked:el.value;
+  if(el.type==='number'){if(v===''||isNaN(Number(v)))return;v=Number(v);if(el.dataset.u==='cm')v=v/2.54}
+  if(k==='spacing'||k==='size'||k==='pspace')v=Number(v);
+  S.fmt=S.fmt||{};S.fmt[std]=S.fmt[std]||{};S.fmt[std][k]=v;
+  const C=cfg(std);$('#fmtNow').textContent=`${C.fam==='times'?'Times':'Arial'} ${C.size} pt · ${C.spacing}× · ${C.cols} col`;$('#fmtReset').disabled=false;
+  const lab=el.closest('label,div');if(lab)lab.classList.toggle('changed',String(v)!==String(DEF[std][k]));
+  if(k==='cols')renderFmt();changed();
+}
+$('#fmt').addEventListener('change',e=>{if(e.target.dataset.fmt)setFmt(e.target)});
+$('#fmt').addEventListener('input',e=>{if(e.target.dataset.fmt&&e.target.type==='number')setFmt(e.target)});
 function stats(){const total=words(S.abstract)+S.sections.reduce((t,s)=>t+words(s.b),0);$('#abWc').textContent=`${words(S.abstract)} words`;return total}
 
 /* ---- preview via pdf.js ---- */
@@ -579,6 +724,8 @@ function setStd(id){if(S.std===id)return;S.std=id;renderStd();S.refs.forEach((r,
 
 $('#form').addEventListener('input',e=>{
   const t=e.target;
+  if(t.dataset.fmt)return;
+  if(t.dataset.fig!==undefined){const g=(S.sections[+t.dataset.fig].figs||[])[+t.dataset.j];if(!g)return;g[t.dataset.k]=t.dataset.k==='cap'?t.value:Number(t.value);changed();return}
   if(t.dataset.f){S[t.dataset.f]=t.value}
   else if(t.dataset.list){const L=S[t.dataset.list],i=+t.dataset.i;L[i][t.dataset.k]=t.value;
     if(t.dataset.list==='refs'){if(t.dataset.k==='type'){renderLists()}else{const el=$('#rf'+i);if(el)el.innerHTML=refPreview(L[i])}}}
@@ -589,7 +736,10 @@ $('#form').addEventListener('click',e=>{
   const sb=e.target.closest('[data-std]');if(sb){setStd(sb.dataset.std);return}
   const b=e.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,L=S[b.dataset.list],i=+b.dataset.i;
-  if(act==='blank'){undoState=clone(S);const std=S.std;S=clone(BLANK);S.std=std;all();toast('Started a blank paper',true);return}
+  if(act==='fmtreset'){const std=STD(S.std).id;if(S.fmt)delete S.fmt[std];renderFmt();changed(true);toast('Settings reset');return}
+  if(act==='addfig'){figTarget=i;$('#figFile').click();return}
+  if(act==='delfig'){undoState=clone(S);S.sections[i].figs.splice(+b.dataset.j,1);renderLists();changed(true);toast('Figure removed',true);return}
+  if(act==='blank'){undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};all();toast('Started a blank paper',true);return}
   if(act==='add'){L.push(NEW[b.dataset.list]())}
   else if(act==='del'){undoState=clone(S);L.splice(i,1);all();toast('Removed',true);return}
   else if(act==='up'&&i>0){[L[i-1],L[i]]=[L[i],L[i-1]]}
@@ -631,6 +781,7 @@ const q=new URLSearchParams(location.search).get('std');if(q&&STDS.some(s=>s.id=
 let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(pvT);pvT=setTimeout(renderPreview,300)});ro.observe($('#pv'));
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 renderStd();renderLists();renderPreview();
+loadImgs().then(n=>{if(n){renderLists();changed(true)}});
 }
 </script>
 </body>

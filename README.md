@@ -17,6 +17,9 @@ Write a research paper once and format it for any of 8 standards, with a live pr
 - Each standard has its own layout function that draws the PDF with jsPDF (page size, columns, fonts, heading numbering, abstract style, page numbers).
 - References are entered as structured fields and formatted per standard; in-text `[1]` citations become `(Author, Year)` etc. for author-date styles.
 - The preview renders the generated PDF with pdf.js, so the preview and the download are identical.
+- Page & text settings (page size, font, size, line spacing, margins, indent, alignment, columns, page numbers) start from each standard's defaults and can be changed.
+- Figures: upload images into any section; they are numbered and captioned per standard. Images are kept in the browser (IndexedDB).
+- Two-column layouts balance the columns on the last page.
 - Drafts are saved in the browser's local storage. No server.
 
 ## Run locally
