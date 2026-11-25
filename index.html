@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research Paper Builder</title>
+<script>try{if(localStorage.getItem("rpb-theme")==="dark")document.documentElement.dataset.theme="dark";else document.documentElement.dataset.theme="light"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=DM+Mono:wght@400;500&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: editorial and friendly, like a well-made resources site, but a working tool
+   IDEA: a paper's parts as coloured index bands you open one by one; the typeset proof beside them
+   PICTURE: the live IEEE sheet on a cream desk, framed in hairline black
+   COLOUR and TYPE: cream ground, black 1.5px rules, bands in sky, sage, mustard, navy, orange; Inter Tight display, DM Mono labels, Tinos page
+   LAYOUT: logo bar, huge headline, bands | sticky preview; under 900px a bottom bar switches Write / Preview / PDF */
+:root{color-scheme:light;--bg:#f6efe1;--paper2:#fbf7ee;--ink:#2a2620;--mute:#6f6756;--rule:#a99e88;--soft:#d6ccb6;--field:#fffcf5;--desk:#efe6d3;
+  --sky:#8cb8e3;--sage:#b4c47e;--mustard:#ecd97a;--lav:#bcaee6;--orange:#f47a3c;--bw:1.5px}
+:root[data-theme=dark]{color-scheme:dark;--bg:#25221c;--paper2:#2d2a23;--ink:#efe8d8;--mute:#b0a793;--rule:#6f6757;--soft:#4c463a;--field:#2f2c25;--desk:#2a271f}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Inter Tight",system-ui,sans-serif;overflow-x:clip}
+.mono{font-family:"DM Mono",ui-monospace,monospace}
+header{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px max(3vw,14px);background:var(--bg);border-bottom:var(--bw) solid var(--rule)}
+.logo{font-size:21px;font-weight:500;letter-spacing:-.02em;display:flex;align-items:center;gap:2px}
+.logo svg{width:18px;height:18px;margin:0 1px}
+header .sp{flex:1}
+.pill{font:500 13px "DM Mono",monospace;background:var(--sage);color:#16200a;border-radius:99px;padding:4px 12px;white-space:nowrap}
+button{font:inherit;cursor:pointer;min-height:44px;padding:0 16px;border:var(--bw) solid var(--soft);border-radius:4px;background:var(--field);color:var(--ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+button:disabled{opacity:.35;cursor:default}
+.cta{background:var(--orange);border-color:var(--orange);color:#2a1004;font-weight:600;white-space:nowrap}
+.theme{min-width:44px;padding:0 12px;background:transparent;display:flex;align-items:center;gap:6px;font-size:14px}
+.theme svg{width:18px;height:18px}
+.ghost{border-style:dashed;width:100%;background:transparent}
+.mini{min-height:36px;min-width:36px;padding:0 10px;font-size:14px;background:transparent}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:start}
+.edit{padding-bottom:60px}
+.hero{padding:clamp(24px,4vw,44px) max(3vw,14px) 22px}
+.hero h1{font-size:clamp(52px,9vw,104px);line-height:.95;font-weight:500;letter-spacing:-.045em;margin:0 0 14px}
+.hero p{margin:0;max-width:46ch;color:var(--mute);font-size:17px}
+.hero .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+.hero .row span{font:13px "DM Mono",monospace;color:var(--mute)}
+details.band{border-top:var(--bw) solid var(--bg)}
+details.band:last-of-type{border-bottom:0}
+summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:8px;padding:12px max(3vw,14px);font-size:clamp(22px,3.2vw,28px);letter-spacing:-.02em;line-height:1.15}
+summary::-webkit-details-marker{display:none}
+summary sup{font:12px "DM Mono",monospace;position:relative;top:-.6em}
+summary .arr{margin-left:auto;align-self:center;width:24px;height:24px;border:1.5px solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:13px;transition:transform .2s;flex:none}
+details[open] .arr{transform:rotate(180deg)}
+.b1 summary{background:var(--sky);color:#0d1b2a}.b2 summary{background:var(--sage);color:#16200a}
+.b3 summary{background:var(--mustard);color:#241f05}.b4 summary{background:var(--lav);color:#221a3d}.b5 summary{background:var(--orange);color:#1a0a02}
+.body{padding:18px max(3vw,14px) 22px;display:grid;gap:14px}
+label{display:grid;gap:5px;font:13px "DM Mono",monospace;color:var(--mute)}
+input,textarea{font:16px/1.5 "Inter Tight",system-ui,sans-serif;color:var(--ink);background:var(--field);border:var(--bw) solid var(--soft);border-radius:4px;padding:10px 12px;width:100%;min-height:44px}
+textarea{resize:vertical}
+.hint{font:13px/1.5 "DM Mono",monospace;color:var(--mute);margin:0}
+.card{display:grid;grid-template-columns:52px minmax(0,1fr);border:var(--bw) solid var(--soft);border-radius:6px;overflow:hidden;background:var(--paper2)}
+.strip{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0;color:#fff;font:500 15px "Tinos",serif}
+.strip i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.card .in{padding:12px;display:grid;gap:10px}
+.card .top{display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.card .top b{margin-right:auto;font:13px "DM Mono",monospace;color:var(--mute);font-weight:400}
+.ref{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start}
+.ref span{font:15px "Tinos",serif;padding-top:11px}
+.pro ul{margin:0;padding:0;list-style:none;display:grid}
+.pro li{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--soft)}
+.pro li span{font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
+.view{position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto;padding:22px max(3vw,14px) 40px;border-left:var(--bw) solid var(--rule)}
+.meta{display:flex;justify-content:space-between;font:13px "DM Mono",monospace;color:var(--mute);margin:0 auto 10px;max-width:816px}
+.frame{border:var(--bw) solid var(--soft);border-radius:6px;padding:clamp(8px,2vw,16px);background:var(--desk);max-width:850px;margin:0 auto}
+.sheet{container-type:inline-size;background:#fff;color:#111;padding:clamp(18px,6%,54px) clamp(16px,6%,46px);font:13px/1.32 "Tinos","Times New Roman",serif;min-height:600px;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.sheet .pt{font:400 clamp(20px,4.4cqi,30px)/1.15 "Tinos",serif;text-align:center;margin:0 0 14px;text-wrap:balance}
+.sheet .pa{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin-bottom:18px;text-align:center}
+.sheet .pa div{display:grid;flex:0 1 220px;font-size:12.5px}
+.sheet .pa b{font-weight:400;font-size:14px}
+.sheet p{margin:0 0 6px;text-align:justify;text-indent:1.2em;hyphens:auto;overflow-wrap:anywhere}
+.sheet .ab{font-size:12px}
+.sheet h3{font:400 13px "Tinos",serif;font-variant:small-caps;text-align:center;margin:14px 0 6px;letter-spacing:.02em;break-after:avoid}
+.sheet .refs{list-style:none;margin:0;padding:0;font-size:11px}
+.sheet .refs li{display:grid;grid-template-columns:28px minmax(0,1fr);margin-bottom:3px;text-align:justify}
+.sheet .empty{color:#888;font-style:italic;text-indent:0}
+@container (min-width:600px){.sheet .cols{columns:2;column-gap:22px}}
+.nav{display:none}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;font-size:15px;display:flex;gap:12px;align-items:center;transition:.25s;pointer-events:none;z-index:9;max-width:calc(100vw - 28px)}
+.toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.toast button{min-height:34px;background:transparent;color:inherit;border-color:currentColor}
+@media(prefers-reduced-motion:reduce){.toast,.arr{transition:none}}
+@media(max-width:900px){
+  main{display:block}
+  header .cta{display:none}
+  .view{position:static;height:auto;border:0;display:none;padding-bottom:100px}
+  body.show-p .view{display:block}body.show-p .edit{display:none}
+  .edit{padding-bottom:100px}
+  .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--bg);border-top:var(--bw) solid var(--rule)}
+  .nav button{border:0;border-radius:0;background:transparent;min-height:60px;display:grid;place-items:center;gap:2px;font-size:13px;padding:6px 0}
+  .nav button+button{border-left:var(--bw) solid var(--rule)}
+  .nav button[aria-current=true]{color:var(--orange);font-weight:600}
+  .nav svg{width:22px;height:22px}
+  .nav .dl{background:var(--orange);color:#2a1004;font-weight:600}
+  .theme span{display:none}
+  .toast{bottom:80px}
+}
+@media(max-width:520px){.pill{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Paper<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1v18M1 10h18M3.6 3.6l12.8 12.8M16.4 3.6 3.6 16.4" stroke="var(--orange)" stroke-width="3" stroke-linecap="round"/></svg>Build</div>
+  <span class="sp"></span>
+  <span class="pill">IEEE format</span>
+  <button class="theme" id="theme" type="button" aria-label="Switch to dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Dark</span></button>
+  <button class="cta" id="pdf">Download PDF</button>
+</header>
+<main>
+  <section class="edit" id="form">
+    <div class="hero">
+      <h1>Your paper</h1>
+      <p>Fill in each band below. The page typesets itself in IEEE conference style, ready to download as a PDF.</p>
+      <div class="row"><span>Sample content shown.</span><button class="mini" data-act="blank" type="button">Start blank</button></div>
+    </div>
+    <details class="band b1" open>
+      <summary><sup>01</sup>Title &amp; authors<span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <label>Paper title<textarea id="title" rows="2" data-f="title"></textarea></label>
+        <div id="authors" style="display:grid;gap:12px"></div>
+        <button class="ghost" data-act="add" data-list="authors" type="button">+ Add author</button>
+      </div>
+    </details>
+    <details class="band b2">
+      <summary><sup>02</sup>Abstract &amp; keywords<span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <label><span>Abstract · <span id="abWc"></span></span><textarea id="abstract" rows="7" data-f="abstract"></textarea></label>
+        <p class="hint">IEEE suggests 150–250 words in one paragraph.</p>
+        <label>Keywords (Index Terms), comma-separated<input id="keywords" data-f="keywords"></label>
+      </div>
+    </details>
+    <details class="band b3">
+      <summary><sup>03</sup>Sections<span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <div id="sections" style="display:grid;gap:12px"></div>
+        <button class="ghost" data-act="add" data-list="sections" type="button">+ Add section</button>
+        <p class="hint">Numbered I, II, III… automatically. Leave an empty line between paragraphs.</p>
+      </div>
+    </details>
+    <details class="band b4">
+      <summary><sup>04</sup>References<span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <div id="refs" style="display:grid;gap:8px"></div>
+        <button class="ghost" data-act="add" data-list="refs" type="button">+ Add reference</button>
+        <p class="hint">Cite in your text as [1], [2]… in the order listed here.</p>
+      </div>
+    </details>
+    <details class="band b5 pro">
+      <summary><sup>05</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <ul>
+          <li>Word (.docx) export<span>Coming soon</span></li>
+          <li>APA, Springer, Elsevier templates<span>Coming soon</span></li>
+          <li>Figures &amp; tables with captions<span>Coming soon</span></li>
+          <li>Grammar &amp; clarity suggestions<span>Coming soon</span></li>
+        </ul>
+      </div>
+    </details>
+  </section>
+  <section class="view">
+    <div class="meta"><span>Live preview</span><span id="wc"></span></div>
+    <div class="frame"><article class="sheet" id="pv"></article></div>
+  </section>
+</main>
+<nav class="nav" aria-label="Views">
+  <button id="nW" aria-current="true" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>Write</button>
+  <button id="nP" aria-current="false" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Preview</button>
+  <button id="nD" class="dl" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF</button>
+</nav>
+<div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+{
+const K='rpb-v1';
+const SAMPLE={
+  title:'Low-Cost Moisture Monitoring for Stored Grain Using Capacitive Sensors',
+  authors:[
+    {name:'A. Patil',aff:'Dept. of Electronics, Example Institute of Technology, Pune, India',email:'a.patil@example.edu'},
+    {name:'S. Kulkarni',aff:'Dept. of Electronics, Example Institute of Technology, Pune, India',email:'s.kulkarni@example.edu'}
+  ],
+  abstract:'Moisture is the main cause of spoilage in stored grain, yet small warehouses rarely monitor it because commercial meters are expensive and need manual readings. This paper presents a low-cost monitoring system that uses capacitive probes, a microcontroller and a mobile dashboard to report moisture levels continuously. We describe the probe design, the calibration procedure and the alert logic, and we compare readings against a laboratory oven-drying method. The system is intended for small storage units where a full commercial installation is not affordable.',
+  keywords:'grain storage, capacitive sensing, moisture measurement, IoT, low-cost sensors',
+  sections:[
+    {h:'Introduction',b:'Post-harvest losses remain a serious problem for small storage units. Moisture above safe limits encourages mould and insect activity, and the damage is often found only after it has spread [1].\n\nThis work aims to give storage owners a simple, affordable way to watch moisture levels without manual sampling.'},
+    {h:'Related Work',b:'Earlier studies have used resistive and capacitive methods to estimate grain moisture [2]. Commercial systems achieve good accuracy but are priced for large silos. Our approach focuses on cost and ease of installation.'},
+    {h:'System Design',b:'Each probe consists of two parallel copper plates embedded in a PVC tube. The microcontroller measures the charge time of the probe, which changes with the dielectric constant of the surrounding grain.\n\nReadings are sent every ten minutes to a mobile dashboard, which raises an alert when moisture crosses a set threshold.'},
+    {h:'Calibration and Testing',b:'Probe readings were compared with the oven-drying method on samples prepared at different moisture levels. Write your measured results and error figures here.'},
+    {h:'Conclusion',b:'The proposed system shows that continuous moisture monitoring can be built from low-cost parts. Future work includes temperature compensation and field trials across a full storage season.'}
+  ],
+  refs:[
+    'A. Author and B. Author, “Title of the cited paper,” in Proc. Int. Conf. Name, City, Country, 2024, pp. 1–6.',
+    'C. Author, “Title of the journal article,” Journal Name, vol. 12, no. 3, pp. 45–52, 2023.'
+  ]
+};
+const BLANK={title:'',authors:[{name:'',aff:'',email:''}],abstract:'',keywords:'',sections:[{h:'Introduction',b:''},{h:'Conclusion',b:''}],refs:['']};
+const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:''}),refs:()=>''};
+const STRIPS=['#2f5d46','#6c5a9c','#c8662e','#3a6ea5'];
+const clone=o=>JSON.parse(JSON.stringify(o));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const words=t=>(String(t||'').match(/\S+/g)||[]).length;
+const paras=t=>String(t||'').split(/\n\s*\n/).map(p=>p.replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);
+const roman=n=>{let r='';for(const[v,s]of[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(n>=v){r+=s;n-=v}return r};
+
+let S=load(),undoState=null,tTimer=null;
+function load(){try{const v=JSON.parse(localStorage.getItem(K));if(v&&Array.isArray(v.sections)&&Array.isArray(v.authors)&&Array.isArray(v.refs))return v}catch(e){}return clone(SAMPLE)}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+
+function renderLists(){
+  $('#title').value=S.title;$('#abstract').value=S.abstract;$('#keywords').value=S.keywords;
+  const n=S.authors.length;
+  $('#authors').innerHTML=S.authors.map((a,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[i%4]}">${i+1}<i></i></div><div class="in"><div class="top"><b>Author ${i+1}</b>
+    ${n>1?`<button class="mini" type="button" data-act="del" data-list="authors" data-i="${i}" aria-label="Remove author ${i+1}">Remove</button>`:''}</div>
+    <label>Name<input data-list="authors" data-i="${i}" data-k="name" value="${esc(a.name)}"></label>
+    <label>Department, institution, city, country<input data-list="authors" data-i="${i}" data-k="aff" value="${esc(a.aff)}"></label>
+    <label>Email<input type="email" data-list="authors" data-i="${i}" data-k="email" value="${esc(a.email)}"></label></div></div>`).join('');
+  $('[data-act=add][data-list=authors]').hidden=n>=6;
+  const m=S.sections.length;
+  $('#sections').innerHTML=S.sections.map((s,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[i%4]}">${roman(i+1)}<i></i></div><div class="in"><div class="top"><b>Section ${roman(i+1)}</b>
+    <button class="mini" type="button" data-act="up" data-list="sections" data-i="${i}" ${i?'':'disabled'} aria-label="Move up">↑</button>
+    <button class="mini" type="button" data-act="down" data-list="sections" data-i="${i}" ${i<m-1?'':'disabled'} aria-label="Move down">↓</button>
+    ${m>1?`<button class="mini" type="button" data-act="del" data-list="sections" data-i="${i}">Remove</button>`:''}</div>
+    <label>Heading<input data-list="sections" data-i="${i}" data-k="h" value="${esc(s.h)}"></label>
+    <label>Text<textarea rows="6" data-list="sections" data-i="${i}" data-k="b">${esc(s.b)}</textarea></label></div></div>`).join('');
+  $('#refs').innerHTML=S.refs.map((r,i)=>`<div class="ref"><span>[${i+1}]</span>
+    <textarea rows="2" data-list="refs" data-i="${i}" aria-label="Reference ${i+1}" placeholder="Author, “Title,” Journal or conference, year, pages.">${esc(r)}</textarea>
+    <button class="mini" type="button" data-act="del" data-list="refs" data-i="${i}" aria-label="Remove reference ${i+1}">✕</button></div>`).join('');
+}
+
+function renderPreview(){
+  const refs=S.refs.map(r=>r.trim()).filter(Boolean);
+  const au=S.authors.filter(a=>a.name||a.aff||a.email);
+  $('#pv').innerHTML=`<h2 class="pt">${esc(S.title)||'Untitled paper'}</h2>
+  ${au.length?`<div class="pa">${au.map(a=>`<div><b>${esc(a.name)}</b><i>${esc(a.aff)}</i><span>${esc(a.email)}</span></div>`).join('')}</div>`:''}
+  <div class="cols">
+    <p class="ab"><b><i>Abstract</i>—${esc(S.abstract)||'<span class="empty">Write your abstract.</span>'}</b></p>
+    ${S.keywords.trim()?`<p class="ab"><b><i>Index Terms</i>—${esc(S.keywords)}</b></p>`:''}
+    ${S.sections.map((s,i)=>`<h3>${roman(i+1)}. ${esc(s.h)}</h3>${paras(s.b).map(p=>`<p>${esc(p)}</p>`).join('')||'<p class="empty">Empty section.</p>'}`).join('')}
+    ${refs.length?`<h3>References</h3><ol class="refs">${refs.map((r,i)=>`<li><span>[${i+1}]</span><span>${esc(r)}</span></li>`).join('')}</ol>`:''}
+  </div>`;
+  const total=words(S.abstract)+S.sections.reduce((t,s)=>t+words(s.b),0);
+  $('#wc').textContent=`${total.toLocaleString()} words`;
+  $('#abWc').textContent=`${words(S.abstract)} words`;
+}
+
+let pvT=null;
+function changed(){save();clearTimeout(pvT);pvT=setTimeout(renderPreview,120)}
+function all(){renderLists();renderPreview();save()}
+
+$('#form').addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.f){S[t.dataset.f]=t.value}
+  else if(t.dataset.list){const L=S[t.dataset.list],i=+t.dataset.i;if(t.dataset.list==='refs')L[i]=t.value;else L[i][t.dataset.k]=t.value}
+  else return;
+  changed();
+});
+$('#form').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.dataset.act,L=S[b.dataset.list],i=+b.dataset.i;
+  if(act==='blank'){undoState=clone(S);S=clone(BLANK);all();toast('Started a blank paper',true);return}
+  if(act==='add'){L.push(NEW[b.dataset.list]())}
+  else if(act==='del'){undoState=clone(S);L.splice(i,1);if(b.dataset.list==='refs'&&!L.length)L.push('');all();toast('Removed',true);return}
+  else if(act==='up'&&i>0){[L[i-1],L[i]]=[L[i],L[i-1]]}
+  else if(act==='down'&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]]}
+  all();
+  if(act==='add'){const box=$('#'+b.dataset.list);const f=box.lastElementChild&&box.lastElementChild.querySelector('input,textarea');if(f)f.focus()}
+});
+
+function toast(msg,undo){
+  $('#tMsg').textContent=msg;$('#tUndo').hidden=!undo;$('#toast').classList.add('on');
+  clearTimeout(tTimer);tTimer=setTimeout(()=>$('#toast').classList.remove('on'),undo?6000:3000);
+}
+$('#tUndo').addEventListener('click',()=>{if(undoState){S=undoState;undoState=null;all()}$('#toast').classList.remove('on')});
+
+function tab(p){document.body.classList.toggle('show-p',p);$('#nW').setAttribute('aria-current',!p);$('#nP').setAttribute('aria-current',p);window.scrollTo(0,0)}
+$('#nW').addEventListener('click',()=>tab(false));
+$('#nP').addEventListener('click',()=>tab(true));
+
+/* ---- PDF: IEEE conference layout on US Letter ---- */
+function buildPDF(){
+  const d=new window.jspdf.jsPDF({unit:'pt',format:'letter'});
+  const W=612,H=792,ML=45,MR=45,MT=54,MB=72,G=18,FW=W-ML-MR,CW=(FW-G)/2;
+  let y=MT,col=0,top=MT;
+  const x=()=>ML+col*(CW+G);
+  const need=h=>{if(y+h>H-MB){if(col===0){col=1;y=top}else{d.addPage();col=0;top=MT;y=MT}}};
+  const wrap=(text,w,ind)=>{const ws=String(text).split(/\s+/).filter(Boolean),out=[];let cur='',lim=w-ind;
+    for(const q of ws){const t=cur?cur+' '+q:q;if(d.getTextWidth(t)>lim&&cur){out.push(cur);cur=q;lim=w}else cur=t}
+    if(cur)out.push(cur);return out};
+  const line=(l,xx,yy,w,just)=>{const ws=l.split(' ');if(!just||ws.length<2){d.text(l,xx,yy);return}
+    const tot=ws.reduce((s,q)=>s+d.getTextWidth(q),0),gap=(w-tot)/(ws.length-1);let cx=xx;
+    ws.forEach(q=>{d.text(q,cx,yy);cx+=d.getTextWidth(q)+gap})};
+  const para=(text,o={})=>{const{font='normal',size=10,lh=11.5,ind=10}=o;d.setFont('times',font);d.setFontSize(size);
+    const ls=wrap(text,CW,ind);ls.forEach((l,i)=>{need(lh);y+=lh;const off=i?0:ind;line(l,x()+off,y,CW-off,i<ls.length-1)});y+=2};
+  const heading=t=>{d.setFont('times','normal');d.setFontSize(10);const ls=d.splitTextToSize(t,CW);need(ls.length*12+30);y+=10;
+    ls.forEach(l=>{y+=12;d.text(l,x()+CW/2,y,{align:'center'})});y+=4};
+
+  d.setFont('times','normal');d.setFontSize(24);
+  d.splitTextToSize(S.title||'Untitled paper',FW).forEach(l=>{y+=26;d.text(l,W/2,y,{align:'center'})});
+  y+=14;
+  const au=S.authors.filter(a=>a.name||a.aff||a.email),per=Math.min(3,au.length||1);
+  for(let r=0;r<au.length;r+=per){
+    const row=au.slice(r,r+per),bw=FW/row.length;let maxy=y;
+    row.forEach((a,j)=>{let yy=y;const cx=ML+bw*j+bw/2;
+      const put=(t,f,s,lh)=>{if(!t)return;d.setFont('times',f);d.setFontSize(s);d.splitTextToSize(t,bw-12).forEach(l=>{yy+=lh;d.text(l,cx,yy,{align:'center'})})};
+      put(a.name,'normal',11,13);put(a.aff,'italic',10,11.5);put(a.email,'normal',10,11.5);maxy=Math.max(maxy,yy)});
+    y=maxy+12;
+  }
+  y+=8;top=y;
+  para('Abstract—'+(S.abstract||''),{font:'bold',size:9,lh:10.5});
+  if(S.keywords.trim()){y+=3;para('Index Terms—'+S.keywords,{font:'bold',size:9,lh:10.5})}
+  S.sections.forEach((s,i)=>{heading(`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`);paras(s.b).forEach(p=>para(p))});
+  const refs=S.refs.map(r=>r.trim()).filter(Boolean);
+  if(refs.length){heading('REFERENCES');d.setFont('times','normal');d.setFontSize(8);
+    refs.forEach((r,i)=>{const ls=wrap(r,CW-20,0);ls.forEach((l,k)=>{need(9.5);y+=9.5;if(!k)d.text(`[${i+1}]`,x(),y);line(l,x()+20,y,CW-20,k<ls.length-1)});y+=2})}
+  return d.output('blob');
+}
+
+const dlP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(undefined);
+async function download(){
+  if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
+  let blob;try{blob=buildPDF()}catch(e){toast('Could not build the PDF.');return}
+  const name=(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'.pdf';
+  const dl=await dlP;
+  if(dl){
+    try{await dl.save({filename:name,data:blob});toast('PDF saved')}
+    catch(e){const c=e&&e.code;toast(c==='declined'?'Download cancelled':c==='host_unavailable'?'This app can’t save files here. Open the page in a browser to download.':'Download isn’t available in this view.')}
+    return;
+  }
+  if(dl===null){toast('Download isn’t available in this view.');return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+$('#pdf').addEventListener('click',download);
+$('#nD').addEventListener('click',download);
+
+const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Dark</span>';
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Light</span>';
+function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme');b.innerHTML=t==='dark'?SUN:MOON;b.setAttribute('aria-label',t==='dark'?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('rpb-theme',t)}catch(e){}}
+$('#theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
+renderLists();renderPreview();
+}
+</script>
+</body>
+</html>
