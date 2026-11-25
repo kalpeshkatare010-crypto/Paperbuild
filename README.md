@@ -24,3 +24,8 @@ Write a research paper once and format it for any of 8 standards, with a live pr
 
 ## Run locally
 Open `index.html` in a browser. Install-as-app and offline mode need the site served over HTTPS (e.g. GitHub Pages).
+
+## Android app (APK)
+`android/` is a small Android app that shows the bundled web app full screen (WebView, works offline).
+Every push to `main` builds it with GitHub Actions and publishes **PaperBuild.apk** under **Releases**.
+`android/sideload.keystore` only signs APKs for direct install (so updates install over the old version). For the Play Store, create a separate private upload key and keep it out of the repo.

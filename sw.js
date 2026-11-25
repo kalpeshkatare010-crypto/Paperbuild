@@ -1,10 +1,10 @@
-const CACHE = 'paperbuild-v1';
+const CACHE = 'paperbuild-v2';
 const CORE = ['./', 'index.html', 'app.html', 'manifest.webmanifest',
   'assets/icon.svg', 'assets/icon-192.png', 'assets/icon-512.png',
-  'fonts/LibertinusSerif-Regular.woff2', 'fonts/LibertinusSerif-Italic.woff2', 'fonts/LibertinusSerif-Semibold.woff2',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'];
+  'fonts/LibertinusSerif-Regular.woff2', 'fonts/LibertinusSerif-Italic.woff2', 'fonts/LibertinusSerif-Semibold.woff2', 'fonts/fonts.css',
+  'fonts/inter-tight-latin-400-normal.woff2', 'fonts/inter-tight-latin-500-normal.woff2', 'fonts/inter-tight-latin-600-normal.woff2',
+  'fonts/dm-mono-latin-400-normal.woff2', 'fonts/dm-mono-latin-500-normal.woff2',
+  'vendor/jspdf.umd.min.js', 'vendor/pdf.min.js', 'vendor/pdf.worker.min.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(CORE.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));

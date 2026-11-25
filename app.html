@@ -9,17 +9,13 @@
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script>try{document.documentElement.dataset.theme=localStorage.getItem("pb-theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="fonts/fonts.css" rel="stylesheet">
 <style>
 /* VOICE: editorial and friendly, a working tool for students and researchers
    IDEA: a paper's parts as coloured index bands; the real typeset proof beside them
    PICTURE: the live PDF pages, rendered exactly as they will download
    COLOUR and TYPE: cream ground, soft beige rules, sky / sage / mustard / lavender / orange bands; Libertinus for display, Inter Tight UI, DM Mono labels
    LAYOUT: logo bar, headline, bands | sticky preview; under 900px a bottom bar switches Write / Preview / PDF */
-@font-face{font-family:"Libertinus Serif";src:url(fonts/LibertinusSerif-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Libertinus Serif";src:url(fonts/LibertinusSerif-Italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
-@font-face{font-family:"Libertinus Serif";src:url(fonts/LibertinusSerif-Semibold.woff2) format("woff2");font-weight:600;font-display:swap}
 :root{color-scheme:light;--bg:#f6efe1;--paper2:#fbf7ee;--ink:#2a2620;--mute:#6f6756;--rule:#a99e88;--soft:#d6ccb6;--field:#fffcf5;--desk:#efe6d3;
   --sky:#8cb8e3;--sage:#b4c47e;--mustard:#ecd97a;--lav:#bcaee6;--orange:#f47a3c;--bw:1.5px}
 :root[data-theme=dark]{color-scheme:dark;--bg:#25221c;--paper2:#2d2a23;--ink:#efe8d8;--mute:#b0a793;--rule:#6f6757;--soft:#4c463a;--field:#2f2c25;--desk:#2a271f}
@@ -212,9 +208,9 @@ textarea{resize:vertical}
 <input type="file" id="figFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 <div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/pdf.worker.min.js"></script>
 <script>
 {
 /* ================= Standards ================= */
@@ -708,7 +704,7 @@ async function renderPreview(){
   $('#wc').textContent=`${total.toLocaleString()} words · ${pages} page${pages>1?'s':''}`;
   const lib=window.pdfjsLib;if(!lib){$('#pv').innerHTML='<div class="msg">Preview unavailable here, but Download PDF still works.</div>';return}
   try{
-    if(!lib.GlobalWorkerOptions.workerSrc)lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    if(!lib.GlobalWorkerOptions.workerSrc)lib.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';
     const doc=await lib.getDocument({data:d.output('arraybuffer'),isEvalSupported:false}).promise;if(tok!==pvTok)return;
     const box=$('#pv'),wpx=Math.max(240,box.clientWidth-32),dpr=Math.min(window.devicePixelRatio||1,2);
     const canv=[];
@@ -764,6 +760,8 @@ async function download(){
   if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
   let blob;try{blob=build().output('blob')}catch(e){toast('Could not build the PDF.');return}
   const name=(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'-'+STD(S.std).id+'.pdf';
+  if(window.PaperBuildAndroid){try{const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(blob)});
+    const where=window.PaperBuildAndroid.savePdf(name,b64);toast(where?'PDF saved to '+where:'Could not save the PDF')}catch(e){toast('Could not save the PDF')}return}
   const dl=await dlP;
   if(dl){try{await dl.save({filename:name,data:blob});toast('PDF saved')}catch(e){const c=e&&e.code;toast(c==='declined'?'Download cancelled':c==='host_unavailable'?'This app can’t save files here. Open the page in a browser to download.':'Download isn’t available in this view.')}return}
   if(dl===null){toast('Download isn’t available in this view.');return}
@@ -779,7 +777,7 @@ setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
 
 const q=new URLSearchParams(location.search).get('std');if(q&&STDS.some(s=>s.id===q))S.std=q;
 let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(pvT);pvT=setTimeout(renderPreview,300)});ro.observe($('#pv'));
-if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.PaperBuildAndroid){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 renderStd();renderLists();renderPreview();
 loadImgs().then(n=>{if(n){renderLists();changed(true)}});
 }
