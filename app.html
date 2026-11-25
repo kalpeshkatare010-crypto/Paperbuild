@@ -85,6 +85,30 @@ textarea{resize:vertical}
 .fig img{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:4px;border:1px solid var(--soft)}
 .fig .fi{display:grid;gap:8px}
 .fig .fi .top{display:flex;justify-content:space-between;align-items:center;font:13px "DM Mono",monospace;color:var(--mute)}
+.acct{background:transparent;gap:6px;padding:0 10px;white-space:nowrap}
+.acct .av{width:26px;height:26px;border-radius:50%;background:var(--lav);color:#221a3d;display:grid;place-items:center;font:600 13px "Inter Tight",sans-serif}
+.acct .pro{font:500 11px "DM Mono",monospace;background:var(--orange);color:#2a1004;border-radius:3px;padding:2px 6px}
+.acct .free{font:500 11px "DM Mono",monospace;color:var(--mute)}
+.sheetwrap{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:14px}
+.sheetbg{position:absolute;inset:0;background:rgba(30,26,20,.45)}
+.panel{position:relative;background:var(--bg);border:var(--bw) solid var(--soft);border-radius:10px;width:min(460px,100%);max-height:calc(100vh - 28px);overflow:auto;padding:18px;display:grid;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ph h2{margin:0;font:400 28px/1.1 "Libertinus Serif",Georgia,serif}.ph h3{margin:0;font-size:18px;font-weight:600}
+.sb{display:grid;gap:14px}.sb .btn,.sb>button{width:100%}
+.gbtn{background:#fff;color:#1f1f1f}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font:13px "DM Mono",monospace;margin:0}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--soft)}
+.links{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between}
+.tabs2{display:flex;gap:6px}.tabs2 button{flex:1;min-height:40px}.tabs2 button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.err{color:#b3261e;font-size:14px;margin:0}.err:empty,.okmsg:empty{display:none}.okmsg{color:#2f6b47;font-size:15px;margin:0}
+:root[data-theme=dark] .err{color:#ff8a80}:root[data-theme=dark] .okmsg{color:#8fd1a6}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan{border:var(--bw) solid var(--soft);border-radius:8px;padding:12px;display:grid;gap:2px;background:var(--paper2);text-align:left;cursor:pointer;font:inherit;color:var(--ink);justify-content:stretch;align-content:start;min-height:0}
+.plan[aria-checked=true]{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange)}
+.plan b{font:400 30px/1.1 "Libertinus Serif",serif}.plan span{font:12px "DM Mono",monospace;color:var(--mute)}
+.feat{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}.feat li{padding-left:22px;position:relative}.feat li::before{content:"";position:absolute;left:2px;top:.6em;width:10px;height:2px;background:var(--orange)}
+.plist{display:grid;gap:8px}.pitem{display:flex;gap:6px;align-items:center;border:1px solid var(--soft);border-radius:6px;padding:8px 10px;background:var(--paper2)}.pitem>div{flex:1;font-size:15px}.pitem small{display:block;color:var(--mute);font:12px "DM Mono",monospace}
+.cur{font:11px "DM Mono",monospace;background:var(--sage);color:#16200a;border-radius:3px;padding:1px 5px}
+.std{position:relative}.std .lock{position:absolute;top:18px;right:18px;font:500 11px "DM Mono",monospace;font-style:normal;background:var(--orange);color:#2a1004;border-radius:3px;padding:2px 7px}
 .pro ul{margin:0;padding:0;list-style:none;display:grid}
 .pro li{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--soft)}
 .pro li span{font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
@@ -101,6 +125,7 @@ textarea{resize:vertical}
 @media(max-width:900px){
   main{display:block}
   header .cta,header select{display:none}
+  .acct .free{display:none}
   .view{position:static;height:auto;border:0;display:none;padding-bottom:100px}
   body.show-p .view{display:block}body.show-p .edit{display:none}
   .edit{padding-bottom:100px}
@@ -119,6 +144,7 @@ textarea{resize:vertical}
   <a class="logo" href="index.html" aria-label="Paper Build home"><svg viewBox="-12 -676 5588 710" role="img" aria-label="Paper Build"><path fill="currentColor" d="M104 -523V-122C104 -39 87 -34 17 -31C11 -25 11 -4 17 2C62 1 111 0 147 0C182 0 241 1 291 2C297 -4 297 -25 291 -31C213 -35 189 -39 189 -122V-292C211 -285 235 -282 270 -282C452 -282 507 -401 507 -486C507 -545 468 -652 283 -652C245 -652 186 -645 146 -645C109 -645 57 -646 17 -647C11 -641 11 -620 17 -614C87 -611 104 -606 104 -523ZM189 -554C189 -583 204 -618 276 -618C345 -618 414 -595 414 -468C414 -360 362 -316 265 -316C240 -316 200 -318 189 -321Z M651 -105C631 -61 619 -36 566 -31C560 -25 560 -4 566 2C584 1 606 0 632 0C659 0 697 1 728 2C734 -4 734 -25 728 -31C674 -35 667 -48 690 -98L709 -141C712 -149 715 -152 731 -152H918L939 -98C961 -44 962 -36 908 -31C902 -25 902 -4 908 2C943 1 982 0 1014 0C1044 0 1073 1 1102 2C1108 -4 1108 -25 1102 -31C1049 -38 1046 -46 1022 -104L868 -481C853 -473 834 -465 814 -462ZM906 -186H755C735 -186 737 -199 745 -219L819 -388L826 -389Z M1346 -122V-196C1364 -188 1384 -184 1409 -184C1543 -184 1584 -280 1584 -340C1584 -392 1554 -462 1412 -462C1375 -462 1333 -460 1306 -460C1277 -460 1235 -461 1195 -462C1189 -456 1189 -435 1195 -429C1256 -425 1267 -421 1267 -338V-122C1267 -39 1256 -36 1195 -31C1189 -25 1189 -4 1195 2C1228 1 1263 0 1307 0C1350 0 1385 1 1418 2C1424 -4 1424 -25 1418 -31C1357 -35 1346 -39 1346 -122ZM1346 -384C1346 -416 1358 -429 1406 -429C1465 -429 1497 -398 1497 -328C1497 -256 1471 -217 1411 -217C1391 -217 1366 -220 1346 -228Z M1911 -225C1977 -225 1978 -206 1980 -169C1985 -164 2003 -164 2008 -169C2007 -192 2006 -226 2006 -242C2006 -256 2007 -288 2008 -313C2003 -318 1985 -318 1980 -313C1978 -268 1976 -257 1911 -257H1854V-399C1854 -416 1867 -427 1886 -427H1943C2025 -427 2038 -394 2056 -337C2066 -336 2075 -338 2083 -342C2079 -376 2067 -454 2065 -461C2065 -463 2064 -464 2062 -464C2048 -461 2038 -460 2021 -460H1814C1785 -460 1739 -461 1703 -462C1697 -456 1697 -435 1703 -429C1764 -425 1775 -421 1775 -338V-122C1775 -39 1764 -36 1703 -31C1697 -25 1697 -4 1703 2C1739 1 1783 0 1815 0H1969C2009 0 2075 2 2075 2C2087 -39 2098 -94 2105 -136C2096 -141 2088 -143 2077 -140C2061 -81 2032 -31 1949 -31H1906C1864 -31 1854 -42 1854 -75V-225Z M2376 -122V-209H2431C2469 -209 2483 -176 2496 -139L2518 -79C2541 -17 2575 7 2618 7C2633 7 2664 4 2681 0C2684 -10 2682 -20 2675 -28C2639 -28 2620 -34 2600 -86L2571 -161C2559 -192 2547 -209 2534 -222V-224C2568 -236 2619 -277 2619 -346C2619 -429 2567 -464 2448 -464C2423 -464 2366 -460 2336 -460C2307 -460 2265 -461 2225 -462C2219 -456 2219 -435 2225 -429C2286 -425 2297 -421 2297 -338V-122C2297 -39 2286 -36 2225 -31C2219 -25 2219 -4 2225 2C2263 1 2304 0 2337 0C2368 0 2401 1 2433 2C2439 -4 2439 -25 2433 -31C2386 -34 2376 -39 2376 -122ZM2532 -346C2532 -267 2509 -238 2420 -238H2376V-368C2376 -421 2386 -431 2442 -431C2512 -431 2532 -406 2532 -346Z M3114.0 -645C3078.0 -645 3024.0 -646 2985.0 -647C2979.0 -641 2979.0 -620 2985.0 -614C3055.0 -611 3072.0 -606 3072.0 -523V-122C3072.0 -39 3055.0 -34 2985.0 -31C2979.0 -25 2979.0 -4 2985.0 2C3024.0 1 3078.0 0 3115.0 0C3151.0 0 3177.0 2 3261.0 2C3460.0 2 3513.0 -98 3513.0 -184C3513.0 -280 3446.0 -335 3359.0 -360V-362C3409.0 -387 3454.0 -439 3454.0 -493C3454.0 -560 3425.0 -647 3239.0 -647C3204.0 -647 3150.0 -645 3114.0 -645ZM3157.0 -332H3226.0C3363.0 -332 3420.0 -255 3420.0 -165C3420.0 -92 3392.0 -31 3240.0 -31C3170.0 -31 3157.0 -57 3157.0 -118ZM3157.0 -550C3157.0 -603 3157.0 -613 3244.0 -613C3300.0 -613 3373.0 -583 3373.0 -481C3373.0 -396 3314.0 -366 3231.0 -366H3157.0Z M4004.0 -338V-211C4004.0 -125 4004.0 -31 3872.0 -31C3773.0 -31 3752.0 -109 3752.0 -202V-338C3752.0 -421 3763.0 -424 3824.0 -429C3830.0 -435 3830.0 -456 3824.0 -462C3785.0 -461 3745.0 -460 3712.0 -460C3676.0 -460 3637.0 -461 3601.0 -462C3595.0 -456 3595.0 -435 3601.0 -429C3662.0 -425 3673.0 -421 3673.0 -338V-181C3673.0 -31 3746.0 10 3855.0 10C4010.0 10 4051.0 -78 4051.0 -224V-338C4051.0 -421 4062.0 -424 4123.0 -429C4129.0 -435 4129.0 -456 4123.0 -462C4093.0 -461 4057.0 -460 4027.0 -460C3997.0 -460 3962.0 -461 3932.0 -462C3926.0 -456 3926.0 -435 3932.0 -429C3993.0 -425 4004.0 -421 4004.0 -338Z M4385.0 -338C4385.0 -421 4396.0 -424 4457.0 -429C4463.0 -435 4463.0 -456 4457.0 -462C4419.0 -461 4376.0 -460 4345.0 -460C4315.0 -460 4273.0 -461 4234.0 -462C4228.0 -456 4228.0 -435 4234.0 -429C4295.0 -425 4306.0 -421 4306.0 -338V-122C4306.0 -39 4295.0 -36 4234.0 -31C4228.0 -25 4228.0 -4 4234.0 2C4271.0 1 4312.0 0 4346.0 0C4378.0 0 4422.0 1 4457.0 2C4463.0 -4 4463.0 -25 4457.0 -31C4396.0 -35 4385.0 -39 4385.0 -122Z M4925.0 0C4925.0 0 4948.0 -96 4955.0 -138C4946.0 -143 4938.0 -145 4927.0 -142C4911.0 -83 4882.0 -34 4819.0 -34H4774.0C4751.0 -34 4737.0 -50 4737.0 -69V-338C4737.0 -421 4748.0 -424 4809.0 -429C4815.0 -435 4815.0 -456 4809.0 -462C4772.0 -461 4731.0 -460 4697.0 -460C4666.0 -460 4623.0 -461 4586.0 -462C4580.0 -456 4580.0 -435 4586.0 -429C4647.0 -425 4658.0 -421 4658.0 -338V-122C4658.0 -39 4656.0 -34 4586.0 -31C4580.0 -25 4580.0 -4 4586.0 2C4635.0 1 4701.0 0 4701.0 0Z M5170.0 -460C5143.0 -460 5098.0 -461 5059.0 -462C5053.0 -456 5053.0 -435 5059.0 -429C5120.0 -425 5131.0 -421 5131.0 -338V-122C5131.0 -39 5120.0 -36 5059.0 -31C5053.0 -25 5053.0 -4 5059.0 2C5097.0 1 5142.0 0 5171.0 0C5197.0 0 5237.0 2 5317.0 2C5428.0 2 5552.0 -50 5552.0 -225C5552.0 -358 5470.0 -462 5303.0 -462C5235.0 -462 5199.0 -460 5170.0 -460ZM5210.0 -76V-398C5210.0 -423 5235.0 -429 5274.0 -429C5442.0 -429 5465.0 -312 5465.0 -208C5465.0 -68 5403.0 -31 5293.0 -31C5217.0 -31 5210.0 -48 5210.0 -76Z"/></svg></a>
   <span class="sp"></span>
   <select id="stdSel" aria-label="Paper standard"></select>
+  <button class="acct" id="acct" type="button" hidden>Sign in</button>
   <button class="theme" id="theme" type="button" aria-label="Switch to dark mode"></button>
   <button class="cta" id="pdf" type="button">Download PDF</button>
 </header>
@@ -128,6 +154,7 @@ textarea{resize:vertical}
       <h1>Your paper</h1>
       <p>Pick the journal standard, fill in each band, and the pages typeset themselves. The preview is exactly the PDF you download.</p>
       <div class="row"><span>Sample content shown.</span><button class="mini" data-act="blank" type="button">Start blank</button></div>
+      <p class="hint" id="sync" role="status" style="margin-top:8px"></p>
     </div>
     <details class="band b0" open>
       <summary><sup>01</sup>Standard<span class="now" id="stdNow"></span><span class="arr" aria-hidden="true">↓</span></summary>
@@ -187,11 +214,13 @@ textarea{resize:vertical}
       <summary><sup>07</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <ul>
+          <li>All 8 standards<span>Pro</span></li>
+          <li>Unlimited saved papers<span>Pro</span></li>
+          <li>PDFs without the “Made with Paper Build” line<span>Pro</span></li>
           <li>Word (.docx) export<span>Coming soon</span></li>
-          <li>Tables with captions<span>Coming soon</span></li>
-          <li>Subsections and equations<span>Coming soon</span></li>
-          <li>Grammar &amp; clarity suggestions<span>Coming soon</span></li>
+          <li>Tables, subsections and equations<span>Coming soon</span></li>
         </ul>
+        <button class="btn cta" type="button" id="proBtn">See Pro plans · from ₹99</button>
       </div>
     </details>
   </section>
@@ -205,9 +234,13 @@ textarea{resize:vertical}
   <button id="nP" aria-current="false" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Preview</button>
   <button id="nD" class="dl" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF</button>
 </nav>
+<div class="sheetwrap" id="sheet" hidden><div class="sheetbg" data-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetT"><div class="ph"><h2 id="sheetT"></h2><button class="mini" type="button" data-close aria-label="Close">✕</button></div><div id="sheetB" class="sb"></div></div></div>
 <input type="file" id="figFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 <div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
 
+<script src="assets/config.js"></script>
+<script src="vendor/supabase.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="vendor/pdf.min.js"></script>
 <script src="vendor/pdf.worker.min.js"></script>
@@ -573,7 +606,8 @@ const R={
   return E}
 };
 /* build, then for 2-column layouts balance the columns on the last page (like real IEEE/ACM papers) */
-function build(){
+function build(){const d=buildRaw();if(needsWm())watermark(d);return d}
+function buildRaw(){
   const std=STD(S.std).id,C=cfg(std);
   const E=R[std](C,null);
   if(C.cols!==2||E.cols!==2)return E.d;
@@ -599,7 +633,7 @@ function thumb(t){const w=100,h=Math.round(w*t.r),L=[];const m=t.narrow?20:t.stu
 
 function renderStd(){
   const cur=STD(S.std);
-  $('#gal').innerHTML=STDS.map(s=>`<button type="button" class="std" role="radio" aria-checked="${s.id===cur.id}" data-std="${s.id}"><div class="th">${thumb(s.thumb)}</div><b>${esc(s.name)}</b><span>${esc(s.use)}</span><small>${esc(s.spec)}</small></button>`).join('');
+  $('#gal').innerHTML=STDS.map(s=>`<button type="button" class="std" role="radio" aria-checked="${s.id===cur.id}" data-std="${s.id}">${stdAllowed(s.id)?'':'<em class="lock">Pro</em>'}<div class="th">${thumb(s.thumb)}</div><b>${esc(s.name)}</b><span>${esc(s.use)}</span><small>${esc(s.spec)}</small></button>`).join('');
   $('#stdSel').innerHTML=STDS.map(s=>`<option value="${s.id}" ${s.id===cur.id?'selected':''}>${esc(s.name)}</option>`).join('');
   $('#stdNow').textContent=cur.name;$('#stdNote').textContent=cur.note;$('#pvName').textContent=cur.name+' · '+cur.org;
   $('#student').hidden=!['apa','mla','chicago','harvard'].includes(cur.id);
@@ -650,7 +684,7 @@ let figTarget=0;
 $('#figFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
   try{const {src,w,h}=await toJpeg(file);const id='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);IMG[id]=src;
     const kept=await idbPut(id,src);const s=S.sections[figTarget];if(!s)return;(s.figs=s.figs||[]).push({id,iw:w,ih:h,cap:'',w:100,after:0});
-    renderLists();changed(true);toast(kept?'Figure added':'Figure added (it won’t be remembered after you close this page)')}
+    renderLists();changed(true);if(SB&&USER)uploadFig(id);toast(kept?'Figure added':'Figure added (it won’t be remembered after you close this page)')}
   catch(err){toast('Could not read that image')}});
 
 /* ---- page & text settings ---- */
@@ -714,9 +748,9 @@ async function renderPreview(){
     box.replaceChildren(...canv);doc.destroy();
   }catch(e){if(tok===pvTok)$('#pv').innerHTML='<div class="msg">Preview unavailable here, but Download PDF still works.</div>'}
 }
-function changed(fast){save();clearTimeout(pvT);pvT=setTimeout(renderPreview,fast?0:450)}
+function changed(fast){S._ts=Date.now();save();if(typeof queueSave==='function'&&USER)queueSave();clearTimeout(pvT);pvT=setTimeout(renderPreview,fast?0:450)}
 function all(){renderStd();renderLists();save();changed(true)}
-function setStd(id){if(S.std===id)return;S.std=id;renderStd();S.refs.forEach((r,i)=>{const el=$('#rf'+i);if(el)el.innerHTML=refPreview(r)});save();changed(true);toast(STD(id).name+' selected')}
+function setStd(id){if(S.std===id)return;if(!stdAllowed(id)){openUpgrade(`${STD(id).name} is part of Pro. Free accounts can use IEEE and APA.`);return}S.std=id;renderStd();S.refs.forEach((r,i)=>{const el=$('#rf'+i);if(el)el.innerHTML=refPreview(r)});save();changed(true);toast(STD(id).name+' selected')}
 
 $('#form').addEventListener('input',e=>{
   const t=e.target;
@@ -757,6 +791,7 @@ $('#nP').addEventListener('click',()=>tab(true));
 
 const dlP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(undefined);
 async function download(){
+  if(!(await gateDownload()))return;
   if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
   let blob;try{blob=build().output('blob')}catch(e){toast('Could not build the PDF.');return}
   const name=(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'-'+STD(S.std).id+'.pdf';
@@ -775,11 +810,208 @@ function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme'
 $('#theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
 setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
 
+
+/* ================= Accounts, Pro plan and cloud saving ================= */
+const CFG=window.PB_CONFIG||{};
+const SB=(CFG.supabaseUrl&&CFG.supabaseAnonKey&&window.supabase&&window.supabase.createClient)?
+  window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+const FREE=['ieee','apa'];
+let USER=null,PROF=null,PAPERS=null,sheetAfter=null,authMode='signin',authReason='',phoneSent='',planSel='yearly',upReason='',saveT=null;
+let PAPER_ID=null;try{PAPER_ID=localStorage.getItem('pb-paper-id')}catch(e){}
+function setPaperId(id){PAPER_ID=id||null;try{id?localStorage.setItem('pb-paper-id',id):localStorage.removeItem('pb-paper-id')}catch(e){}}
+function isPro(){if(!SB)return true;return !!(PROF&&PROF.pro_until&&new Date(PROF.pro_until)>new Date())}
+function stdAllowed(id){return isPro()||FREE.includes(id)}
+function needsWm(){return !!SB&&!isPro()}
+function watermark(d){const n=d.getNumberOfPages(),W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight();
+  for(let i=1;i<=n;i++){d.setPage(i);d.setFont('helvetica','normal');d.setFontSize(7);d.setTextColor(140);d.text('Made with Paper Build · kalpeshkatare.in/Paperbuild',W/2,H-12,{align:'center'});d.setTextColor(0)}}
+const fmtDate=(s,time)=>{try{const d=new Date(s);return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+(time?' · '+d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}):'')}catch(e){return ''}};
+function setSync(t){const el=$('#sync');if(el)el.textContent=t||''}
+
+/* ---- sheet (dialog) ---- */
+let lastFocus=null;
+function openSheet(title,html){if($('#sheet').hidden)lastFocus=document.activeElement;$('#sheetT').textContent=title;$('#sheetB').innerHTML=html;$('#sheet').hidden=false;document.body.style.overflow='hidden';
+  setTimeout(()=>{const f=$('#sheetB').querySelector('input:not([type=hidden]),.plan[aria-checked=true],button');if(f)f.focus()},30)}
+function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('#sheet').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
+
+/* ---- header account button ---- */
+function renderAcct(){const b=$('#acct');if(!SB){b.hidden=true;return}b.hidden=false;
+  if(!USER){b.innerHTML='Sign in';b.setAttribute('aria-label','Sign in or create an account');return}
+  const nm=(USER.user_metadata||{}).full_name||USER.email||USER.phone||'You';
+  b.innerHTML=`<span class="av" aria-hidden="true">${esc(nm.trim()[0]||'U').toUpperCase()}</span>${isPro()?'<span class="pro">PRO</span>':'<span class="free">Free</span>'}`;
+  b.setAttribute('aria-label','Your account');}
+$('#acct').addEventListener('click',()=>USER?openAccount():openAuth());
+
+/* ---- sign in / sign up ---- */
+const GICON='<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.7-4-13.6-9.6l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>';
+function openAuth(reason,after){if(!SB){toast('Accounts are not switched on yet.');return}sheetAfter=after||null;authReason=reason||'';if(authMode==='newpw')authMode='signin';renderAuth()}
+function emailForm(){
+  if(authMode==='reset')return `<form id="fA" class="body" style="padding:0"><label>Email<input name="email" type="email" autocomplete="email" required></label><button class="btn cta" type="submit">Send reset link</button><button class="mini" type="button" data-a="go-signin">Back to sign in</button></form>`;
+  if(authMode==='newpw')return `<form id="fA" class="body" style="padding:0"><label>New password<input name="password" type="password" autocomplete="new-password" minlength="6" required></label><button class="btn cta" type="submit">Save password</button></form>`;
+  const up=authMode==='signup';
+  return `<form id="fA" class="body" style="padding:0">${up?'<label>Full name<input name="name" autocomplete="name" required></label>':''}
+    <label>Email<input name="email" type="email" autocomplete="email" required></label>
+    <label>Password${up?' (at least 6 characters)':''}<input name="password" type="password" autocomplete="${up?'new-password':'current-password'}" minlength="6" required></label>
+    <button class="btn cta" type="submit">${up?'Create free account':'Sign in'}</button>
+    <div class="links">${up?'<button class="mini" type="button" data-a="go-signin">I already have an account</button>':'<button class="mini" type="button" data-a="go-signup">Create a free account</button><button class="mini" type="button" data-a="go-reset">Forgot password?</button>'}</div></form>`}
+function phoneForm(){return phoneSent?
+  `<form id="fA" class="body" style="padding:0"><label>6-digit code sent to ${esc(phoneSent)}<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button class="btn cta" type="submit">Verify and sign in</button><button class="mini" type="button" data-a="phone-change">Use a different number</button></form>`:
+  `<form id="fA" class="body" style="padding:0"><label>Mobile number<input name="phone" type="tel" autocomplete="tel" value="+91 " required></label><button class="btn cta" type="submit">Send code</button></form>`}
+function renderAuth(msg,ok){const isPhone=authMode==='phone',special=authMode==='reset'||authMode==='newpw';
+  const html=`${authReason&&!special?`<p class="note">${esc(authReason)}</p>`:''}
+  ${CFG.google&&!special?`<button class="btn gbtn" type="button" data-a="google">${GICON} Continue with Google</button><p class="or"><span>or</span></p>`:''}
+  ${CFG.phone&&!special?`<div class="tabs2" role="tablist"><button type="button" role="tab" data-a="m-email" aria-selected="${!isPhone}">Email</button><button type="button" role="tab" data-a="m-phone" aria-selected="${isPhone}">Phone</button></div>`:''}
+  ${isPhone?phoneForm():emailForm()}
+  <p class="${ok?'okmsg':'err'}" id="aMsg" role="status">${msg?esc(msg):''}</p>`;
+  openSheet(authMode==='signup'?'Create your account':authMode==='reset'?'Reset password':authMode==='newpw'?'Set a new password':isPhone?'Sign in with phone':'Sign in',html)}
+function friendly(err){const m=String(err&&err.message||err||'');
+  if(/invalid login/i.test(m))return 'Wrong email or password.';
+  if(/not confirmed/i.test(m))return 'Please confirm your email first. Check your inbox for the link.';
+  if(/already registered|already exists/i.test(m))return 'That email already has an account. Sign in instead.';
+  if(/rate limit|too many/i.test(m))return 'Too many tries. Please wait a minute and try again.';
+  if(/phone provider|sms/i.test(m))return 'Phone sign-in isn’t available right now. Please use email.';
+  if(/fetch|network/i.test(m))return 'No connection. Check your internet and try again.';
+  return m||'Something went wrong. Please try again.'}
+const pageUrl=()=>location.origin+location.pathname;
+async function google(){try{
+  if(window.PaperBuildAndroid&&window.PaperBuildAndroid.openExternal){const {data,error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:'paperbuild://auth',skipBrowserRedirect:true}});if(error)throw error;window.PaperBuildAndroid.openExternal(data.url)}
+  else{const {error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:pageUrl()}});if(error)throw error}
+}catch(err){const m=$('#aMsg');if(m){m.className='err';m.textContent=friendly(err)}}}
+
+/* ---- Pro / payments ---- */
+function openUpgrade(reason){if(!SB){toast('Pro isn’t available yet.');return}if(reason!==undefined)upReason=reason;
+  const m=planSel==='monthly';
+  openSheet('Upgrade to Pro',`${upReason?`<p class="note">${esc(upReason)}</p>`:''}
+  <ul class="feat"><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Unlimited saved papers</li><li>No “Made with Paper Build” line on your PDFs</li></ul>
+  <div class="plans" role="radiogroup" aria-label="Plan">
+    <button type="button" class="plan" role="radio" data-plan="monthly" aria-checked="${m}"><span>Monthly</span><b>₹99</b><span>per month</span></button>
+    <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>₹799</b><span>per year</span></button>
+  </div>
+  <button class="btn cta" type="button" data-a="pay">Pay ₹${m?99:799}${USER?'':' · sign in first'}</button>
+  <p class="hint">Secure payment by Razorpay: UPI, cards or net banking. Pro doesn’t renew automatically, so you’re never charged without paying yourself.</p>
+  <p class="err" id="aMsg" role="status"></p>`)}
+function loadScript(src){return new Promise((res,rej)=>{if(window.Razorpay)return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Could not open the payment page. Check your connection.'));document.head.appendChild(s)})}
+async function fnErr(error){try{const j=await error.context.json();return new Error(j.error||error.message)}catch(_){return error}}
+async function pay(){
+  if(!USER){openAuth('Sign in or create a free account, then you can upgrade.',()=>openUpgrade());return}
+  const b=$('[data-a=pay]'),m=$('#aMsg');if(b)b.disabled=true;
+  try{
+    const {data,error}=await SB.functions.invoke('create-order',{body:{plan:planSel}});
+    if(error)throw await fnErr(error);if(!data||data.error)throw new Error((data&&data.error)||'Could not start the payment.');
+    await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+    const rz=new window.Razorpay({key:data.key_id,amount:data.amount,currency:'INR',order_id:data.order_id,name:'Paper Build',description:data.label,
+      prefill:{name:(USER.user_metadata||{}).full_name||'',email:USER.email||'',contact:USER.phone||''},theme:{color:'#f47a3c'},
+      handler:async resp=>{try{const r=await SB.functions.invoke('verify-payment',{body:{order_id:resp.razorpay_order_id,payment_id:resp.razorpay_payment_id,signature:resp.razorpay_signature}});
+          if(r.error)throw await fnErr(r.error);if(!r.data||r.data.error)throw new Error(r.data&&r.data.error);
+          PROF=Object.assign(PROF||{},{pro_until:r.data.pro_until});proChanged();closeSheet();toast('You’re on Pro. Thank you!')}
+        catch(e){closeSheet();toast('Payment received. Pro will switch on within a minute.');setTimeout(async()=>{await loadProfile();proChanged()},8000)}},
+      modal:{ondismiss:()=>{const x=$('[data-a=pay]');if(x)x.disabled=false}}});
+    rz.on('payment.failed',r=>{const x=$('#aMsg');if(x)x.textContent='Payment failed: '+((r&&r.error&&r.error.description)||'please try again.')});
+    rz.open();
+  }catch(e){if(m)m.textContent=friendly(e);if(b)b.disabled=false}
+}
+function proChanged(){renderAcct();renderStd();changed(true)}
+
+/* ---- account & papers ---- */
+async function loadProfile(){if(!SB||!USER)return;const {data}=await SB.from('profiles').select('*').eq('id',USER.id).maybeSingle();PROF=data||{}}
+async function listPapers(){const {data,error}=await SB.from('papers').select('id,title,updated_at').order('updated_at',{ascending:false});if(error)throw error;PAPERS=data||[];return PAPERS}
+function loadPaperData(data,ts){S=Object.assign(clone(BLANK),data||{});if(!S.fmt||typeof S.fmt!=='object')S.fmt={};S._ts=ts||Date.now();save();renderStd();renderLists();renderPreview();loadImgs().then(n=>{if(n){renderLists();renderPreview()}})}
+async function openPaper(id){const {data,error}=await SB.from('papers').select('data,updated_at').eq('id',id).single();if(error){toast('Could not open that paper');return}
+  setPaperId(id);loadPaperData(data.data,new Date(data.updated_at).getTime());closeSheet();toast('Paper opened');setSync('Saved to your account')}
+async function delPaper(id){const {error}=await SB.from('papers').delete().eq('id',id);if(error){toast('Could not delete');return}if(id===PAPER_ID)setPaperId(null);toast('Paper deleted');openAccount()}
+async function newPaper(){if(!isPro()&&(PAPERS||[]).length>=1){openUpgrade('Free accounts keep 1 saved paper. Upgrade to Pro for unlimited papers.');return}
+  undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};setPaperId(null);all();closeSheet();await saveNow();toast('New paper started')}
+async function openAccount(){if(!USER){openAuth();return}const pro=isPro(),meta=USER.user_metadata||{},name=meta.full_name||'';
+  openSheet('Your account',`<div><b>${esc(name||USER.email||USER.phone||'')}</b>${name?`<div class="hint">${esc(USER.email||USER.phone||'')}</div>`:''}</div>
+  <p class="note">${pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free plan · IEEE and APA standards, 1 saved paper'}</p>
+  ${pro?'<button class="btn" type="button" data-a="upgrade">Add more Pro time</button>':'<button class="btn cta" type="button" data-a="upgrade">Upgrade to Pro · from ₹99</button>'}
+  <div class="ph"><h3>My papers</h3><button class="mini" type="button" data-a="newpaper">+ New paper</button></div>
+  <div class="plist" id="plist"><p class="hint">Loading…</p></div>
+  <button class="btn" type="button" data-a="signout">Sign out</button>`);
+  try{const L=await listPapers();const el=$('#plist');if(!el)return;
+    el.innerHTML=L.length?L.map(p=>`<div class="pitem"><div>${esc(p.title||'Untitled paper')}${p.id===PAPER_ID?' <span class="cur">Open now</span>':''}<small>Saved ${esc(fmtDate(p.updated_at,true))}</small></div>${p.id===PAPER_ID?'':`<button class="mini" type="button" data-a="open" data-id="${esc(p.id)}">Open</button>`}<button class="mini" type="button" data-a="del" data-id="${esc(p.id)}">Delete</button></div>`).join(''):'<p class="hint">No saved papers yet. The paper you’re writing saves here automatically.</p>'}
+  catch(e){const el=$('#plist');if(el)el.innerHTML='<p class="err">Could not load your papers.</p>'}}
+function queueSave(){if(!SB||!USER)return;clearTimeout(saveT);setSync('Saving…');saveT=setTimeout(saveNow,1500)}
+async function saveNow(){if(!SB||!USER)return;
+  if(!PAPER_ID&&!isPro()&&(PAPERS||[]).length>=1){setSync('Saved on this device only · free accounts keep 1 paper online');return}
+  const data=clone(S),title=String(S.title||'Untitled paper').slice(0,160);
+  try{if(PAPER_ID){const {data:rows,error}=await SB.from('papers').update({title,data,updated_at:new Date().toISOString()}).eq('id',PAPER_ID).select('id');if(error)throw error;if(!rows||!rows.length){setPaperId(null);return saveNow()}}
+    else{const {data:row,error}=await SB.from('papers').insert({title,data}).select('id').single();if(error)throw error;setPaperId(row.id);PAPERS=[...(PAPERS||[]),{id:row.id,title}]}
+    setSync('Saved to your account')}
+  catch(e){setSync(/FREE_LIMIT/.test(String(e&&e.message))?'Saved on this device only · free accounts keep 1 paper online':'Saved on this device · will sync when online')}}
+async function syncOnLogin(){try{const L=await listPapers();
+  if(PAPER_ID&&L.some(p=>p.id===PAPER_ID)){const {data}=await SB.from('papers').select('data,updated_at').eq('id',PAPER_ID).single();
+    const st=data?new Date(data.updated_at).getTime():0;if(data&&st>(S._ts||0)+2000)loadPaperData(data.data,st);else await saveNow();return}
+  setPaperId(null);
+  if(!S._ts&&L.length){await openPaper(L[0].id);return}
+  if(L.length===0||isPro()){await saveNow();return}
+  setSync('Saved on this device only · free accounts keep 1 paper online');
+  toast('Your account already has a saved paper. Open it from your account, or upgrade to save more.');
+}catch(e){setSync('Saved on this device')}}
+async function afterAuth(){if(USER){await loadProfile();renderAcct();renderStd();changed(true);await syncOnLogin();fetchFigs().then(g=>{if(g){renderLists();renderPreview()}});
+    const f=sheetAfter;sheetAfter=null;if(f)setTimeout(f,50)}
+  else{PROF=null;PAPERS=null;setPaperId(null);setSync('');renderAcct();renderStd();changed(true)}}
+
+/* ---- figure images in the account's storage ---- */
+function dataUrlBlob(u){const [h,b]=u.split(',');const bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:(h.match(/data:([^;]+)/)||[])[1]||'image/jpeg'})}
+async function uploadFig(id){if(!SB||!USER||!IMG[id])return;try{await SB.storage.from('figures').upload(`${USER.id}/${id}.jpg`,dataUrlBlob(IMG[id]),{contentType:'image/jpeg',upsert:true})}catch(e){}}
+async function fetchFigs(){if(!SB||!USER)return false;const miss=S.sections.flatMap(s=>(s.figs||[]).map(f=>f.id)).filter(id=>!IMG[id]);if(!miss.length)return false;let got=false;
+  await Promise.all(miss.map(async id=>{try{const {data}=await SB.storage.from('figures').download(`${USER.id}/${id}.jpg`);if(!data)return;
+    const url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(data)});IMG[id]=url;idbPut(id,url);got=true}catch(e){}}));return got}
+
+/* ---- sheet buttons and forms ---- */
+$('#sheetB').addEventListener('click',async e=>{
+  const p=e.target.closest('[data-plan]');if(p){planSel=p.dataset.plan;openUpgrade();return}
+  const b=e.target.closest('[data-a]');if(!b)return;
+  switch(b.dataset.a){
+    case 'm-email':authMode='signin';renderAuth();break;
+    case 'm-phone':authMode='phone';renderAuth();break;
+    case 'go-signup':authMode='signup';renderAuth();break;
+    case 'go-signin':authMode='signin';renderAuth();break;
+    case 'go-reset':authMode='reset';renderAuth();break;
+    case 'phone-change':phoneSent='';renderAuth();break;
+    case 'google':google();break;
+    case 'pay':pay();break;
+    case 'upgrade':openUpgrade('');break;
+    case 'signout':await SB.auth.signOut();closeSheet();toast('Signed out');break;
+    case 'open':openPaper(b.dataset.id);break;
+    case 'del':if(b.dataset.sure)delPaper(b.dataset.id);else{b.dataset.sure='1';b.textContent='Tap again to delete'}break;
+    case 'newpaper':newPaper();break;
+  }});
+$('#sheetB').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,v=n=>((f.elements[n]&&f.elements[n].value)||'').trim(),btn=f.querySelector('button[type=submit]'),msg=$('#aMsg');
+  if(btn)btn.disabled=true;if(msg){msg.className='err';msg.textContent=''}
+  try{let r;
+    if(authMode==='signin'){r=await SB.auth.signInWithPassword({email:v('email'),password:f.elements.password.value});if(r.error)throw r.error;closeSheet();toast('Signed in')}
+    else if(authMode==='signup'){r=await SB.auth.signUp({email:v('email'),password:f.elements.password.value,options:{data:{full_name:v('name')},emailRedirectTo:CFG.siteUrl||pageUrl()}});if(r.error)throw r.error;
+      if(r.data&&r.data.session){closeSheet();toast('Welcome to Paper Build')}else{authMode='signin';renderAuth('Almost done: open the email we sent and tap the link to confirm, then sign in here.',true)}}
+    else if(authMode==='reset'){r=await SB.auth.resetPasswordForEmail(v('email'),{redirectTo:CFG.siteUrl||pageUrl()});if(r.error)throw r.error;renderAuth('If that email has an account, a reset link is on its way.',true)}
+    else if(authMode==='newpw'){r=await SB.auth.updateUser({password:f.elements.password.value});if(r.error)throw r.error;authMode='signin';closeSheet();toast('Password updated')}
+    else if(authMode==='phone'){
+      if(!phoneSent){const ph=v('phone').replace(/[^\d+]/g,'');if(ph.replace(/\D/g,'').length<10)throw new Error('Enter your full mobile number with country code.');r=await SB.auth.signInWithOtp({phone:ph});if(r.error)throw r.error;phoneSent=ph;renderAuth('We sent a 6-digit code by SMS.',true)}
+      else{r=await SB.auth.verifyOtp({phone:phoneSent,token:v('code'),type:'sms'});if(r.error)throw r.error;phoneSent='';closeSheet();toast('Signed in')}}
+  }catch(err){const m=$('#aMsg');if(m){m.className='err';m.textContent=friendly(err)}}
+  finally{if(btn&&document.body.contains(btn))btn.disabled=false}});
+
+async function gateDownload(){if(!SB)return true;
+  if(!USER){openAuth('Create a free account to download your PDF. It takes less than a minute.',()=>download());return false}
+  if(!stdAllowed(S.std)){openUpgrade(`${STD(S.std).name} is a Pro standard. Free accounts can download IEEE and APA papers.`);return false}
+  return true}
+
+if(SB){
+  SB.auth.onAuthStateChange((ev,session)=>{const u=session?session.user:null,was=USER&&USER.id;USER=u;
+    if(ev==='PASSWORD_RECOVERY'){authMode='newpw';authReason='';setTimeout(()=>renderAuth(),0)}
+    if((u&&u.id)!==was)setTimeout(afterAuth,0);else renderAcct()});
+}
+renderAcct();
+const pb=$('#proBtn');if(pb){pb.hidden=!SB;pb.addEventListener('click',()=>openUpgrade(''))}
+
 const q=new URLSearchParams(location.search).get('std');if(q&&STDS.some(s=>s.id===q))S.std=q;
 let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(pvT);pvT=setTimeout(renderPreview,300)});ro.observe($('#pv'));
 if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.PaperBuildAndroid){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 renderStd();renderLists();renderPreview();
-loadImgs().then(n=>{if(n){renderLists();changed(true)}});
+loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
+if(location.hash==='#signin')setTimeout(()=>openAuth(),300);else if(location.hash==='#upgrade')setTimeout(()=>openUpgrade(''),300);
 }
 </script>
 </body>

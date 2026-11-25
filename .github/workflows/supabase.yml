@@ -1,0 +1,56 @@
+name: Deploy Supabase backend
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/**', '.github/workflows/supabase.yml']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
+      RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+      RAZORPAY_WEBHOOK_SECRET: ${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the Supabase secrets are added
+        id: check
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$PROJECT_REF" ] || [ -z "$SUPABASE_DB_PASSWORD" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Supabase secrets are not added yet, so nothing was deployed. See SETUP.md."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: supabase/setup-cli@v1
+        if: steps.check.outputs.ready == 'true'
+        with:
+          version: latest
+
+      - name: Link project
+        if: steps.check.outputs.ready == 'true'
+        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Update database
+        if: steps.check.outputs.ready == 'true'
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Save payment keys
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          args=""
+          [ -n "$RAZORPAY_KEY_ID" ] && args="$args RAZORPAY_KEY_ID=$RAZORPAY_KEY_ID"
+          [ -n "$RAZORPAY_KEY_SECRET" ] && args="$args RAZORPAY_KEY_SECRET=$RAZORPAY_KEY_SECRET"
+          [ -n "$RAZORPAY_WEBHOOK_SECRET" ] && args="$args RAZORPAY_WEBHOOK_SECRET=$RAZORPAY_WEBHOOK_SECRET"
+          if [ -n "$args" ]; then supabase secrets set --project-ref "$PROJECT_REF" $args; else echo "No Razorpay keys yet"; fi
+
+      - name: Deploy functions
+        if: steps.check.outputs.ready == 'true'
+        run: supabase functions deploy --project-ref "$PROJECT_REF"

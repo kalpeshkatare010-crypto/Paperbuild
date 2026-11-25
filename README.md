@@ -29,3 +29,6 @@ Open `index.html` in a browser. Install-as-app and offline mode need the site se
 `android/` is a small Android app that shows the bundled web app full screen (WebView, works offline).
 Every push to `main` builds it with GitHub Actions and publishes **PaperBuild.apk** under **Releases**.
 `android/sideload.keystore` only signs APKs for direct install (so updates install over the old version). For the Play Store, create a separate private upload key and keep it out of the repo.
+
+## Accounts and Pro
+Accounts, saved papers and payments use Supabase + Razorpay. Backend code is in `supabase/` (database migration and three edge functions) and deploys with `.github/workflows/supabase.yml`. Until `assets/config.js` is filled in, the app runs without accounts with everything unlocked. **See [SETUP.md](SETUP.md).**

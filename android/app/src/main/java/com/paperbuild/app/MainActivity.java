@@ -57,6 +57,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(true);
         s.setTextZoom(100);
+        s.setJavaScriptCanOpenWindowsAutomatically(true);
 
         web.addJavascriptInterface(new Bridge(), "PaperBuildAndroid");
 
@@ -69,10 +70,25 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
+                String scheme = uri.getScheme() == null ? "" : uri.getScheme();
                 if (HOST.equals(uri.getHost())) return false;
+                // Razorpay checkout pages must load inside the app.
+                if (("https".equals(scheme) || "http".equals(scheme)) && uri.getHost() != null
+                        && uri.getHost().endsWith("razorpay.com")) return false;
                 try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                } catch (ActivityNotFoundException ignored) { }
+                    if ("intent".equals(scheme)) {
+                        // UPI apps (GPay, PhonePe, Paytm) are opened with intent:// links.
+                        Intent intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME);
+                        try {
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            String fallback = intent.getStringExtra("browser_fallback_url");
+                            if (fallback != null) view.loadUrl(fallback);
+                        }
+                    } else {
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    }
+                } catch (Exception ignored) { }
                 return true;
             }
         });
@@ -95,8 +111,26 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (state != null) web.restoreState(state);
-        else web.loadUrl(START);
+        if (!openAuthReturn(getIntent())) {
+            if (state != null) web.restoreState(state);
+            else web.loadUrl(START);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        openAuthReturn(intent);
+    }
+
+    /** Handles paperbuild://auth?code=... after Google sign-in in the browser. */
+    private boolean openAuthReturn(Intent intent) {
+        Uri data = intent == null ? null : intent.getData();
+        if (data == null || !"paperbuild".equals(data.getScheme())) return false;
+        String query = data.getEncodedQuery();
+        web.loadUrl(START + (query != null ? "?" + query : ""));
+        return true;
     }
 
     @Override
@@ -139,6 +173,17 @@ public class MainActivity extends Activity {
 
     /** Called from app.html to save the generated PDF. Returns where it was saved, or "" on failure. */
     private class Bridge {
+        @JavascriptInterface
+        public void openExternal(String url) {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(MainActivity.this, "No browser found to open the sign-in page.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         @JavascriptInterface
         public String savePdf(String name, String base64) {
             try {

@@ -1,0 +1,12 @@
+# Minimal Supabase CLI config for Paper Build. Deployed by .github/workflows/supabase.yml
+project_id = "paperbuild"
+
+[functions.create-order]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true
+
+# Razorpay calls this directly, so it checks Razorpay's signature instead of a user token.
+[functions.razorpay-webhook]
+verify_jwt = false
