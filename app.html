@@ -1386,7 +1386,7 @@ function openUpgrade(reason){if(!SB){toast('Pro isn’t available yet.');return}
     <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>${P.yearly}</b><span>per year</span></button>
   </div>
   <button class="btn cta" type="button" data-a="pay">Pay ${m?P.monthly:P.yearly}${USER?'':' · sign in first'}</button>
-  <p class="hint">${CUR==='INR'?'Secure payment by Razorpay: UPI, cards or net banking.':'Secure card payment by Razorpay, charged in US dollars.'} Pro doesn’t renew automatically, so you’re never charged without paying yourself.
+  <p class="hint">${CUR==='INR'?'Secure payment by Razorpay: UPI, cards or net banking.':'Secure card payment by Razorpay, charged in US dollars.'} Pro doesn’t renew automatically, so you’re never charged without paying yourself. <a href="terms.html" target="_blank">Terms</a> · <a href="refunds.html" target="_blank">Refunds</a>
   <button class="mini" type="button" data-a="cur" style="padding:0 6px;min-height:30px">${CUR==='INR'?'Paying from outside India?':'Paying from India? Pay in ₹'}</button></p>
   <p class="err" id="aMsg" role="status"></p>`)}
 function loadScript(src){return new Promise((res,rej)=>{if(window.Razorpay)return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Could not open the payment page. Check your connection.'));document.head.appendChild(s)})}

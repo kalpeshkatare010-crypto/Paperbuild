@@ -26,7 +26,7 @@ jobs:
       - name: Copy the web app into the APK
         run: |
           mkdir -p android/app/src/main/assets/www
-          cp -r index.html app.html signup.html privacy.html manifest.webmanifest assets fonts vendor android/app/src/main/assets/www/
+          cp -r index.html app.html signup.html privacy.html terms.html refunds.html delivery.html contact.html manifest.webmanifest assets fonts vendor android/app/src/main/assets/www/
 
       - name: Build APK
         run: gradle -p android assembleRelease --no-daemon --stacktrace
