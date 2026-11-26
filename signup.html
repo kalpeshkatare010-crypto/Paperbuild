@@ -86,6 +86,7 @@ input{font:16px/1.5 "Inter Tight",system-ui,sans-serif;color:var(--ink);backgrou
       </div>
       <p class="msg" id="off" hidden></p>
       <button class="btn gbtn" type="button" id="google" hidden><svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.7-4-13.6-9.6l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+      <button class="btn gbtn" type="button" id="msft" hidden><svg viewBox="0 0 23 23" width="18" height="18" aria-hidden="true"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg> Continue with Microsoft</button>
       <p class="or" id="or" hidden><span>or with email</span></p>
       <form id="f" novalidate>
         <label id="nameL">Full name<input name="name" autocomplete="name" required></label>
@@ -137,7 +138,7 @@ function render(){const up=mode==='up',rs=mode==='reset';
   $('#f').password.autocomplete=up?'new-password':'current-password';$('#pwL').firstChild.textContent=up?'Password (at least 6 characters)':'Password';
   $('#go').textContent=up?'Create free account':rs?'Send reset link':'Sign in';$('#swap').textContent=up?'I already have an account':rs?'Back to sign in':'Create a new account';
   $('#h1').textContent=up?(wantPro?'Create your account, then go Pro':'Create your account'):rs?'Reset your password':'Welcome back';
-  $('#google').hidden=!(SB&&CFG.google)||rs;$('#or').hidden=$('#google').hidden;msg('');document.title=(up?'Create your account':rs?'Reset password':'Sign in')+' · Paper Build'}
+  $('#google').hidden=!(SB&&CFG.google)||rs;$('#msft').hidden=!(SB&&CFG.microsoft)||rs;$('#or').hidden=$('#google').hidden&&$('#msft').hidden;msg('');document.title=(up?'Create your account':rs?'Reset password':'Sign in')+' · Paper Build'}
 $('#tUp').addEventListener('click',()=>{mode='up';render()});$('#tIn').addEventListener('click',()=>{mode='in';render()});
 $('#swap').addEventListener('click',()=>{mode=mode==='up'?'in':'up';render()});$('#forgot').addEventListener('click',()=>{mode='reset';render()});
 $('#showPw').addEventListener('click',e=>{const p=$('#f').password,v=p.type==='password';p.type=v?'text':'password';e.target.textContent=v?'Hide':'Show';e.target.setAttribute('aria-label',v?'Hide password':'Show password')});
@@ -163,9 +164,10 @@ $('#f').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,
     else if(mode==='in'){const r=await SB.auth.signInWithPassword({email,password:pw});if(r.error)throw r.error;location.href=next();return}
     else{const r=await SB.auth.resetPasswordForEmail(email,{redirectTo:appUrl()});if(r.error)throw r.error;msg('If that email has an account, a reset link is on its way.',true)}
   }catch(err){msg(friendly(err))}finally{b.disabled=false}});
-$('#google').addEventListener('click',async()=>{try{
-  if(window.PaperBuildAndroid&&window.PaperBuildAndroid.openExternal){const {data,error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:'paperbuild://auth',skipBrowserRedirect:true}});if(error)throw error;window.PaperBuildAndroid.openExternal(data.url)}
-  else{const {error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:appUrl()}});if(error)throw error}}catch(err){msg(friendly(err))}});
+async function oauth(provider){try{const opt=provider==='azure'?{scopes:'email openid profile'}:{};
+  if(window.PaperBuildAndroid&&window.PaperBuildAndroid.openExternal){const {data,error}=await SB.auth.signInWithOAuth({provider,options:{...opt,redirectTo:'paperbuild://auth',skipBrowserRedirect:true}});if(error)throw error;window.PaperBuildAndroid.openExternal(data.url)}
+  else{const {error}=await SB.auth.signInWithOAuth({provider,options:{...opt,redirectTo:appUrl()}});if(error)throw error}}catch(err){msg(friendly(err))}}
+$('#google').addEventListener('click',()=>oauth('google'));$('#msft').addEventListener('click',()=>oauth('azure'));
 if(!SB){const o=$('#off');o.hidden=false;o.className='msg ok';o.textContent='Accounts are being switched on. Until then you can write and download in the editor without an account.'}
 else SB.auth.getSession().then(({data})=>{if(data&&data.session)done('You’re signed in',`Signed in as <b>${String(data.session.user.email||'').replace(/[<>&"]/g,'')}</b>.`)});
 render();

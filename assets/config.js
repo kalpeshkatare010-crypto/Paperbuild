@@ -6,5 +6,6 @@ window.PB_CONFIG = {
   supabaseAnonKey: 'sb_publishable_VUxgnUbKznzW-aApao-xfA_ToykAmgk', // publishable key (public by design)
   siteUrl: 'https://kalpeshkatare.in/Paperbuild/app.html', // where email links send people back
   google: false,            // set true after enabling Google in Supabase → Authentication → Providers
+  microsoft: false,         // set true after enabling Azure (Microsoft) in Supabase → Authentication → Providers
   phone: false              // set true after adding an SMS provider in Supabase → Authentication → Providers → Phone
 };
