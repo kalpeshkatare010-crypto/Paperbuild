@@ -36,11 +36,15 @@ jobs:
 
       - name: Link project
         if: steps.check.outputs.ready == 'true'
-        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+        run: supabase link --project-ref "$PROJECT_REF"
 
       - name: Update database
         if: steps.check.outputs.ready == 'true'
-        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+        run: |
+          # Newer Supabase CLI versions use --linked or --remote for the hosted project; try each.
+          supabase db push --linked --include-all --password "$SUPABASE_DB_PASSWORD" --yes \
+            || supabase db push --remote --include-all --password "$SUPABASE_DB_PASSWORD" --yes \
+            || supabase db push --linked --include-all --yes
 
       - name: Save payment keys
         if: steps.check.outputs.ready == 'true'
