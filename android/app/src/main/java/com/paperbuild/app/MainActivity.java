@@ -158,15 +158,16 @@ public class MainActivity extends Activity {
         if (web != null) web.saveState(out);
     }
 
-    private void openPdf(final Uri uri) {
+    private void openFile(final Uri uri, final String mime) {
         runOnUiThread(() -> {
             Intent view = new Intent(Intent.ACTION_VIEW);
-            view.setDataAndType(uri, "application/pdf");
+            view.setDataAndType(uri, mime);
             view.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 startActivity(view);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(MainActivity.this, "Saved. Install a PDF viewer to open it.", Toast.LENGTH_LONG).show();
+                String what = mime.contains("pdf") ? "a PDF viewer" : "Word or Google Docs";
+                Toast.makeText(MainActivity.this, "Saved. Install " + what + " to open it.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -186,14 +187,23 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String savePdf(String name, String base64) {
+            return saveFile(name, "application/pdf", base64);
+        }
+
+        /** Saves a PDF or Word file to Downloads/PaperBuild and opens it. Returns where it was saved, or "" on failure. */
+        @JavascriptInterface
+        public String saveFile(String name, String mime, String base64) {
             try {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                boolean word = mime != null && mime.contains("word");
+                String type = word ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/pdf";
+                String ext = word ? ".docx" : ".pdf";
                 String safe = name.replaceAll("[^A-Za-z0-9._-]", "_");
-                if (!safe.toLowerCase().endsWith(".pdf")) safe += ".pdf";
+                if (!safe.toLowerCase().endsWith(ext)) safe += ext;
                 if (Build.VERSION.SDK_INT >= 29) {
                     ContentValues values = new ContentValues();
                     values.put(MediaStore.MediaColumns.DISPLAY_NAME, safe);
-                    values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
+                    values.put(MediaStore.MediaColumns.MIME_TYPE, type);
                     values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/PaperBuild");
                     Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
                     if (uri == null) return "";
@@ -201,7 +211,7 @@ public class MainActivity extends Activity {
                         if (os == null) return "";
                         os.write(bytes);
                     }
-                    openPdf(uri);
+                    openFile(uri, type);
                     return "Downloads/PaperBuild";
                 } else {
                     File dir = new File(getExternalFilesDir(null), "PDFs");
@@ -211,8 +221,8 @@ public class MainActivity extends Activity {
                         os.write(bytes);
                     }
                     Uri uri = FileProvider.getUriForFile(MainActivity.this, getPackageName() + ".files", file);
-                    openPdf(uri);
-                    return "the app's PDFs folder";
+                    openFile(uri, type);
+                    return "the app's files folder";
                 }
             } catch (Exception e) {
                 return "";

@@ -112,6 +112,29 @@ textarea{resize:vertical}
 .pro ul{margin:0;padding:0;list-style:none;display:grid}
 .pro li{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--soft)}
 .pro li span{font:12px "DM Mono",monospace;color:var(--mute);white-space:nowrap}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tools .mini{border-style:dashed}
+.tools .mini em,.lk{font:500 10px "DM Mono",monospace;font-style:normal;background:var(--orange);color:#2a1004;border-radius:3px;padding:1px 5px}
+.tbl{border:1px dashed var(--soft);border-radius:6px;padding:8px;background:var(--field);display:grid;gap:8px}
+.tbl .top{display:flex;justify-content:space-between;align-items:center;font:13px "DM Mono",monospace;color:var(--mute)}
+.tscroll{overflow-x:auto;padding-bottom:4px}
+.tgrid{display:grid;gap:4px;min-width:100%}
+.tgrid input{min-height:38px;padding:6px 8px;font-size:15px}
+.tgrid input.th{font-weight:600;background:var(--paper2)}
+.tbtns{display:flex;flex-wrap:wrap;gap:6px}
+.syntax{font:13px/1.6 "DM Mono",monospace;color:var(--mute);margin:0;padding:10px 12px;background:var(--paper2);border-radius:6px}
+.syntax code{color:var(--ink);background:var(--field);padding:0 4px;border-radius:3px}
+.iss{border:1px solid var(--soft);border-radius:6px;padding:10px 12px;background:var(--paper2);display:grid;gap:6px}
+.iss .ih{display:flex;justify-content:space-between;gap:8px;font:12px "DM Mono",monospace;color:var(--mute)}
+.iss .tag{background:var(--lav);color:#221a3d;border-radius:3px;padding:1px 6px;white-space:nowrap}.iss .tag.st{background:var(--sage);color:#16200a}.iss .tag.sp{background:var(--mustard);color:#241f05}
+.iss p{margin:0;font-size:15px}
+.iss .ctx{font:15px/1.5 "Libertinus Serif",Georgia,serif;color:var(--mute)}
+.iss mark{background:#f9d3bd;color:#2a1004;border-radius:2px;padding:0 1px}
+.iss .sug{display:flex;flex-wrap:wrap;gap:6px}
+.iss .sug .fix{background:var(--field);border-color:var(--orange);font-weight:600}
+.gsum{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.gsum b{font:400 26px "Libertinus Serif",serif}
+.wordbtn{white-space:nowrap}
 .view{position:sticky;top:66px;height:calc(100vh - 66px);overflow:auto;padding:20px max(3vw,14px) 40px;border-left:var(--bw) solid var(--soft)}
 .meta{display:flex;justify-content:space-between;gap:10px;font:13px "DM Mono",monospace;color:var(--mute);margin:0 auto 10px;max-width:820px}
 .frame{border:var(--bw) solid var(--soft);border-radius:6px;padding:clamp(8px,2vw,16px);background:var(--desk);max-width:820px;margin:0 auto;display:grid;gap:14px}
@@ -129,7 +152,8 @@ textarea{resize:vertical}
   .view{position:static;height:auto;border:0;display:none;padding-bottom:100px}
   body.show-p .view{display:block}body.show-p .edit{display:none}
   .edit{padding-bottom:100px}
-  .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--bg);border-top:var(--bw) solid var(--soft)}
+  header .wordbtn{display:none}
+  .nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--bg);border-top:var(--bw) solid var(--soft)}
   .nav button{border:0;border-radius:0;background:transparent;min-height:60px;display:grid;place-items:center;gap:2px;font-size:13px;padding:6px 0}
   .nav button+button{border-left:var(--bw) solid var(--soft)}
   .nav button[aria-current=true]{color:var(--orange);font-weight:600}
@@ -146,6 +170,7 @@ textarea{resize:vertical}
   <select id="stdSel" aria-label="Paper standard"></select>
   <button class="acct" id="acct" type="button" hidden>Sign in</button>
   <button class="theme" id="theme" type="button" aria-label="Switch to dark mode"></button>
+  <button class="wordbtn" id="wordBtn" type="button">Word</button>
   <button class="cta" id="pdf" type="button">Download PDF</button>
 </header>
 <main>
@@ -200,6 +225,8 @@ textarea{resize:vertical}
         <div id="sections" style="display:grid;gap:12px"></div>
         <button class="ghost" data-act="add" data-list="sections" type="button">+ Add section</button>
         <p class="hint">Numbering follows the standard. Leave an empty line between paragraphs. Cite as [1], [2] or [1, 3]: author-date styles turn these into (Name, Year) automatically. Use *italic* and **bold**. Add figures to any section; they're numbered and captioned the way the standard wants.</p>
+        <details><summary class="hint" style="font-size:13px;padding:4px 0;background:none;letter-spacing:0">How to write subsections and equations <span class="lk">Pro</span></summary>
+        <p class="syntax">Subsection: a line starting with <code>## </code> e.g. <code>## Probe design</code><br>Smaller subsection: <code>### </code><br>Numbered equation on its own line: <code>$$ E = mc^2 $$</code><br>Maths inside a sentence: <code>$x_i$</code><br>Fractions <code>\frac{a}{b}</code> · roots <code>\sqrt{x}</code> · powers <code>x^{2}</code> · subscripts <code>x_{i}</code><br>Greek <code>\alpha \beta \Delta</code> · symbols <code>\sum \int \infty \pm \times \le \ge \approx</code></p></details>
       </div>
     </details>
     <details class="band b4">
@@ -210,17 +237,32 @@ textarea{resize:vertical}
         <p class="hint">Write authors as Lastname, Firstname and separate them with ; — each reference is formatted for the chosen standard.</p>
       </div>
     </details>
+    <details class="band b2" id="gBand">
+      <summary><sup>07</sup>Check writing<span class="now" id="gNow">Pro</span><span class="arr" aria-hidden="true">↓</span></summary>
+      <div class="body">
+        <p class="hint">Finds grammar and spelling mistakes, plus wordy phrases, very long sentences and informal words. Tap a suggestion to fix it in your text.</p>
+        <div class="grid2">
+          <label>English<select id="gLang"><option value="en-US">US English</option><option value="en-GB">UK / Indian English</option><option value="en-AU">Australian English</option><option value="en-CA">Canadian English</option></select></label>
+          <div style="display:grid;align-content:end"><button class="btn cta" type="button" id="gRun">Check my paper</button></div>
+        </div>
+        <div id="gOut" style="display:grid;gap:10px"></div>
+        <p class="hint">Grammar and spelling are checked by LanguageTool (languagetool.org), so your text is sent to their server for the check. Clarity tips are worked out on your device.</p>
+      </div>
+    </details>
     <details class="band b5 pro">
-      <summary><sup>07</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
+      <summary><sup>08</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <ul>
           <li>All 8 standards<span>Pro</span></li>
+          <li>Word (.docx) export<span>Pro</span></li>
+          <li>Tables with captions<span>Pro</span></li>
+          <li>Subsections and equations<span>Pro</span></li>
+          <li>Grammar &amp; clarity suggestions<span>Pro</span></li>
           <li>Unlimited saved papers<span>Pro</span></li>
           <li>PDFs without the “Made with Paper Build” line<span>Pro</span></li>
-          <li>Word (.docx) export<span>Coming soon</span></li>
-          <li>Tables, subsections and equations<span>Coming soon</span></li>
         </ul>
-        <button class="btn cta" type="button" id="proBtn">See Pro plans · from ₹99</button>
+        <p class="note" id="proState" hidden></p>
+        <button class="btn cta" type="button" id="proBtn">See Pro plans</button>
       </div>
     </details>
   </section>
@@ -232,6 +274,7 @@ textarea{resize:vertical}
 <nav class="nav" aria-label="Views">
   <button id="nW" aria-current="true" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>Write</button>
   <button id="nP" aria-current="false" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Preview</button>
+  <button id="nX" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M8.5 11l1.5 6 2-4.5 2 4.5 1.5-6"/></svg>Word</button>
   <button id="nD" class="dl" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF</button>
 </nav>
 <div class="sheetwrap" id="sheet" hidden><div class="sheetbg" data-close></div>
@@ -242,6 +285,7 @@ textarea{resize:vertical}
 <script src="assets/config.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
+<script src="fonts/pbmath.js"></script>
 <script src="vendor/pdf.min.js"></script>
 <script src="vendor/pdf.worker.min.js"></script>
 <script>
@@ -281,8 +325,9 @@ const SAMPLE={std:'ieee',fmt:{},
   sections:[
     {h:'Introduction',b:'Post-harvest losses remain a serious problem for small storage units. Moisture above safe limits encourages mould and insect activity, and the damage is often found only after it has spread [1].\n\nThis work aims to give storage owners a simple, affordable way to watch moisture levels without manual sampling.'},
     {h:'Related Work',b:'Earlier studies have used resistive and capacitive methods to estimate grain moisture [1, 2]. Commercial systems achieve good accuracy but are priced for large silos. Our approach focuses on *cost* and *ease of installation*.'},
-    {h:'System Design',b:'Each probe consists of two parallel copper plates embedded in a PVC tube. The microcontroller measures the charge time of the probe, which changes with the dielectric constant of the surrounding grain.\n\nReadings are sent every ten minutes to a mobile dashboard, which raises an alert when moisture crosses a set threshold [3].'},
-    {h:'Calibration and Testing',b:'Probe readings were compared with the oven-drying method on samples prepared at different moisture levels. Write your measured results and error figures here.'},
+    {h:'System Design',b:'## Probe\n\nEach probe consists of two parallel copper plates embedded in a PVC tube. The capacitance of the probe depends on the relative permittivity $\\varepsilon_r$ of the surrounding grain:\n\n$$ C = \\frac{\\varepsilon_r \\varepsilon_0 A}{d} $$\n\nwhere $A$ is the plate area and $d$ is the gap between the plates.\n\n## Electronics and alerts\n\nThe microcontroller measures the charge time of the probe, and readings are sent every ten minutes to a mobile dashboard, which raises an alert when moisture crosses a set threshold [3].'},
+    {h:'Calibration and Testing',b:'Probe readings were compared with the oven-drying method on samples prepared at different moisture levels. Write your measured results and error figures here.',
+     tables:[{id:'t1',cap:'Probe readings compared with oven drying',after:1,rows:[['Sample','Oven drying (%)','Probe (%)','Error (%)'],['A','11.2','11.6','0.4'],['B','13.5','13.1','0.4'],['C','15.8','16.4','0.6']]}]},
     {h:'Conclusion',b:'The proposed system shows that continuous moisture monitoring can be built from low-cost parts. Future work includes temperature compensation and field trials across a full storage season.'}
   ],
   refs:[
@@ -292,7 +337,7 @@ const SAMPLE={std:'ieee',fmt:{},
   ]};
 const BLANK={std:'ieee',fmt:{},title:'',authors:[{name:'',aff:'',email:''}],course:'',instructor:'',date:'',abstract:'',keywords:'',sections:[{h:'Introduction',b:''},{h:'Conclusion',b:''}],refs:[]};
 const NEWREF=()=>({type:'journal',authors:'',year:'',title:'',source:'',volume:'',issue:'',pages:'',doi:'',publisher:'',url:''});
-const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:'',figs:[]}),refs:NEWREF};
+const NEW={authors:()=>({name:'',aff:'',email:''}),sections:()=>({h:'New section',b:'',figs:[],tables:[]}),refs:NEWREF};
 const STRIPS=['#2f5d46','#6c5a9c','#c8662e','#3a6ea5'];
 const REFTYPES={journal:'Journal article',conference:'Conference paper',book:'Book',web:'Website'};
 const REFFIELDS={
@@ -308,8 +353,74 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const words=t=>(String(t||'').match(/\S+/g)||[]).length;
 const paras=t=>String(t||'').split(/\n\s*\n/).map(p=>p.replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);
 const roman=n=>{let r='';for(const[v,s]of[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']])while(n>=v){r+=s;n-=v}return r};
+/* section text → blocks: paragraphs, ## subsections, ### sub-subsections, $$ equations $$ */
+function blocks(text){const out=[];
+  String(text||'').replace(/\r/g,'').replace(/\$\$([\s\S]+?)\$\$/g,(m,x)=>'\n\n$$'+x.replace(/\s+/g,' ').trim()+'$$\n\n').split(/\n\s*\n/).forEach(chunk=>{let buf=[];
+    const flush=()=>{const t=buf.join(' ').replace(/\s+/g,' ').trim();if(t)out.push({k:'p',t});buf=[]};
+    chunk.split('\n').forEach(line=>{const l=line.trim();let m;
+      if((m=l.match(/^(#{2,3})\s+(.+)$/))){flush();out.push({k:m[1].length===2?'h2':'h3',t:m[2].trim()})}
+      else if((m=l.match(/^\$\$(.+)\$\$$/))){flush();out.push({k:'eq',t:m[1].trim()})}
+      else if(l)buf.push(l)});
+    flush()});
+  return out}
+const ptext=t=>blocks(t).filter(x=>x.k==='p');
+const INLM=/\$(?=[^\s$])([^$\n]*?[^\s$])\$/;
+const tblRows=t=>(t&&Array.isArray(t.rows)?t.rows:[]).filter(r=>Array.isArray(r)&&r.some(c=>String(c??'').trim()));
 
-let S=load(),undoState=null,tTimer=null;
+/* ---- a small LaTeX-style maths reader: \frac \sqrt ^ _ Greek and symbols ---- */
+const MSYM={alpha:'α',beta:'β',gamma:'γ',delta:'δ',epsilon:'ϵ',varepsilon:'ε',zeta:'ζ',eta:'η',theta:'θ',vartheta:'ϑ',iota:'ι',kappa:'κ',lambda:'λ',mu:'μ',nu:'ν',xi:'ξ',pi:'π',rho:'ρ',sigma:'σ',tau:'τ',upsilon:'υ',phi:'ϕ',varphi:'φ',chi:'χ',psi:'ψ',omega:'ω',
+  Gamma:'Γ',Delta:'Δ',Theta:'Θ',Lambda:'Λ',Xi:'Ξ',Pi:'Π',Sigma:'Σ',Upsilon:'Υ',Phi:'Φ',Psi:'Ψ',Omega:'Ω',
+  pm:'±',mp:'∓',times:'×',cdot:'⋅',div:'÷',ast:'∗',le:'≤',leq:'≤',ge:'≥',geq:'≥',ne:'≠',neq:'≠',approx:'≈',equiv:'≡',sim:'∼',simeq:'≃',propto:'∝',ll:'≪',gg:'≫',
+  infty:'∞',partial:'∂',nabla:'∇',to:'→',rightarrow:'→',leftarrow:'←',Rightarrow:'⇒',Leftarrow:'⇐',leftrightarrow:'↔',Leftrightarrow:'⇔',mapsto:'↦',uparrow:'↑',downarrow:'↓',
+  in:'∈',notin:'∉',subset:'⊂',subseteq:'⊆',supset:'⊃',cup:'∪',cap:'∩',emptyset:'∅',forall:'∀',exists:'∃',neg:'¬',land:'∧',lor:'∨',angle:'∠',perp:'⊥',parallel:'∥',
+  degree:'°',circ:'∘',ldots:'…',cdots:'⋯',dots:'…',prime:'′',hbar:'ℏ',ell:'ℓ',langle:'⟨',rangle:'⟩',lvert:'|',rvert:'|',vert:'|',
+  sum:'∑',prod:'∏',int:'∫',iint:'∬',oint:'∮'};
+const MBIG={sum:1,prod:1,int:1,iint:1,oint:1};
+const MFN={sin:1,cos:1,tan:1,cot:1,sec:1,csc:1,log:1,ln:1,exp:1,lim:1,max:1,min:1,det:1,sinh:1,cosh:1,tanh:1,arcsin:1,arccos:1,arctan:1,mod:1};
+const MREL='=<>≤≥≠≈≡∼≃∝≪≫→←⇒⇐↔⇔↦∈∉⊂⊆⊃';const MBIN='+−±∓×⋅÷∗∪∩∧∨∘';
+function mparse(src){const s=String(src||'');let i=0;
+  const ws=()=>{while(i<s.length&&/\s/.test(s[i]))i++};
+  const group=()=>{const c=[];while(i<s.length&&s[i]!=='}'){const a=post();if(a)c.push(a)}if(s[i]==='}')i++;return{t:'row',c}};
+  const arg=()=>{ws();if(s[i]==='{'){i++;return group()}return atom()||{t:'row',c:[]}};
+  const raw=()=>{ws();if(s[i]!=='{')return '';i++;let dep=1,o='';while(i<s.length){const ch=s[i++];if(ch==='{')dep++;else if(ch==='}'&&!--dep)break;o+=ch}return o};
+  function atom(){ws();if(i>=s.length)return null;const ch=s[i];
+    if(ch==='{'){i++;return group()}
+    if(ch==='}'){i++;return null}
+    if(ch==='\\'){i++;let nm='';while(i<s.length&&/[A-Za-z]/.test(s[i]))nm+=s[i++];if(!nm)nm=s[i++]||'';
+      if(nm==='frac'||nm==='dfrac'||nm==='tfrac'){const n=arg(),d=arg();return{t:'frac',n,d}}
+      if(nm==='sqrt'){ws();if(s[i]==='['){while(i<s.length&&s[i]!==']')i++;i++}return{t:'sqrt',c:arg()}}
+      if(nm==='text'||nm==='mathrm'||nm==='textrm'||nm==='operatorname')return{t:'sym',v:raw(),up:true};
+      if(nm==='mathbf'||nm==='textbf'||nm==='boldsymbol')return{t:'sym',v:raw(),up:true,b:true};
+      if(nm==='left'||nm==='right'||nm==='big'||nm==='Big'||nm==='bigg'||nm==='displaystyle'){return null}
+      if(nm===','||nm===':'||nm===';')return{t:'sp',w:.2};if(nm==='!')return{t:'sp',w:-.12};if(nm==='quad')return{t:'sp',w:1};if(nm==='qquad')return{t:'sp',w:2};if(nm===' ')return{t:'sp',w:.25};
+      if(nm==='{'||nm==='}'||nm==='%'||nm==='$'||nm==='#'||nm==='&'||nm==='_')return{t:'sym',v:nm,up:true};
+      if(MFN[nm])return{t:'sym',v:nm,up:true,fn:true};
+      if(MSYM[nm]){const v=MSYM[nm];return{t:'sym',v,big:!!MBIG[nm],it:/^[a-z]/.test(nm)&&/^[α-ωϵϑϕ]$/.test(v),op:MREL.includes(v)?'rel':MBIN.includes(v)?'bin':''}}
+      return{t:'sym',v:nm,up:true}}
+    if(/[0-9.]/.test(ch)){let v='';while(i<s.length&&/[0-9.]/.test(s[i]))v+=s[i++];return{t:'sym',v,up:true}}
+    if(/[A-Za-z]/.test(ch)){i++;return{t:'sym',v:ch,it:true}}
+    i++;const v=ch==='-'?'−':ch==='*'?'⋅':ch==="'"?'′':ch;
+    return{t:'sym',v,up:true,op:MREL.includes(v)?'rel':MBIN.includes(v)?'bin':(v===','||v===';')?'punct':''}}
+  function post(){const b=atom();if(!b)return null;let sup=null,sub=null;
+    for(;;){ws();if(s[i]==='^'){i++;sup=arg()}else if(s[i]==='_'){i++;sub=arg()}else break}
+    return(sup||sub)?{t:'ss',b,sup,sub}:b}
+  const c=[];let guard=0;while(i<s.length&&guard++<5000){const a=post();if(a)c.push(a)}
+  /* a minus sign at the start or after an operator is a sign, not a binary operator */
+  c.forEach((n,k)=>{if(n.t==='sym'&&n.op==='bin'&&(k===0||(c[k-1].t==='sym'&&c[k-1].op)))n.op=''});
+  return{t:'row',c}}
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','−':'⁻','=':'⁼','(':'⁽',')':'⁾','n':'ⁿ','i':'ⁱ'};
+const SUB={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','+':'₊','−':'₋','=':'₌','(':'₍',')':'₎','a':'ₐ','e':'ₑ','o':'ₒ','x':'ₓ','i':'ᵢ','j':'ⱼ','k':'ₖ','m':'ₘ','n':'ₙ','p':'ₚ','r':'ᵣ','s':'ₛ','t':'ₜ'};
+/* maths flattened to one line of Unicode text, used for maths inside sentences */
+function mflat(n){if(!n)return '';switch(n.t){
+  case 'row':return n.c.map(mflat).join('');
+  case 'sym':return n.op==='rel'||n.op==='bin'?' '+n.v+' ':n.op==='punct'?n.v+' ':n.v;
+  case 'sp':return n.w>0?' ':'';
+  case 'frac':{const a=mflat(n.n),b=mflat(n.d),w=x=>/[\s+−]/.test(x.trim())?'('+x.trim()+')':x.trim();return w(a)+'/'+w(b)}
+  case 'sqrt':{const x=mflat(n.c).trim();return '√'+(x.length>1?'('+x+')':x)}
+  case 'ss':{let o=mflat(n.b);const conv=(x,M,mk)=>{const t=mflat(x).replace(/\s+/g,'');return t&&[...t].every(ch=>M[ch])?[...t].map(ch=>M[ch]).join(''):mk+(t.length>1?'('+t+')':t)};
+    if(n.sub)o+=conv(n.sub,SUB,'_');if(n.sup)o+=conv(n.sup,SUP,'^');return o}}return ''}
+
+let S=load(),undoState=null,tTimer=null,STRIP=false,NEEDMATH=false;
 function valid(v){return v&&typeof v==='object'&&Array.isArray(v.sections)&&Array.isArray(v.authors)&&Array.isArray(v.refs)}
 function load(){try{const v=JSON.parse(localStorage.getItem(K));if(valid(v)){const o=Object.assign(clone(BLANK),v);if(!o.fmt||typeof o.fmt!=='object')o.fmt={};return o}}catch(e){}return clone(SAMPLE)}
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
@@ -402,7 +513,11 @@ function citeText(std,nums){
   return '('+nums.map(one).join('; ')+')';
 }
 function cites(std,text){return String(text).replace(/\[(\s*\d+(?:\s*[,–-]\s*\d+)*\s*)\]/g,(m,inner)=>{const nums=[];inner.split(',').forEach(part=>{const r=part.split(/[–-]/).map(x=>parseInt(x,10));if(r.length===2&&r[1]>=r[0]&&r[1]-r[0]<50){for(let k=r[0];k<=r[1];k++)nums.push(k)}else if(!isNaN(r[0]))nums.push(r[0])});return nums.length?citeText(std,nums):m})}
-function md(text,base='n'){const out=[];const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/g;let last=0,m;while((m=re.exec(text))){if(m.index>last)out.push({t:text.slice(last,m.index),s:base});const b=m[0].startsWith('**');out.push({t:m[0].slice(b?2:1,b?-2:-1),s:b?(base==='i'?'bi':'b'):(base==='b'?'bi':'i')});last=m.index+m[0].length}if(last<text.length)out.push({t:text.slice(last),s:base});return out}
+function md(text,base='n'){text=String(text??'');if(!INLM.test(text))return md0(text,base);
+  const out=[],re=new RegExp(INLM.source,'g');let last=0,m;
+  while((m=re.exec(text))){if(m.index>last)out.push(...md0(text.slice(last,m.index),base));const v=mflat(mparse(m[1])).replace(/\s+/g,' ').trim();out.push(STRIP?{t:v,s:base}:{t:v,s:'m',src:m[1]});last=m.index+m[0].length}
+  if(last<text.length)out.push(...md0(text.slice(last),base));return out}
+function md0(text,base='n'){const out=[];const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/g;let last=0,m;while((m=re.exec(text))){if(m.index>last)out.push({t:text.slice(last,m.index),s:base});const b=m[0].startsWith('**');out.push({t:m[0].slice(b?2:1,b?-2:-1),s:b?(base==='i'?'bi':'b'):(base==='b'?'bi':'i')});last=m.index+m[0].length}if(last<text.length)out.push({t:text.slice(last),s:base});return out}
 
 /* ================= Formatting defaults (inches unless noted) ================= */
 const DEF={
@@ -430,6 +545,52 @@ const CAP={
  harvard:{lab:n=>`Figure ${n}: `,ls:'b',size:11,align:'left'}
 };
 
+/* subsection headings: si = section index, a = subsection number, b = sub-subsection number */
+const L2=a=>String.fromCharCode(64+Math.min(26,a));
+const SUBH={
+ ieee:(si,a,b,l,t)=>l==='h2'?{t:`${L2(a)}. ${t}`,s:'i'}:{t:`${b}) ${t}`,s:'i'},
+ acm:(si,a,b,l,t)=>l==='h2'?{t:`${si+1}.${a} ${t}`,s:'b',fam:'helvetica'}:{t:`${si+1}.${a}.${b} ${t}`,s:'bi',fam:'helvetica'},
+ lncs:(si,a,b,l,t)=>l==='h2'?{t:`${si+1}.${a}  ${t}`,s:'b',size:10}:{t:t,s:'bi',size:10},
+ elsevier:(si,a,b,l,t)=>l==='h2'?{t:`${si+1}.${a}. ${t}`,s:'i'}:{t:`${si+1}.${a}.${b}. ${t}`,s:'i'},
+ apa:(si,a,b,l,t)=>l==='h2'?{t,s:'b'}:{t,s:'bi'},
+ mla:(si,a,b,l,t)=>l==='h2'?{t,s:'i'}:{t,s:'n'},
+ chicago:(si,a,b,l,t)=>l==='h2'?{t,s:'bi',align:'left'}:{t,s:'i',align:'left'},
+ harvard:(si,a,b,l,t)=>l==='h2'?{t:`${si+1}.${a} ${t}`,s:'b'}:{t:`${si+1}.${a}.${b} ${t}`,s:'bi'}
+};
+/* table captions: caption above the table, in each standard's style */
+const TCAP={
+ ieee:{lines:(n,c)=>[[{t:'TABLE '+roman(n)}],...(c?[[{t:c.toUpperCase()}]]:[])],size:8,cell:8,align:'center'},
+ acm:{lines:(n,c)=>[cat({t:`Table ${n}: `,s:'b'},md(c))],size:8,cell:8,align:'center',capFam:'helvetica'},
+ lncs:{lines:(n,c)=>[cat({t:`Table ${n}. `,s:'b'},md(c))],size:9,cell:9,align:'center'},
+ elsevier:{lines:(n,c)=>[cat({t:`Table ${n}: `},md(c))],size:10,cell:10,align:'center'},
+ apa:{lines:(n,c)=>[[{t:`Table ${n}`,s:'b'}],...(c?[md(c,'i')]:[])],align:'left'},
+ mla:{lines:(n,c)=>[[{t:`Table ${n}`}],...(c?[md(c)]:[])],align:'left'},
+ chicago:{lines:(n,c)=>[cat({t:`Table ${n}. `},md(c))],align:'left'},
+ harvard:{lines:(n,c)=>[cat({t:`Table ${n}: `,s:'b'},md(c))],align:'left'}
+};
+/* maths layout for the PDF: each node becomes a box {w, a (above baseline), d (below), draw(x, baseline)} */
+function mbox(E,n,fs,lv){const d=E.d;
+  switch(n.t){
+  case 'row':{const bs=n.c.map(x=>mbox(E,x,fs,lv));let w=0,a=fs*.68,de=fs*.2;bs.forEach(b=>{w+=b.w;a=Math.max(a,b.a);de=Math.max(de,b.d)});
+    return{w,a,d:de,draw:(x,y)=>{bs.forEach(b=>{b.draw(x,y);x+=b.w})}}}
+  case 'sp':return{w:fs*n.w,a:0,d:0,draw:()=>{}};
+  case 'sym':{const st=n.it?'italic':'normal',size=n.big?fs*1.5:fs,txt=String(n.v);const set=()=>{if(n.b)d.setFont('times','bold');else E.mfont(st);d.setFontSize(size)};set();
+    const tw=d.getTextWidth(txt),pl=n.op==='rel'?fs*.28:n.op==='bin'?fs*.22:n.fn?fs*.06:0,pr=n.op==='punct'?fs*.18:pl,ex=n.it?fs*.04:0;
+    const a=n.big?size*.78:fs*.7,de=n.big?size*.28:fs*.2,dy=n.big?size*.1:0;
+    return{w:tw+pl+pr+ex,a,d:de,big:n.big,draw:(x,y)=>{set();d.text(txt,x+pl,y+dy)}}}
+  case 'ss':{const B=mbox(E,n.b,fs,lv),s2=Math.max(fs*(lv?.82:.72),5),P=n.sup?mbox(E,n.sup,s2,lv+1):null,Q=n.sub?mbox(E,n.sub,s2,lv+1):null;
+    if(B.big&&n.b.v!=='∫'&&n.b.v!=='∮'&&n.b.v!=='∬'&&lv===0){const g=fs*.12,w=Math.max(B.w,P?P.w:0,Q?Q.w:0);
+      return{w:w+fs*.1,a:B.a+(P?P.a+P.d+g:0),d:B.d+(Q?Q.a+Q.d+g:0),draw:(x,y)=>{B.draw(x+(w-B.w)/2,y);if(P)P.draw(x+(w-P.w)/2,y-B.a-g-P.d);if(Q)Q.draw(x+(w-Q.w)/2,y+B.d+g+Q.a)}}}
+    const up=Math.max(fs*.42,B.a-s2*.45),dn=Math.max(fs*.18,Q&&P?fs*.28:0)+(B.big?fs*.2:0),ux=B.big?fs*.05:0;
+    return{w:B.w+Math.max(P?P.w+ux:0,Q?Q.w:0)+fs*.06,a:Math.max(B.a,P?up+P.a:0),d:Math.max(B.d,Q?dn+Q.d:0),
+      draw:(x,y)=>{B.draw(x,y);if(P)P.draw(x+B.w+ux,y-up);if(Q)Q.draw(x+B.w-(B.big?fs*.15:0),y+dn)}}}
+  case 'frac':{const s2=lv?Math.max(fs*.8,5):fs*.92,N=mbox(E,n.n,s2,lv+1),D=mbox(E,n.d,s2,lv+1),ax=fs*.27,g=fs*.16,w=Math.max(N.w,D.w)+fs*.3;
+    return{w:w+fs*.12,a:ax+g+N.a+N.d,d:Math.max(0,g+D.a+D.d-ax),draw:(x,y)=>{x+=fs*.06;N.draw(x+(w-N.w)/2,y-ax-g-N.d);D.draw(x+(w-D.w)/2,y-ax+g+D.a);d.setLineWidth(fs*.045);d.setDrawColor(0);d.line(x,y-ax,x+w,y-ax)}}}
+  case 'sqrt':{const C=mbox(E,n.c,fs,lv),g=fs*.14,rw=fs*.62,top=C.a+g;
+    return{w:rw+C.w+fs*.12,a:top+fs*.06,d:C.d+fs*.04,draw:(x,y)=>{d.setLineWidth(fs*.05);d.setDrawColor(0);
+      d.lines([[rw*.2,-fs*.08],[rw*.25,C.d+fs*.08+fs*.25],[rw*.45,-(C.d+top)],[C.w+fs*.08,0]],x,y-fs*.25,[1,1],'S');C.draw(x+rw,y)}}}}
+  return{w:0,a:0,d:0,draw:()=>{}}}
+
 /* ================= PDF engine ================= */
 const FS={n:'normal',i:'italic',b:'bold',bi:'bolditalic'};
 const IN=72;
@@ -437,7 +598,9 @@ function Engine(C,cap){
   const M={t:C.mt*IN,b:C.mb*IN,l:C.ml*IN,r:C.mr*IN};
   const d=new window.jspdf.jsPDF({unit:'pt',format:C.page});
   const W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight();
-  const E={d,W,H,M,C,cols:1,gap:0,col:0,y:M.t,top:M.t,fam:C.fam,cap,figN:0};
+  const E={d,W,H,M,C,cols:1,gap:0,col:0,y:M.t,top:M.t,fam:C.fam,cap,figN:0,tabN:0,eqN:0,math:false,std:STD(S.std).id};
+  if(NEEDMATH&&window.PBMATH){try{d.addFileToVFS('pbm-r.ttf',window.PBMATH.r);d.addFont('pbm-r.ttf','pbmath','normal');d.addFileToVFS('pbm-i.ttf',window.PBMATH.i);d.addFont('pbm-i.ttf','pbmath','italic');E.math=true}catch(e){}}
+  E.mfont=(st)=>{if(E.math)d.setFont('pbmath',st);else d.setFont('times',st)};
   E.cw=()=>E.cols===1?W-M.l-M.r:(W-M.l-M.r-E.gap*(E.cols-1))/E.cols;
   E.x=()=>M.l+E.col*(E.cw()+E.gap);
   E.setCols=(n,g=0)=>{E.cols=n;E.gap=g;E.col=0;E.top=E.y};
@@ -449,14 +612,15 @@ function Engine(C,cap){
   E.rule=(w=.6)=>{d.setLineWidth(w);d.setDrawColor(0);d.line(E.x(),E.y,E.x()+E.cw(),E.y)};
   E.text=(segs,o={})=>{
     const size=o.size||C.size,lead=o.lead||size*1.2,fm=o.fam||E.fam,al=o.align||'justify';
-    const sf=st=>d.setFont(fm,FS[st]||'normal');d.setFontSize(size);
+    const sf=st=>{if(st==='m')E.mfont('italic');else d.setFont(fm,FS[st]||'normal');d.setFontSize(size)};
     const li=o.li||0,ri=o.ri||0,base=E.cw()-li-ri,ind=o.ind||0,hang=o.hang||0;
     let wordsL=[],cur=[];
-    for(const sg of segs){String(sg.t).split(/(\s+)/).forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){if(cur.length){wordsL.push(cur);cur=[]}}else cur.push({t:p,s:sg.s||'n'})})}
+    for(const sg of segs){if(sg.s==='m'&&sg.src!=null){const bx=mbox(E,mparse(sg.src),size,1);cur.push({t:sg.t,s:'m',box:bx});continue}
+      String(sg.t).split(/(\s+)/).forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){if(cur.length){wordsL.push(cur);cur=[]}}else cur.push({t:p,s:sg.s||'n'})})}
     if(cur.length)wordsL.push(cur);
-    const ww=w=>w.reduce((a,p)=>{sf(p.s);return a+d.getTextWidth(p.t)},0);
+    const ww=w=>w.reduce((a,p)=>{if(p.box)return a+p.box.w;sf(p.s);return a+d.getTextWidth(p.t)},0);
     const maxW=base-Math.max(ind,hang);
-    const fixed=[];for(const w of wordsL){if(w.length===1&&ww(w)>maxW){let chunk='';const s=w[0].s;sf(s);for(const ch of w[0].t){if(d.getTextWidth(chunk+ch)>maxW&&chunk){fixed.push([{t:chunk,s}]);chunk=ch}else chunk+=ch}if(chunk)fixed.push([{t:chunk,s}])}else fixed.push(w)}
+    const fixed=[];for(const w of wordsL){if(w.length===1&&!w[0].box&&ww(w)>maxW){let chunk='';const s=w[0].s;sf(s);for(const ch of w[0].t){if(d.getTextWidth(chunk+ch)>maxW&&chunk){fixed.push([{t:chunk,s}]);chunk=ch}else chunk+=ch}if(chunk)fixed.push([{t:chunk,s}])}else fixed.push(w)}
     sf('n');const sp=d.getTextWidth(' ');
     const lines=[];let line=[],lw=0;
     const avail=()=>base-(lines.length===0?ind:hang);
@@ -468,7 +632,7 @@ function Engine(C,cap){
       const off=li+(k===0?ind:hang),avw=base-(k===0?ind:hang);let x=E.x()+off,gap=sp;
       if(al==='center')x+=(avw-L.w)/2;else if(al==='right')x+=avw-L.w;else if(al==='justify'&&k<lines.length-1&&L.ws.length>1)gap=sp+(avw-L.w)/(L.ws.length-1);
       if(k===0&&o.label){sf('n');d.text(o.label,E.x()+(o.labelX||0),E.y)}
-      L.ws.forEach(w=>{w.forEach(p=>{sf(p.s);d.text(p.t,x,E.y);x+=d.getTextWidth(p.t)});x+=gap});
+      L.ws.forEach(w=>{w.forEach(p=>{if(p.box){p.box.draw(x,E.y);x+=p.box.w;return}sf(p.s);d.text(p.t,x,E.y);x+=d.getTextWidth(p.t)});x+=gap});
     });
     E.y+=o.after||0;
   };
@@ -494,6 +658,45 @@ function Engine(C,cap){
     if(!cp.above){const cs=cp.size*k;E.space(2);E.text(cat({t:cp.lab(n),s:cp.ls},md(cap)),{size:cs,lead:cs*1.2,align:cp.align,fam:cp.fam||E.fam,after:8})}
     else E.space(C.size*C.spacing*.5);
   };
+  const STU=['apa','mla','chicago','harvard'].includes(E.std);
+  E.subhead=(si,a,b,lvl,title)=>{
+    const h=SUBH[E.std](si,a,b,lvl,title),sz=h.size?h.size*C.k:C.size;
+    if(STRIP){E.text(md(title,'b'),{size:C.size,lead:C.size*C.spacing,align:'left',after:C.pspace,keep:2});return}
+    E.need(sz*5);if(!STU)E.space(sz*.6);
+    E.text(md(h.t,h.s),{size:sz,lead:STU?C.size*C.spacing:sz*1.25,align:h.align||'left',fam:h.fam||E.fam,after:STU?0:2,keep:2})};
+  E.equation=src=>{
+    if(STRIP){E.text([{t:src}],{size:C.size,lead:C.size*C.spacing,align:'center',after:C.pspace});return}
+    const n=++E.eqN,lab=`(${n})`;d.setFont(E.fam,'normal');d.setFontSize(C.size);const nw=d.getTextWidth(lab);
+    const avail=E.cw()-2*nw-12;let fs=C.size*1.05,tree;try{tree=mparse(src)}catch(e){tree={t:'row',c:[{t:'sym',v:src,up:true}]}}
+    let B=mbox(E,tree,fs,0);if(B.w>avail&&B.w>0){fs*=Math.max(.55,avail/B.w);B=mbox(E,tree,fs,0)}
+    const pad=C.size*(STU?.3:.45);E.need(B.a+B.d+pad*2);E.y+=pad+B.a;
+    B.draw(E.x()+(E.cw()-B.w)/2,E.y);d.setFont(E.fam,'normal');d.setFontSize(C.size);d.text(lab,E.x()+E.cw(),E.y,{align:'right'});
+    E.y+=B.d+pad};
+  E.table=t=>{
+    const rows=tblRows(t);if(!rows.length||STRIP)return;
+    const n=++E.tabN,tc=TCAP[E.std],k=C.k,fam=tc.fam||E.fam;
+    const cs=tc.cell?tc.cell*k:C.size*.92,capS=tc.size?tc.size*k:C.size,lead=cs*1.2,pv=cs*.35,ph=cs*.45;
+    const nc=Math.max(...rows.map(r=>r.length));const cell=(r,c)=>String(rows[r][c]??'').trim();
+    const nat=Array(nc).fill(0),min=Array(nc).fill(0);
+    rows.forEach((r,ri)=>{d.setFont(fam,ri===0?'bold':'normal');d.setFontSize(cs);for(let c=0;c<nc;c++){const s=cell(ri,c);nat[c]=Math.max(nat[c],d.getTextWidth(s)+2*ph);min[c]=Math.max(min[c],Math.max(0,...s.split(/\s+/).map(w=>d.getTextWidth(w)))+2*ph)}});
+    const cw=E.cw();let wd;const sn=nat.reduce((a,b)=>a+b,0),sm=min.reduce((a,b)=>a+b,0);
+    if(sn<=cw)wd=nat.map(w=>w+(STU?(cw*.85-sn>0?(cw*.85-sn)/nc:0):Math.min(12,(cw-sn)/nc)));
+    else if(sm<=cw){const ex=nat.map((w,c)=>w-min[c]),se=ex.reduce((a,b)=>a+b,0)||1;wd=min.map((m,c)=>m+(cw-sm)*ex[c]/se)}
+    else wd=min.map(m=>m*cw/sm);
+    const tw=Math.min(cw,wd.reduce((a,b)=>a+b,0));
+    const lines=rows.map((r,ri)=>{d.setFont(fam,ri===0?'bold':'normal');d.setFontSize(cs);return wd.map((w,c)=>{const s=cell(ri,c);return s?d.splitTextToSize(s,Math.max(4,w-2*ph)):['']})});
+    const rh=lines.map(L=>Math.max(...L.map(x=>x.length))*lead+2*pv);
+    const capLines=tc.lines(n,String(t.cap||'').trim());
+    E.need(capLines.length*capS*1.6+rh[0]+(rh[1]||0)+16);E.space(STU?C.size*.4:6);
+    capLines.forEach((L,j)=>E.text(L,{size:capS,lead:STU?C.size*C.spacing:capS*1.25,align:tc.align,fam:tc.capFam||E.fam,after:j===capLines.length-1?3:0}));
+    const x0=()=>E.x()+(STU?0:(E.cw()-tw)/2);
+    const rule=w=>{d.setLineWidth(w);d.setDrawColor(0);d.line(x0(),E.y,x0()+tw,E.y)};
+    const drawRow=ri=>{let x=x0();lines[ri].forEach((L,c)=>{d.setFont(fam,ri===0?'bold':'normal');d.setFontSize(cs);const w=wd[c];
+      L.forEach((ln,li)=>{const yy=E.y+pv+lead*(li+.78);if(c===0)d.text(ln,x+ph,yy);else d.text(ln,x+w/2,yy,{align:'center'})});x+=w});E.y+=rh[ri]};
+    const head=()=>{rule(.8);drawRow(0);rule(.45)};
+    head();
+    for(let ri=1;ri<rows.length;ri++){const pg=d.getNumberOfPages(),col=E.col;E.need(rh[ri]);if(d.getNumberOfPages()!==pg||E.col!==col)head();drawRow(ri)}
+    rule(.8);E.y+=STU?C.size*C.spacing*.6:10};
   E.pageNums=fn=>{if(!C.pn)return;const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFont(E.fam,'normal');fn(i,n)}};
   return E;
 }
@@ -501,13 +704,25 @@ const authorsOf=()=>S.authors.filter(a=>(a.name||'').trim()||(a.aff||'').trim()|
 const kwList=()=>String(S.keywords||'').split(',').map(s=>s.trim()).filter(Boolean);
 const lastName=n=>{const A=names(String(n||''));return A[0]?A[0].last:''};
 const uniq=a=>[...new Set(a.filter(Boolean))];
-/* body text of one section, with its figures placed after the chosen paragraph */
-function sectionBody(E,std,s){
-  const C=E.C,ps=paras(s.b),figs=(s.figs||[]).filter(f=>IMG[f.id]);
+/* body of one section: paragraphs, subsections and equations, with figures and tables placed after the chosen paragraph */
+function sectionBody(E,std,s,si){
+  const C=E.C,bl=blocks(s.b),figs=(s.figs||[]).filter(f=>IMG[f.id]),tabs=(s.tables||[]).filter(t=>tblRows(t).length);
   const B={size:C.size,lead:C.size*C.spacing,align:C.align,after:C.pspace};
-  ps.forEach((p,i)=>{E.text(md(cites(std,p)),{...B,ind:(i===0&&C.noFirstInd)?0:C.ind*IN});figs.filter(f=>Number(f.after)===i+1).forEach(f=>E.figure(std,f))});
-  figs.filter(f=>!(Number(f.after)>=1&&Number(f.after)<=ps.length)).forEach(f=>E.figure(std,f));
+  const place=n=>{figs.filter(f=>Number(f.after)===n).forEach(f=>E.figure(std,f));tabs.filter(t=>Number(t.after)===n).forEach(t=>E.table(t))};
+  let pi=0,a=0,b=0,fresh=true;
+  bl.forEach(x=>{
+    if(x.k==='p'){pi++;E.text(md(cites(std,x.t)),{...B,ind:(fresh&&C.noFirstInd)?0:C.ind*IN});fresh=false;place(pi)}
+    else if(x.k==='eq'){E.equation(x.t)}
+    else{if(x.k==='h2'){a++;b=0}else b++;E.subhead(si,a||1,b,x.k,x.t);fresh=true}});
+  figs.filter(f=>!(Number(f.after)>=1&&Number(f.after)<=pi)).forEach(f=>E.figure(std,f));
+  tabs.filter(t=>!(Number(t.after)>=1&&Number(t.after)<=pi)).forEach(t=>E.table(t));
 }
+/* which Pro-only parts the paper uses */
+function proUses(){const u=new Set();
+  if(INLM.test(S.abstract||''))u.add('equations');
+  S.sections.forEach(s=>{const bl=blocks(s.b);if(bl.some(x=>x.k==='h2'||x.k==='h3'))u.add('subsections');if(bl.some(x=>x.k==='eq')||INLM.test(s.b||''))u.add('equations');if((s.tables||[]).some(t=>tblRows(t).length))u.add('tables')});
+  return[...u]}
+const usesMath=()=>INLM.test(S.abstract||'')||S.sections.some(s=>/\$/.test(s.b||'')&&(INLM.test(s.b)||blocks(s.b).some(x=>x.k==='eq')));
 
 const R={
  ieee(C,cap){const E=Engine(C,cap),k=C.k;
@@ -515,7 +730,7 @@ const R={
   E.authorBlocks(authorsOf(),{nameSize:11*k,affSize:10*k});E.space(6);E.body();
   if(S.abstract)E.text(cat({t:'Abstract',s:'bi'},{t:'—',s:'b'},md(S.abstract,'b')),{size:9*k,lead:9*k*C.spacing*.92,ind:10,align:C.align,after:3});
   if(kwList().length)E.text(cat({t:'Index Terms',s:'bi'},{t:'—'+kwList().join(', '),s:'b'}),{size:9*k,lead:9*k*C.spacing*.92,ind:10,align:C.align,after:2});
-  S.sections.forEach((s,i)=>{E.need(40*k);E.space(8*k);E.text([{t:`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`}],{size:C.size,lead:C.size*1.2,align:'center',after:3});sectionBody(E,'ieee',s)});
+  S.sections.forEach((s,i)=>{E.need(40*k);E.space(8*k);E.text([{t:`${roman(i+1)}. ${String(s.h||'').toUpperCase()}`}],{size:C.size,lead:C.size*1.2,align:'center',after:3});sectionBody(E,'ieee',s,i)});
   const L=refList('ieee');if(L.length){E.need(40*k);E.space(8*k);E.text([{t:'REFERENCES'}],{size:C.size,lead:C.size*1.2,align:'center',after:3});
     L.forEach((o,j)=>E.text(fmtRef('ieee',o.r),{size:8*k,lead:9.5*k,li:20*k,label:`[${j+1}]`,align:C.align,after:1}))}
   E.pageNums(i=>{E.d.setFontSize(9);E.d.text(String(i),E.W/2,E.H-30,{align:'center'})});
@@ -526,7 +741,7 @@ const R={
   const Hd=t=>{E.need(36*k);E.space(8*k);E.text([{t,s:'b'}],{size:C.size,lead:C.size*1.2,fam:'helvetica',align:'left',after:2})};
   if(S.abstract){Hd('ABSTRACT');E.text(md(S.abstract),{size:C.size,lead:C.size*C.spacing,align:C.align,after:2})}
   if(kwList().length){Hd('KEYWORDS');E.text([{t:kwList().join(', ')}],{size:C.size,lead:C.size*C.spacing,align:C.align,after:2})}
-  S.sections.forEach((s,i)=>{Hd(`${i+1} ${String(s.h||'').toUpperCase()}`);sectionBody(E,'acm',s)});
+  S.sections.forEach((s,i)=>{Hd(`${i+1} ${String(s.h||'').toUpperCase()}`);sectionBody(E,'acm',s,i)});
   const L=refList('acm');if(L.length){Hd('REFERENCES');L.forEach((o,j)=>E.text(fmtRef('acm',o.r),{size:7*k,lead:8.5*k,li:16*k,label:`[${j+1}]`,align:C.align,after:1}))}
   E.pageNums(i=>{E.d.setFontSize(8);E.d.text(String(i),E.W/2,E.H-30,{align:'center'})});
   return E},
@@ -540,7 +755,7 @@ const R={
   if(S.abstract)E.text(cat({t:'Abstract. ',s:'b'},md(S.abstract)),{size:9*k,lead:11*k,li:28,ri:28,align:C.align,after:6});
   if(kwList().length)E.text(cat({t:'Keywords: ',s:'b'},kwList().join(' · ')),{size:9*k,lead:11*k,li:28,ri:28,align:'left'});
   E.space(10*k);E.body();
-  S.sections.forEach((s,i)=>{E.need(44*k);E.space(14*k);E.text([{t:`${i+1}  ${s.h||''}`,s:'b'}],{size:12*k,lead:15*k,align:'left',after:5});sectionBody(E,'lncs',s)});
+  S.sections.forEach((s,i)=>{E.need(44*k);E.space(14*k);E.text([{t:`${i+1}  ${s.h||''}`,s:'b'}],{size:12*k,lead:15*k,align:'left',after:5});sectionBody(E,'lncs',s,i)});
   const L=refList('lncs');if(L.length){E.need(44*k);E.space(14*k);E.text([{t:'References',s:'b'}],{size:12*k,lead:15*k,align:'left',after:5});
     L.forEach((o,j)=>E.text(fmtRef('lncs',o.r),{size:9*k,lead:11*k,li:16*k,label:`${j+1}.`,align:C.align,after:1}))}
   E.pageNums(i=>{E.d.setFontSize(9);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
@@ -555,7 +770,7 @@ const R={
   if(S.abstract){E.text([{t:'Abstract',s:'b'}],{size:12*k,lead:15*k,align:'left',after:2});E.text(md(S.abstract),{size:11*k,lead:14*k,align:C.align,after:6})}
   if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{size:11*k,lead:14*k,align:'left',after:2});
   E.space(6);E.rule();E.space(6);E.body();
-  S.sections.forEach((s,i)=>{E.need(50*k);E.space(14*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{size:C.size,lead:C.size*1.25,align:'left',after:4});sectionBody(E,'elsevier',s)});
+  S.sections.forEach((s,i)=>{E.need(50*k);E.space(14*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{size:C.size,lead:C.size*1.25,align:'left',after:4});sectionBody(E,'elsevier',s,i)});
   const L=refList('elsevier');if(L.length){E.need(50*k);E.space(16*k);E.text([{t:'References',s:'b'}],{size:C.size,lead:C.size*1.25,align:'left',after:4});
     L.forEach((o,j)=>E.text(fmtRef('elsevier',o.r),{size:10*k,lead:12.5*k,li:22*k,label:`[${j+1}]`,align:C.align,after:2}))}
   E.pageNums(i=>{E.d.setFontSize(10);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
@@ -569,7 +784,7 @@ const R={
     if(S.abstract)E.text(md(S.abstract),{...o,align:C.align});
     if(kwList().length)E.text(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{...o,align:'left',ind:C.ind*IN})}
   E.newPage();E.body();E.text([{t:S.title||'Untitled paper',s:'b'}],{...o,align:'center'});
-  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'apa',s)});
+  S.sections.forEach((s,i)=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'apa',s,i)});
   const L=refList('apa');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('apa',x.r),{...o,align:'left',hang:C.ind*IN||36}))}
   E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text(String(i),E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
   return E},
@@ -577,7 +792,7 @@ const R={
   const au=authorsOf();
   [au.map(a=>a.name).filter(Boolean).join(', '),S.instructor,S.course,S.date].filter(Boolean).forEach(t=>E.text([{t}],{...o,align:'left'}));
   E.text([{t:S.title||'Untitled paper'}],{...o,align:'center'});E.body();
-  S.sections.forEach(s=>{if(s.h)E.text([{t:s.h,s:'b'}],{...o,align:'left',keep:3});sectionBody(E,'mla',s)});
+  S.sections.forEach((s,i)=>{if(s.h)E.text([{t:s.h,s:'b'}],{...o,align:'left',keep:3});sectionBody(E,'mla',s,i)});
   const L=refList('mla');if(L.length){E.newPage();E.text([{t:'Works Cited'}],{...o,align:'center'});L.forEach(x=>E.text(fmtRef('mla',x.r),{...o,align:'left',hang:C.ind*IN||36}))}
   const ln=au[0]?lastName(au[0].name):'';
   E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text((ln?ln+' ':'')+i,E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
@@ -588,7 +803,7 @@ const R={
   [andList(au.map(a=>a.name).filter(Boolean)),S.course,S.instructor,S.date].filter(Boolean).forEach(t=>E.text([{t}],{size:C.size,lead:C.size*1.35,align:'center'}));
   E.space(18);E.body();
   if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'center'});E.text(md(S.abstract),{...o,align:C.align,ind:C.ind*IN})}
-  S.sections.forEach(s=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'chicago',s)});
+  S.sections.forEach((s,i)=>{E.text([{t:s.h||'',s:'b'}],{...o,align:'center',keep:3});sectionBody(E,'chicago',s,i)});
   const L=refList('chicago');if(L.length){E.newPage();E.text([{t:'References',s:'b'}],{...o,align:'center',after:12});L.forEach(x=>E.text(fmtRef('chicago',x.r),{size:C.size,lead:C.size*1.2,align:'left',hang:C.ind*IN||36,after:12}))}
   E.pageNums(i=>{E.d.setFontSize(C.size);E.d.text(String(i),E.W-E.M.r,E.M.t/2+C.size/2,{align:'right'})});
   return E},
@@ -600,13 +815,13 @@ const R={
   if(S.abstract){E.text([{t:'Abstract',s:'b'}],{...o,align:'left',after:4});E.text(md(S.abstract),{...o,align:C.align,after:9})}
   if(kwList().length)E.text(cat({t:'Keywords: ',s:'b'},kwList().join(', ')),{...o,align:'left',after:9});
   E.body();
-  S.sections.forEach((s,i)=>{E.need(60*k);E.space(8*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{...o,align:'left',after:4});sectionBody(E,'harvard',s)});
+  S.sections.forEach((s,i)=>{E.need(60*k);E.space(8*k);E.text([{t:`${i+1}. ${s.h||''}`,s:'b'}],{...o,align:'left',after:4});sectionBody(E,'harvard',s,i)});
   const L=refList('harvard');if(L.length){E.need(60*k);E.space(8*k);E.text([{t:'Reference list',s:'b'}],{...o,align:'left',after:6});L.forEach(x=>E.text(fmtRef('harvard',x.r),{size:C.size,lead:C.size*1.25,align:'left',after:8}))}
   E.pageNums(i=>{E.d.setFontSize(C.size-1);E.d.text(String(i),E.W/2,E.H-E.M.b/2,{align:'center'})});
   return E}
 };
 /* build, then for 2-column layouts balance the columns on the last page (like real IEEE/ACM papers) */
-function build(){const d=buildRaw();if(needsWm())watermark(d);return d}
+function build(strip){STRIP=!!strip;NEEDMATH=!STRIP&&usesMath();try{const d=buildRaw();if(needsWm())watermark(d);return d}finally{STRIP=false}}
 function buildRaw(){
   const std=STD(S.std).id,C=cfg(std);
   const E=R[std](C,null);
@@ -657,8 +872,8 @@ function renderLists(){
     ${m>1?`<button class="mini" type="button" data-act="del" data-list="sections" data-i="${i}">Remove</button>`:''}</div>
     <label>Heading<input data-list="sections" data-i="${i}" data-k="h" value="${esc(s.h)}"></label>
     <label>Text<textarea rows="6" data-list="sections" data-i="${i}" data-k="b">${esc(s.b)}</textarea></label>
-    ${figsUI(s,i)}
-    <button class="ghost mini" type="button" data-act="addfig" data-i="${i}">+ Add figure</button></div></div>`).join('');
+    ${figsUI(s,i)}${tblsUI(s,i)}
+    <div class="tools"><button class="mini" type="button" data-act="addfig" data-i="${i}">+ Figure</button><button class="mini" type="button" data-act="addtbl" data-i="${i}">+ Table${lockTag()}</button><button class="mini" type="button" data-act="addsub" data-i="${i}">+ Subsection${lockTag()}</button><button class="mini" type="button" data-act="addeq" data-i="${i}">+ Equation${lockTag()}</button></div></div></div>`).join('');
   $('#refs').innerHTML=S.refs.length?S.refs.map((r,i)=>`<div class="card"><div class="strip" style="background:${STRIPS[(i+2)%4]}">${i+1}<i></i></div><div class="in"><div class="top"><b>Cite as [${i+1}]</b>
     <button class="mini" type="button" data-act="del" data-list="refs" data-i="${i}" aria-label="Remove reference ${i+1}">Remove</button></div>
     <label>Type<select data-list="refs" data-i="${i}" data-k="type">${Object.entries(REFTYPES).map(([k,v])=>`<option value="${k}" ${r.type===k?'selected':''}>${v}</option>`).join('')}</select></label>
@@ -672,15 +887,35 @@ function idb(){if(dbP)return dbP;dbP=new Promise(res=>{try{const r=indexedDB.ope
 async function idbPut(k,v){const d=await idb();if(!d)return false;return new Promise(r=>{try{const t=d.transaction('img','readwrite');t.objectStore('img').put(v,k);t.oncomplete=()=>r(true);t.onerror=()=>r(false)}catch(e){r(false)}})}
 async function idbGet(k){const d=await idb();if(!d)return null;return new Promise(r=>{try{const q=d.transaction('img').objectStore('img').get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})}
 async function loadImgs(){const ids=S.sections.flatMap(s=>(s.figs||[]).map(f=>f.id)).filter(id=>!IMG[id]);if(!ids.length)return false;await Promise.all(ids.map(async id=>{const v=await idbGet(id);if(v)IMG[id]=v}));return true}
-function figsUI(s,i){const f=s.figs||[];if(!f.length)return '';const np=paras(s.b).length;let n=S.sections.slice(0,i).reduce((t,x)=>t+(x.figs||[]).filter(g=>IMG[g.id]).length,0);
+function figsUI(s,i){const f=s.figs||[];if(!f.length)return '';const np=ptext(s.b).length;let n=S.sections.slice(0,i).reduce((t,x)=>t+(x.figs||[]).filter(g=>IMG[g.id]).length,0);
   return `<div class="figs">${f.map((g,j)=>{const ok=!!IMG[g.id];if(ok)n++;return `<div class="fig">${ok?`<img src="${esc(IMG[g.id])}" alt="Figure ${n} preview">`:'<img alt="Image not found on this device">'}<div class="fi"><div class="top"><span>${ok?'Figure '+n:'Image missing on this device'}</span><button class="mini" type="button" data-act="delfig" data-i="${i}" data-j="${j}">Remove</button></div>
   <label>Caption<input data-fig="${i}" data-j="${j}" data-k="cap" value="${esc(g.cap)}" placeholder="What the figure shows"></label>
   <div class="grid2"><label>Width<select data-fig="${i}" data-j="${j}" data-k="w">${[[100,'Full column'],[75,'75%'],[50,'Half']].map(([v,l])=>`<option value="${v}" ${Number(g.w)===v?'selected':''}>${l}</option>`).join('')}</select></label>
   <label>Place<select data-fig="${i}" data-j="${j}" data-k="after"><option value="0">End of section</option>${Array.from({length:np},(_,k)=>`<option value="${k+1}" ${Number(g.after)===k+1?'selected':''}>After paragraph ${k+1}</option>`).join('')}</select></label></div></div></div>`}).join('')}</div>`}
+/* ---- tables ---- */
+const lockTag=()=>SB&&!isPro()?' <em>Pro</em>':'';
+function tblsUI(s,i){const T=s.tables||[];if(!T.length)return '';const np=ptext(s.b).length;let n=S.sections.slice(0,i).reduce((t,x)=>t+(x.tables||[]).filter(g=>tblRows(g).length).length,0);
+  return `<div class="figs">${T.map((t,j)=>{const rows=t.rows&&t.rows.length?t.rows:[['']],nc=Math.max(1,...rows.map(r=>r.length));if(tblRows(t).length)n++;
+    return `<div class="tbl"><div class="top"><span>${tblRows(t).length?'Table '+n:'Empty table'} · ${rows.length} × ${nc}</span><button class="mini" type="button" data-act="deltbl" data-i="${i}" data-j="${j}">Remove</button></div>
+    <label>Caption<input data-tbl="${i}" data-j="${j}" data-k="cap" value="${esc(t.cap)}" placeholder="What the table shows"></label>
+    <div class="tscroll"><div class="tgrid" style="grid-template-columns:repeat(${nc},minmax(96px,1fr))">${rows.map((r,ri)=>Array.from({length:nc},(_,c)=>`<input class="${ri===0?'th':''}" data-tbl="${i}" data-j="${j}" data-r="${ri}" data-c="${c}" value="${esc(r[c]??'')}" aria-label="${ri===0?'Heading':'Row '+ri}, column ${c+1}" placeholder="${ri===0?'Heading':''}">`).join('')).join('')}</div></div>
+    <div class="tbtns"><button class="mini" type="button" data-act="trow" data-i="${i}" data-j="${j}">+ Row</button><button class="mini" type="button" data-act="trowx" data-i="${i}" data-j="${j}" ${rows.length>1?'':'disabled'}>− Row</button><button class="mini" type="button" data-act="tcol" data-i="${i}" data-j="${j}" ${nc<8?'':'disabled'}>+ Column</button><button class="mini" type="button" data-act="tcolx" data-i="${i}" data-j="${j}" ${nc>1?'':'disabled'}>− Column</button><button class="mini" type="button" data-act="tpaste" data-i="${i}" data-j="${j}">Paste from Excel</button></div>
+    <label>Place<select data-tbl="${i}" data-j="${j}" data-k="after"><option value="0">End of section</option>${Array.from({length:np},(_,k)=>`<option value="${k+1}" ${Number(t.after)===k+1?'selected':''}>After paragraph ${k+1}</option>`).join('')}</select></label></div>`}).join('')}</div>`}
+function parseTable(txt){const L=String(txt||'').replace(/\r/g,'').split('\n').filter(l=>l.trim());if(!L.length)return null;
+  const sep=L.some(l=>l.includes('\t'))?'\t':L.every(l=>l.includes('|'))?'|':',';
+  let rows=L.map(l=>{let c=l.split(sep).map(x=>x.trim());if(sep==='|'){if(c[0]==='')c.shift();if(c[c.length-1]==='')c.pop()}return c}).filter(r=>!(sep==='|'&&r.every(x=>/^:?-{2,}:?$/.test(x))));
+  rows=rows.slice(0,60).map(r=>r.slice(0,8));const nc=Math.max(...rows.map(r=>r.length));return rows.map(r=>Array.from({length:nc},(_,c)=>r[c]??''))}
+function insertAt(i,snippet,selFrom,selLen){const ta=document.querySelector(`textarea[data-list="sections"][data-i="${i}"]`);const s=S.sections[i];const v=s.b||'';
+  let pos=ta&&document.activeElement===ta?ta.selectionStart:v.length;if(ta&&ta.dataset.caret)pos=Number(ta.dataset.caret);pos=Math.min(pos,v.length);
+  const before=v.slice(0,pos).replace(/\s*$/,''),after=v.slice(pos).replace(/^\s*/,'');
+  const pre=before?before+'\n\n':'',post=after?'\n\n'+after:'';s.b=pre+snippet+post;
+  if(ta){ta.value=s.b;ta.focus();const st=pre.length+(selFrom||0);ta.setSelectionRange(st,st+(selLen||0))}changed()}
+function needPro(what){if(SB&&!isPro()){openUpgrade(what+' are part of Pro.');return true}return false}
+
 async function toJpeg(file){const url=URL.createObjectURL(file);try{const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url});
   const max=1600,sc=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*sc)),h=Math.max(1,Math.round(img.naturalHeight*sc));
   const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);return{src:c.toDataURL('image/jpeg',.88),w,h}}finally{URL.revokeObjectURL(url)}}
-let figTarget=0;
+let figTarget=0,pasteTarget=null;
 $('#figFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
   try{const {src,w,h}=await toJpeg(file);const id='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);IMG[id]=src;
     const kept=await idbPut(id,src);const s=S.sections[figTarget];if(!s)return;(s.figs=s.figs||[]).push({id,iw:w,ih:h,cap:'',w:100,after:0});
@@ -755,6 +990,8 @@ function setStd(id){if(S.std===id)return;if(!stdAllowed(id)){openUpgrade(`${STD(
 $('#form').addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset.fmt)return;
+  if(t.dataset.tbl!==undefined){const g=(S.sections[+t.dataset.tbl].tables||[])[+t.dataset.j];if(!g)return;
+    if(t.dataset.r!==undefined){const r=+t.dataset.r,c=+t.dataset.c;g.rows=g.rows||[];while(g.rows.length<=r)g.rows.push([]);g.rows[r][c]=t.value}else g[t.dataset.k]=t.dataset.k==='cap'?t.value:Number(t.value);changed();return}
   if(t.dataset.fig!==undefined){const g=(S.sections[+t.dataset.fig].figs||[])[+t.dataset.j];if(!g)return;g[t.dataset.k]=t.dataset.k==='cap'?t.value:Number(t.value);changed();return}
   if(t.dataset.f){S[t.dataset.f]=t.value}
   else if(t.dataset.list){const L=S[t.dataset.list],i=+t.dataset.i;L[i][t.dataset.k]=t.value;
@@ -762,12 +999,25 @@ $('#form').addEventListener('input',e=>{
   else return;
   changed();
 });
+$('#form').addEventListener('focusout',e=>{const t=e.target;if(t.tagName==='TEXTAREA'&&t.dataset.list==='sections')t.dataset.caret=t.selectionStart});
 $('#form').addEventListener('click',e=>{
   const sb=e.target.closest('[data-std]');if(sb){setStd(sb.dataset.std);return}
   const b=e.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,L=S[b.dataset.list],i=+b.dataset.i;
   if(act==='fmtreset'){const std=STD(S.std).id;if(S.fmt)delete S.fmt[std];renderFmt();changed(true);toast('Settings reset');return}
   if(act==='addfig'){figTarget=i;$('#figFile').click();return}
+  if(act==='addtbl'){if(needPro('Tables'))return;const sec=S.sections[i];(sec.tables=sec.tables||[]).push({id:'t'+Date.now().toString(36),cap:'',after:0,rows:[['Column 1','Column 2','Column 3'],['','',''],['','','']]});renderLists();changed(true);toast('Table added');return}
+  if(act==='addsub'){if(needPro('Subsections'))return;insertAt(i,'## New subsection',3,14);return}
+  if(act==='addeq'){if(needPro('Equations'))return;insertAt(i,'$$ y = mx + c $$',3,10);return}
+  if(['deltbl','trow','trowx','tcol','tcolx','tpaste'].includes(act)){const T=S.sections[i].tables||[],j=+b.dataset.j,t=T[j];if(!t)return;t.rows=t.rows&&t.rows.length?t.rows:[['']];const nc=Math.max(1,...t.rows.map(r=>r.length));
+    if(act==='deltbl'){undoState=clone(S);T.splice(j,1);renderLists();changed(true);toast('Table removed',true);return}
+    if(act==='trow')t.rows.push(Array(nc).fill(''));
+    if(act==='trowx'&&t.rows.length>1)t.rows.pop();
+    if(act==='tcol')t.rows.forEach(r=>{while(r.length<nc)r.push('');r.push('')});
+    if(act==='tcolx'&&nc>1)t.rows.forEach(r=>{r.length=Math.min(r.length,nc-1)});
+    if(act==='tpaste'){pasteTarget=[i,j];openSheet('Paste a table',`<p class="hint">Copy cells in Excel, Google Sheets or Word and paste them here. The first row becomes the heading.</p><label>Table<textarea id="tpBox" rows="8" placeholder="Sample	Value
+A	11.2"></textarea></label><button class="btn cta" type="button" data-a="tpaste">Use this table</button><p class="err" id="aMsg"></p>`);return}
+    renderLists();changed(true);return}
   if(act==='delfig'){undoState=clone(S);S.sections[i].figs.splice(+b.dataset.j,1);renderLists();changed(true);toast('Figure removed',true);return}
   if(act==='blank'){undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};all();toast('Started a blank paper',true);return}
   if(act==='add'){L.push(NEW[b.dataset.list]())}
@@ -790,19 +1040,24 @@ $('#nW').addEventListener('click',()=>tab(false));
 $('#nP').addEventListener('click',()=>tab(true));
 
 const dlP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(undefined);
-async function download(){
-  if(!(await gateDownload()))return;
-  if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
-  let blob;try{blob=build().output('blob')}catch(e){toast('Could not build the PDF.');return}
-  const name=(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'-'+STD(S.std).id+'.pdf';
+const fileBase=()=>(String(S.title||'paper').replace(/[^\w\- ]+/g,'').trim().slice(0,60).replace(/\s+/g,'-')||'paper')+'-'+STD(S.std).id;
+async function saveBlob(blob,name,kind){
   if(window.PaperBuildAndroid){try{const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(blob)});
-    const where=window.PaperBuildAndroid.savePdf(name,b64);toast(where?'PDF saved to '+where:'Could not save the PDF')}catch(e){toast('Could not save the PDF')}return}
+    const A=window.PaperBuildAndroid;const where=A.saveFile?A.saveFile(name,blob.type||'application/octet-stream',b64):(kind==='PDF'?A.savePdf(name,b64):'');
+    toast(where?kind+' saved to '+where:(A.saveFile?'Could not save the '+kind:'Update the Android app to save Word files'))}catch(e){toast('Could not save the '+kind)}return}
   const dl=await dlP;
-  if(dl){try{await dl.save({filename:name,data:blob});toast('PDF saved')}catch(e){const c=e&&e.code;toast(c==='declined'?'Download cancelled':c==='host_unavailable'?'This app can’t save files here. Open the page in a browser to download.':'Download isn’t available in this view.')}return}
+  if(dl){try{await dl.save({filename:name,data:blob});toast(kind+' saved')}catch(e){const c=e&&e.code;toast(c==='declined'?'Download cancelled':c==='host_unavailable'?'This app can’t save files here. Open the page in a browser to download.':'Download isn’t available in this view.')}return}
   if(dl===null){toast('Download isn’t available in this view.');return}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
+async function download(ev,strip){
+  if(!(await gateDownload(strip)))return;
+  if(!window.jspdf){toast('The PDF engine is still loading. Try again in a moment.');return}
+  let blob;try{blob=build(strip).output('blob')}catch(e){console.error(e);toast('Could not build the PDF.');return}
+  await saveBlob(blob,fileBase()+'.pdf','PDF');
+}
 $('#pdf').addEventListener('click',download);$('#nD').addEventListener('click',download);
+$("#wordBtn").addEventListener('click',wordExport);$('#nX').addEventListener('click',wordExport);
 
 const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
 const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -810,6 +1065,195 @@ function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme'
 $('#theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
 setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
 
+
+/* ================= Grammar & clarity ================= */
+let ISS=[],gBusy=false;
+const WORDY=[[/\bin order to\b/gi,'to'],[/\bdue to the fact that\b/gi,'because'],[/\bowing to the fact that\b/gi,'because'],[/\bin spite of the fact that\b/gi,'although'],[/\bat this point in time\b/gi,'now'],[/\bat the present time\b/gi,'now'],
+  [/\bin the event that\b/gi,'if'],[/\ba (?:large|great) number of\b/gi,'many'],[/\ba (?:small )?number of\b/gi,'some'],[/\bthe majority of\b/gi,'most'],[/\bhas the ability to\b/gi,'can'],[/\bis able to\b/gi,'can'],[/\bare able to\b/gi,'can'],
+  [/\bin close proximity to\b/gi,'near'],[/\bwith regard to\b/gi,'about'],[/\bwith respect to\b/gi,'about'],[/\bin the case of\b/gi,'for'],[/\bit is important to note that\s*/gi,''],[/\bit should be noted that\s*/gi,''],[/\bfor the purpose of\b/gi,'to'],
+  [/\bprior to\b/gi,'before'],[/\bsubsequent to\b/gi,'after'],[/\bin addition to this\b/gi,'also'],[/\bmake use of\b/gi,'use'],[/\bmakes use of\b/gi,'uses'],[/\bmade use of\b/gi,'used'],[/\bon a daily basis\b/gi,'daily'],[/\beach and every\b/gi,'every'],[/\bfirst and foremost\b/gi,'first']];
+const WEAK=/\b(very|really|quite|basically|actually|extremely|totally|literally|definitely|obviously|clearly)\b/gi;
+const INFORMAL=[[/\ba lot of\b/gi,'many'],[/\blots of\b/gi,'many'],[/\bkind of\b/gi,'somewhat'],[/\bsort of\b/gi,'somewhat'],[/\bbig\b/gi,'large'],[/\bgot\b/gi,'obtained'],[/\bthings\b/gi,'aspects']];
+const CONTR={"don't":'do not',"doesn't":'does not',"didn't":'did not',"can't":'cannot',"won't":'will not',"isn't":'is not',"aren't":'are not',"wasn't":'was not',"weren't":'were not',"it's":'it is',"that's":'that is',"there's":'there is',"we're":'we are',"they're":'they are',"couldn't":'could not',"shouldn't":'should not',"wouldn't":'would not',"haven't":'have not',"hasn't":'has not',"let's":'let us'};
+function gParts(){const P=[];if((S.title||'').trim())P.push({key:'title',name:'Title',text:S.title});if((S.abstract||'').trim())P.push({key:'abstract',name:'Abstract',text:S.abstract});
+  S.sections.forEach((s,i)=>{if((s.b||'').trim())P.push({key:'s'+i,i,name:`Section ${i+1} · ${s.h||'Untitled'}`,text:s.b})});return P}
+const gGet=key=>key==='title'?S.title||'':key==='abstract'?S.abstract||'':(S.sections[+key.slice(1)]||{}).b||'';
+function gSet(key,v){if(key==='title')S.title=v;else if(key==='abstract')S.abstract=v;else{const s=S.sections[+key.slice(1)];if(s)s.b=v}}
+/* text pieces LanguageTool should skip: maths, ## markers, **, * */
+function ltData(text){const ann=[],re=/(\$\$[\s\S]+?\$\$|\$(?=[^\s$])[^$\n]*?[^\s$]\$|^#{2,3}\s+|\*\*|\*)/gm;let last=0,m;
+  while((m=re.exec(text))){if(m.index>last)ann.push({text:text.slice(last,m.index)});const mk=m[0];ann.push(mk.startsWith('$')?{markup:mk,interpretAs:'x'}:{markup:mk});last=m.index+mk.length}
+  if(last<text.length)ann.push({text:text.slice(last)});return ann}
+function masked(text){return text.replace(/\$\$[\s\S]+?\$\$|\$(?=[^\s$])[^$\n]*?[^\s$]\$/g,m=>' '.repeat(m.length)).replace(/^#{2,3}\s+/gm,m=>' '.repeat(m.length))}
+function localIssues(p){const out=[],t=masked(p.text);const add=(off,len,msg,sug,cat)=>out.push({key:p.key,name:p.name,off,len,orig:p.text.substr(off,len),msg,sug:sug==null?[]:[sug],cat});
+  WORDY.forEach(([re,r])=>{re.lastIndex=0;let m;while((m=re.exec(t))){const rep=r&&/^[A-Z]/.test(m[0])?r[0].toUpperCase()+r.slice(1):r;add(m.index,m[0].length,r?`Wordy. “${r}” says the same thing.`:'Filler phrase. You can usually remove it.',rep,'Clarity')}});
+  WEAK.lastIndex=0;let m;while((m=WEAK.exec(t))){const end=m.index+m[0].length,sp=t[end]===' '?1:0;add(m.index,m[0].length+sp,`“${m[0]}” adds little in academic writing. Consider removing it.`,'','Clarity')}
+  INFORMAL.forEach(([re,r])=>{re.lastIndex=0;let x;while((x=re.exec(t)))add(x.index,x[0].length,`“${x[0]}” is informal. Try “${r}”, or rephrase.`,r,'Style')});
+  const cre=/\b[A-Za-z]+n't\b|\b(?:it|that|there|we|they|let)'s\b|\b(?:we|they)'re\b/gi;let c;while((c=cre.exec(t))){const lo=c[0].toLowerCase().replace('’',"'");if(CONTR[lo]){let r=CONTR[lo];if(/^[A-Z]/.test(c[0]))r=r[0].toUpperCase()+r.slice(1);add(c.index,c[0].length,'Avoid contractions in academic writing.',r,'Style')}}
+  const rep=/\b(\w+)\s+\1\b/gi;let d;while((d=rep.exec(t))){if(!/^\d+$/.test(d[1]))add(d.index,d[0].length,`“${d[1]}” is repeated.`,d[1],'Grammar')}
+  const sre=/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/g;let s;while((s=sre.exec(t))){const n=words(s[0]);if(n>40){const lead=s[0].match(/^\s*/)[0].length;add(s.index+lead,Math.min(60,s[0].trim().length),`Long sentence (${n} words). Splitting it in two usually reads more clearly.`,null,'Clarity')}}
+  const pas=/\b(?:is|are|was|were|be|been|being)\s+(?:\w+ly\s+)?(\w+ed|shown|done|made|given|taken|seen|found|written|built|chosen|known|drawn)\b/gi;let pm,np=0;while((pm=pas.exec(t))&&np<3){np++;add(pm.index,pm[0].length,'Passive voice. Fine in methods sections, but active voice is often clearer.',null,'Style')}
+  return out}
+async function ltCheck(parts,lang){const out=[];let batch=[],size=0;const SEP='\n\n';
+  const run=async B=>{if(!B.length)return;let text='',map=[];B.forEach((p,j)=>{if(j)text+=SEP;map.push({p,start:text.length});text+=p.text});
+    const ann=[];B.forEach((p,j)=>{if(j)ann.push({text:SEP});ann.push(...ltData(p.text))});
+    const body=new URLSearchParams({data:JSON.stringify({annotation:ann}),language:lang,level:'picky'});
+    const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+    if(!r.ok)throw new Error(r.status===429?'busy':'lt');const j=await r.json();
+    (j.matches||[]).forEach(m=>{const seg=[...map].reverse().find(x=>x.start<=m.offset);if(!seg||m.offset+m.length>seg.start+seg.p.text.length)return;const off=m.offset-seg.start;
+      const id=(m.rule&&m.rule.id)||'',ct=(m.rule&&m.rule.category&&m.rule.category.id)||'';if(/WHITESPACE|DOUBLE_PUNCT|UPPERCASE_SENTENCE_START|EN_QUOTES|DASH_RULE|PUNCTUATION_PARAGRAPH_END/.test(id))return;
+      out.push({key:seg.p.key,name:seg.p.name,off,len:m.length,orig:seg.p.text.substr(off,m.length),msg:m.message||m.shortMessage||'Possible problem',sug:(m.replacements||[]).slice(0,3).map(x=>x.value),cat:ct==='TYPOS'?'Spelling':ct==='STYLE'||ct==='REDUNDANCY'||ct==='PLAIN_ENGLISH'?'Style':'Grammar'})})};
+  for(const p of parts){const n=p.text.length;if(size+n>15000&&batch.length){await run(batch);batch=[];size=0}batch.push(p);size+=n}await run(batch);return out}
+async function grammarRun(){
+  if(SB){if(!USER){openAuth('Create an account to check your writing.',()=>grammarRun());return}if(!isPro()){openUpgrade('Grammar & clarity suggestions are part of Pro.');return}}
+  if(gBusy)return;gBusy=true;const btn=$('#gRun');btn.disabled=true;btn.textContent='Checking…';$('#gOut').innerHTML='<p class="hint">Reading your paper…</p>';
+  const parts=gParts(),lang=$('#gLang').value;let lt=[],ltErr='';
+  try{lt=await ltCheck(parts,lang)}catch(e){ltErr=e.message==='busy'?'The grammar server is busy. Clarity tips are below; try grammar again in a minute.':'Couldn’t reach the grammar server (no internet?). Clarity tips below were checked on your device.'}
+  let loc=[];parts.forEach(p=>{loc=loc.concat(localIssues(p))});
+  const all=lt.concat(loc.filter(a=>!lt.some(b=>b.key===a.key&&a.off<b.off+b.len&&b.off<a.off+a.len)));
+  const ord=Object.fromEntries(parts.map((p,i)=>[p.key,i]));all.sort((a,b)=>(ord[a.key]-ord[b.key])||(a.off-b.off));
+  ISS=all;gBusy=false;btn.disabled=false;btn.textContent='Check again';renderIssues(ltErr)}
+function renderIssues(note){const box=$('#gOut');const live=ISS.filter(x=>!x.done);
+  const tag=c=>`<span class="tag ${c==='Style'||c==='Clarity'?'st':c==='Spelling'?'sp':''}">${esc(c)}</span>`;
+  box.innerHTML=`${note?`<p class="note">${esc(note)}</p>`:''}<div class="gsum"><span><b>${live.length}</b> ${live.length===1?'suggestion':'suggestions'}</span>${live.length?'':'<span class="hint">Nothing to fix. Nice writing!</span>'}</div>`+
+    live.slice(0,80).map(x=>{const i=ISS.indexOf(x),t=gGet(x.key),a=Math.max(0,x.off-40),b=Math.min(t.length,x.off+x.len+40);
+      return `<div class="iss"><div class="ih"><span>${esc(x.name)}</span>${tag(x.cat)}</div><p>${esc(x.msg)}</p>
+      <p class="ctx">${a?'…':''}${esc(t.slice(a,x.off))}<mark>${esc(t.slice(x.off,x.off+x.len))||'&nbsp;'}</mark>${esc(t.slice(x.off+x.len,b))}${b<t.length?'…':''}</p>
+      <div class="sug">${x.sug.map((s,j)=>`<button class="mini fix" type="button" data-gfix="${i}" data-s="${j}">${s===''?'Remove':esc(s)}</button>`).join('')}<button class="mini" type="button" data-gign="${i}">Ignore</button></div></div>`}).join('')+
+    (live.length>80?`<p class="hint">Showing the first 80. Fix these and check again for more.</p>`:'')}
+function gApply(i,j){const x=ISS[i];if(!x||x.done)return;let t=gGet(x.key);let off=x.off;
+  if(t.substr(off,x.len)!==x.orig){const f=t.indexOf(x.orig,Math.max(0,off-200));if(f<0){x.done=true;renderIssues('That text has changed, so the suggestion was skipped.');return}off=f}
+  let rep=x.sug[j];if(rep===''&&t[off+x.len]===' '&&(off===0||t[off-1]===' '))x.len++;
+  const nt=t.slice(0,off)+rep+t.slice(off+x.len);gSet(x.key,nt);const delta=rep.length-x.len;x.done=true;
+  ISS.forEach(y=>{if(!y.done&&y.key===x.key&&y.off>off)y.off+=delta;if(!y.done&&y.key===x.key&&y.off<off+x.len&&y.off+y.len>off)y.done=true});
+  renderLists();['title','abstract'].forEach(k=>{if(x.key===k)$('#'+k).value=S[k]});changed();renderIssues();toast('Fixed')}
+$('#gRun').addEventListener('click',grammarRun);
+$('#gOut').addEventListener('click',e=>{const f=e.target.closest('[data-gfix]');if(f){gApply(+f.dataset.gfix,+f.dataset.s);return}const g=e.target.closest('[data-gign]');if(g){ISS[+g.dataset.gign].done=true;renderIssues()}});
+try{const gl=localStorage.getItem('pb-glang');if(gl)$('#gLang').value=gl;else if(/^Asia\/(Kolkata|Calcutta)$|^Europe\/London$/.test(Intl.DateTimeFormat().resolvedOptions().timeZone))$('#gLang').value='en-GB'}catch(e){}
+$('#gLang').addEventListener('change',e=>{try{localStorage.setItem('pb-glang',e.target.value)}catch(_){}});
+
+/* ================= Word (.docx) export ================= */
+function loadJs(src,test){return new Promise((res,rej)=>{if(test())return res();const s=document.createElement('script');s.src=src;s.onload=()=>test()?res():rej(new Error('load'));s.onerror=()=>rej(new Error('load'));document.head.appendChild(s)})}
+async function wordExport(){
+  if(SB){if(!USER){openAuth('Create an account to export Word files.',()=>wordExport());return}
+    if(!isPro()){openUpgrade('Word (.docx) export is part of Pro.');return}}
+  toast('Making your Word file…');
+  try{await loadJs('vendor/docx.min.js',()=>!!window.docx)}catch(e){toast('Could not load the Word engine. Check your connection.');return}
+  let blob;try{blob=await buildDocx()}catch(e){console.error(e);toast('Could not make the Word file.');return}
+  await saveBlob(blob,fileBase()+'.docx','Word file');
+}
+function omml(X,n){
+  switch(n.t){
+  case 'row':{const out=[],c=n.c;
+    for(let k=0;k<c.length;k++){const x=c[k],base=x.t==='ss'?x.b:x;
+      if(base.t==='sym'&&base.big&&(base.v==='∑'||base.v==='∫')){const rest=[];let j=k+1;while(j<c.length&&!(c[j].t==='sym'&&c[j].op==='rel'))rest.push(c[j++]);
+        const o={children:rest.flatMap(r=>omml(X,r))};if(x.t==='ss'){if(x.sub)o.subScript=omml(X,x.sub);if(x.sup)o.superScript=omml(X,x.sup)}
+        out.push(base.v==='∑'?new X.MathSum(o):new X.MathIntegral(o));k=j-1;continue}
+      out.push(...omml(X,x))}
+    return out}
+  case 'sym':return[new X.MathRun(String(n.v))];
+  case 'sp':return n.w>=1?[new X.MathRun('  ')]:[];
+  case 'frac':return[new X.MathFraction({numerator:omml(X,n.n),denominator:omml(X,n.d)})];
+  case 'sqrt':return[new X.MathRadical({children:omml(X,n.c)})];
+  case 'ss':{const b=omml(X,n.b);if(n.sup&&n.sub)return[new X.MathSubSuperScript({children:b,subScript:omml(X,n.sub),superScript:omml(X,n.sup)})];
+    if(n.sup)return[new X.MathSuperScript({children:b,superScript:omml(X,n.sup)})];return[new X.MathSubScript({children:b,subScript:omml(X,n.sub)})]}}
+  return[]}
+function b64bytes(u){const b=atob(String(u).split(',')[1]||''),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+async function buildDocx(){
+  const X=window.docx,std=STD(S.std).id,C=cfg(std),k=C.k,TW=1440,stu=['apa','mla','chicago','harvard'].includes(std);
+  const font=C.fam==='times'?'Times New Roman':'Arial',sans='Arial';
+  const pageW=C.page==='a4'?8.27:8.5,pageH=C.page==='a4'?11.69:11;
+  const colIn=(pageW-C.ml-C.mr-(C.cols===2?C.gap:0))/(C.cols===2?2:1),colTw=Math.round(colIn*TW);
+  const AL={left:X.AlignmentType.LEFT,center:X.AlignmentType.CENTER,justify:X.AlignmentType.JUSTIFIED,right:X.AlignmentType.RIGHT};
+  const hp=p=>Math.round(p*2);
+  const mrun=g=>{try{return new X.Math({children:omml(X,mparse(g.src))})}catch(e){return new X.TextRun({text:g.t,italics:true})}};
+  const runs=(segs,o={})=>segs.map(g=>g.s==='m'?(g.src!=null?mrun(g):new X.TextRun({text:g.t,italics:true,font:'Cambria Math',size:o.size?hp(o.size):undefined}))
+    :new X.TextRun({text:g.t,bold:g.s==='b'||g.s==='bi'||!!o.bold,italics:g.s==='i'||g.s==='bi'||!!o.italics,font:o.font,size:o.size?hp(o.size):undefined}));
+  const P=(segs,o={})=>{const ind={};if(o.ind)ind.firstLine=Math.round(o.ind*TW);if(o.left)ind.left=Math.round(o.left);if(o.right)ind.right=Math.round(o.right);if(o.hang){ind.hanging=Math.round(o.hang);ind.left=Math.round(o.left||o.hang)}
+    return new X.Paragraph({children:o.children||runs(segs,o),alignment:AL[o.align||C.align],keepNext:!!o.keep,keepLines:!!o.keep,pageBreakBefore:!!o.pb,tabStops:o.tabs,border:o.border,
+      spacing:{line:Math.round(240*(o.sp??C.spacing)),lineRule:X.LineRuleType.AUTO,before:Math.round((o.before||0)*20),after:Math.round((o.after??C.pspace)*20)},indent:ind})};
+  const T=(t,o={})=>P([{t,s:o.s||'n'}],o);
+  const head=[],body=[];let out=head;
+  const au=authorsOf(),names=au.map(a=>a.name).filter(Boolean),title=S.title||'Untitled paper';
+  const ruleB={bottom:{style:X.BorderStyle.SINGLE,size:6,color:'000000',space:4}};
+  const abs=S.abstract&&std!=='mla',kws=kwList().length&&std!=='mla';
+  /* ---- title block ---- */
+  if(std==='ieee'){head.push(T(title,{size:24*k,align:'center',sp:1,after:12}));au.forEach(a=>{if(a.name)head.push(T(a.name,{size:11*k,align:'center',sp:1,after:0}));if(a.aff)head.push(T(a.aff,{size:10*k,s:'i',align:'center',sp:1,after:0}));if(a.email)head.push(T(a.email,{size:10*k,align:'center',sp:1,after:8}))})}
+  else if(std==='acm'){head.push(T(title,{size:14.4*k,s:'b',font:sans,align:'center',sp:1,after:10}));au.forEach(a=>{if(a.name)head.push(T(a.name,{size:11*k,font:sans,align:'center',sp:1,after:0}));if(a.aff)head.push(T(a.aff,{size:9*k,align:'center',sp:1,after:0}));if(a.email)head.push(T(a.email,{size:9*k,align:'center',sp:1,after:8}))})}
+  else if(std==='lncs'){head.push(T(title,{size:14*k,s:'b',align:'center',sp:1,after:12}));if(names.length)head.push(T(andList(names,', ',', and ',' and '),{size:10*k,align:'center',sp:1,after:6}));
+    uniq(au.map(a=>a.aff)).forEach(a=>head.push(T(a,{size:9*k,align:'center',sp:1,after:0})));const em=au.map(a=>a.email).filter(Boolean);if(em.length)head.push(T(em.join(', '),{size:9*k,align:'center',sp:1,after:14}));
+    if(abs)head.push(P(cat({t:'Abstract. ',s:'b'},md(S.abstract)),{size:9*k,left:400,right:400,sp:1.1,after:6}));if(kws)head.push(P(cat({t:'Keywords: ',s:'b'},kwList().join(' · ')),{size:9*k,left:400,right:400,align:'left',sp:1.1,after:12}))}
+  else if(std==='elsevier'){head.push(T(title,{size:17*k,align:'center',sp:1,after:10}));if(names.length)head.push(T(names.join(', '),{size:12*k,align:'center',sp:1,after:4}));
+    uniq(au.map(a=>a.aff)).forEach(a=>head.push(T(a,{size:10*k,s:'i',align:'center',sp:1,after:0})));const em=au.map(a=>a.email).filter(Boolean);if(em.length)head.push(P(cat({t:'Email addresses: ',s:'i'},em.join(', ')),{size:9*k,align:'center',sp:1,after:6}));
+    head.push(P([],{border:ruleB,after:6,sp:1}));if(abs){head.push(T('Abstract',{s:'b',size:12*k,align:'left',sp:1.15,after:2}));head.push(P(md(S.abstract),{size:11*k,sp:1.25,after:6}))}
+    if(kws)head.push(P(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{size:11*k,align:'left',sp:1.25,after:2}));head.push(P([],{border:ruleB,after:10,sp:1}))}
+  else if(std==='apa'){head.push(P([],{after:0}),P([],{after:0}),P([],{after:0}));head.push(T(title,{s:'b',align:'center',after:C.size*C.spacing}));
+    [andList(names),uniq(au.map(a=>a.aff)).join('; '),S.course,S.instructor,S.date].filter(Boolean).forEach(t=>head.push(T(t,{align:'center',after:0})));
+    if(abs||kws){head.push(T('Abstract',{s:'b',align:'center',pb:true,after:0}));if(abs)head.push(P(md(S.abstract),{after:0}));if(kws)head.push(P(cat({t:'Keywords: ',s:'i'},kwList().join(', ')),{align:'left',ind:C.ind,after:0}))}
+    head.push(T(title,{s:'b',align:'center',pb:true,after:0}))}
+  else if(std==='mla'){[names.join(', '),S.instructor,S.course,S.date].filter(Boolean).forEach(t=>head.push(T(t,{align:'left',after:0})));head.push(T(title,{align:'center',after:0}))}
+  else if(std==='chicago'){head.push(T(title,{s:'b',align:'center',after:0}));[andList(names),S.course,S.instructor,S.date].filter(Boolean).forEach(t=>head.push(T(t,{align:'center',sp:1.35,after:0})));head.push(P([],{after:6}));
+    if(abs){head.push(T('Abstract',{s:'b',align:'center',after:0}));head.push(P(md(S.abstract),{ind:C.ind,after:0}))}}
+  else if(std==='harvard'){head.push(T(title,{size:16*k,s:'b',align:'center',sp:1.2,after:8}));[andList(names),uniq(au.map(a=>a.aff)).join('; '),S.course,S.date].filter(Boolean).forEach(t=>head.push(T(t,{align:'center',after:0})));head.push(P([],{after:6}));
+    if(abs){head.push(T('Abstract',{s:'b',align:'left',after:4}));head.push(P(md(S.abstract),{after:9}))}if(kws)head.push(P(cat({t:'Keywords: ',s:'b'},kwList().join(', ')),{align:'left',after:9}))}
+  out=C.cols===2?body:head;
+  if(std==='ieee'){if(abs)out.push(P(cat({t:'Abstract',s:'bi'},{t:'—',s:'b'},md(S.abstract,'b')),{size:9*k,ind:.14,sp:1.05,after:3}));if(kws)out.push(P(cat({t:'Index Terms',s:'bi'},{t:'—'+kwList().join(', '),s:'b'}),{size:9*k,ind:.14,sp:1.05,after:6}))}
+  if(std==='acm'){if(abs){out.push(T('ABSTRACT',{s:'b',font:sans,align:'left',sp:1.1,before:6,after:2,keep:true}));out.push(P(md(S.abstract),{after:2}))}if(kws){out.push(T('KEYWORDS',{s:'b',font:sans,align:'left',sp:1.1,before:6,after:2,keep:true}));out.push(T(kwList().join(', '),{after:2}))}}
+  /* ---- sections ---- */
+  let figN=0,tabN=0,eqN=0;
+  const capP=(segs,cp)=>P(segs,{size:cp.size?cp.size*k:C.size,align:cp.align,sp:stu?C.spacing:1.1,font:cp.fam==='helvetica'?sans:undefined,after:8});
+  const figure=f=>{const n=++figN,cp=CAP[std],cap=String(f.cap||'').trim();const maxW=colIn*96*Math.min(100,Math.max(25,Number(f.w)||100))/100,maxH=(pageH-C.mt-C.mb)*96*.6;let w=maxW,h=w*f.ih/f.iw;if(h>maxH){h=maxH;w=h*f.iw/f.ih}
+    if(cp.above){out.push(T(`Figure ${n}`,{s:'b',align:'left',keep:true,after:0}));if(cap)out.push(P(md(cap,'i'),{align:'left',keep:true,after:0}))}
+    out.push(P([],{children:[new X.ImageRun({type:'jpg',data:b64bytes(IMG[f.id]),transformation:{width:Math.round(w),height:Math.round(h)},altText:{title:'Figure '+n,description:cap||('Figure '+n),name:'fig'+n}})],align:'center',sp:1,after:cp.above?C.pspace:2,keep:!cp.above}));
+    if(!cp.above)out.push(capP(cat({t:cp.lab(n),s:cp.ls},md(cap)),cp))};
+  const table=t=>{const rows=tblRows(t);if(!rows.length)return;const n=++tabN,tc=TCAP[std],nc=Math.max(...rows.map(r=>r.length)),cs=tc.cell?tc.cell*k:C.size*.92;
+    tc.lines(n,String(t.cap||'').trim()).forEach(L=>out.push(P(L,{size:tc.size?tc.size*k:C.size,align:tc.align,font:tc.capFam==='helvetica'?sans:undefined,sp:stu?C.spacing:1.1,keep:true,after:2})));
+    const len=Array(nc).fill(1);rows.forEach(r=>{for(let c=0;c<nc;c++)len[c]=Math.max(len[c],Math.min(40,String(r[c]??'').length+3))});const tot=len.reduce((a,b)=>a+b,0);
+    const tw=Math.min(colTw,Math.round(tot*cs*11)),cw=len.map(l=>Math.max(500,Math.round(tw*l/tot)));
+    const none={style:X.BorderStyle.NONE,size:0,color:'FFFFFF'},line=s=>({style:X.BorderStyle.SINGLE,size:s,color:'000000'});
+    out.push(new X.Table({width:{size:cw.reduce((a,b)=>a+b,0),type:X.WidthType.DXA},columnWidths:cw,alignment:stu?X.AlignmentType.LEFT:X.AlignmentType.CENTER,
+      borders:{top:line(8),bottom:line(8),left:none,right:none,insideHorizontal:none,insideVertical:none},
+      rows:rows.map((r,ri)=>new X.TableRow({tableHeader:ri===0,cantSplit:true,children:Array.from({length:nc},(_,c)=>new X.TableCell({width:{size:cw[c],type:X.WidthType.DXA},
+        borders:ri===0?{bottom:line(4)}:undefined,margins:{top:40,bottom:40,left:80,right:80},
+        children:[new X.Paragraph({alignment:c===0?X.AlignmentType.LEFT:X.AlignmentType.CENTER,spacing:{line:240,before:0,after:0},children:[new X.TextRun({text:String(r[c]??''),bold:ri===0,size:hp(cs),font:tc.capFam==='helvetica'?sans:undefined})]})]}))}))}));
+    out.push(P([],{sp:1,after:stu?0:6}))};
+  const equation=src=>{const n=++eqN;let kids;try{kids=omml(X,mparse(src))}catch(e){kids=[new X.MathRun(src)]}
+    out.push(P([],{children:[new X.TextRun('\t'),new X.Math({children:kids}),new X.TextRun(`\t(${n})`)],tabs:[{type:X.TabStopType.CENTER,position:Math.round(colTw/2)},{type:X.TabStopType.RIGHT,position:colTw}],align:'left',sp:1.15,before:4,after:6}))};
+  const secHead=(i,h)=>{const hs={keep:true,align:'left',after:3,sp:stu?C.spacing:1.15,before:stu?0:10};
+    if(std==='ieee')return T(`${roman(i+1)}. ${String(h).toUpperCase()}`,{...hs,align:'center'});
+    if(std==='acm')return T(`${i+1} ${String(h).toUpperCase()}`,{...hs,s:'b',font:sans});
+    if(std==='lncs')return T(`${i+1}  ${h}`,{...hs,s:'b',size:12*k});
+    if(std==='elsevier')return T(`${i+1}. ${h}`,{...hs,s:'b'});
+    if(std==='harvard')return T(`${i+1}. ${h}`,{...hs,s:'b'});
+    return T(h,{...hs,s:'b',align:std==='mla'?'left':'center',before:0})};
+  S.sections.forEach((s,si)=>{if(s.h||std!=='mla')out.push(secHead(si,s.h||''));
+    const bl=blocks(s.b),figs=(s.figs||[]).filter(f=>IMG[f.id]&&f.iw&&f.ih),tabs=(s.tables||[]).filter(t=>tblRows(t).length);
+    const place=n=>{figs.filter(f=>Number(f.after)===n).forEach(figure);tabs.filter(t=>Number(t.after)===n).forEach(table)};
+    let pi=0,a=0,b=0,fresh=true;
+    bl.forEach(x=>{if(x.k==='p'){pi++;out.push(P(md(cites(std,x.t)),{ind:(fresh&&C.noFirstInd)?0:C.ind}));fresh=false;place(pi)}
+      else if(x.k==='eq')equation(x.t);
+      else{if(x.k==='h2'){a++;b=0}else b++;const h=SUBH[std](si,a||1,b,x.k,x.t);out.push(P(md(h.t,h.s),{size:h.size?h.size*k:C.size,align:h.align||'left',font:h.fam==='helvetica'?sans:undefined,keep:true,sp:stu?C.spacing:1.15,before:stu?0:6,after:stu?0:2}));fresh=true}});
+    figs.filter(f=>!(Number(f.after)>=1&&Number(f.after)<=pi)).forEach(figure);tabs.filter(t=>!(Number(t.after)>=1&&Number(t.after)<=pi)).forEach(table)});
+  /* ---- references ---- */
+  const L=refList(std);
+  if(L.length){const num=STD(std).cite==='num';
+    const rh={ieee:['REFERENCES',{align:'center'}],acm:['REFERENCES',{s:'b',font:sans}],lncs:['References',{s:'b',size:12*k}],elsevier:['References',{s:'b'}],apa:['References',{s:'b',align:'center',pb:true}],mla:['Works Cited',{align:'center',pb:true}],chicago:['References',{s:'b',align:'center',pb:true}],harvard:['Reference list',{s:'b'}]}[std];
+    out.push(T(rh[0],{align:'left',keep:true,before:stu?0:10,after:stu?0:4,sp:stu?C.spacing:1.15,...rh[1]}));
+    const rs={ieee:8,acm:7,lncs:9,elsevier:10}[std];
+    L.forEach((o,j)=>{const segs=fmtRef(std,o.r);
+      if(num){const lab=std==='lncs'?`${j+1}.`:`[${j+1}]`,ind=Math.round((std==='elsevier'?.32:.3)*TW);out.push(P(cat({t:lab+'\t'},segs),{size:rs*k,hang:ind,tabs:[{type:X.TabStopType.LEFT,position:ind}],sp:1.1,after:2}))}
+      else out.push(P(segs,{align:'left',hang:(C.ind||.5)*TW,sp:std==='chicago'?1:std==='harvard'?1.25:C.spacing,after:std==='chicago'||std==='harvard'?8:0}))})}
+  /* ---- page setup, page numbers ---- */
+  const page={size:{width:Math.round(pageW*TW),height:Math.round(pageH*TW)},margin:{top:Math.round(C.mt*TW),bottom:Math.round(C.mb*TW),left:Math.round(C.ml*TW),right:Math.round(C.mr*TW),header:Math.round(C.mt*TW/2),footer:Math.round(C.mb*TW/2)}};
+  const pn=ch=>[new X.TextRun({children:ch,font,size:hp(C.size)})];
+  let headers,footers;
+  if(C.pn){const ln=au[0]?lastName(au[0].name):'';
+    if(['apa','chicago','mla'].includes(std))headers={default:new X.Header({children:[new X.Paragraph({alignment:X.AlignmentType.RIGHT,children:pn(std==='mla'&&ln?[ln+' ',X.PageNumber.CURRENT]:[X.PageNumber.CURRENT])})]})};
+    else footers={default:new X.Footer({children:[new X.Paragraph({alignment:X.AlignmentType.CENTER,children:pn([X.PageNumber.CURRENT])})]})}}
+  const sections=[{properties:{page},headers,footers,children:head.length?head:[P([])]}];
+  if(C.cols===2)sections.push({properties:{page,type:X.SectionType.CONTINUOUS,column:{count:2,space:Math.round(C.gap*TW),equalWidth:true}},headers,footers,children:body.length?body:[P([])]});
+  const doc=new X.Document({creator:'Paper Build',title,description:STD(std).name,
+    styles:{default:{document:{run:{font,size:hp(C.size)},paragraph:{spacing:{line:Math.round(240*C.spacing)}}}}},sections});
+  return X.Packer.toBlob(doc)}
 
 /* ================= Accounts, Pro plan and cloud saving ================= */
 const CFG=window.PB_CONFIG||{};
@@ -819,7 +1263,8 @@ const FREE=['ieee','apa'];
 let USER=null,PROF=null,PAPERS=null,sheetAfter=null,authMode='signin',authReason='',phoneSent='',planSel='yearly',upReason='',saveT=null;
 let PAPER_ID=null;try{PAPER_ID=localStorage.getItem('pb-paper-id')}catch(e){}
 function setPaperId(id){PAPER_ID=id||null;try{id?localStorage.setItem('pb-paper-id',id):localStorage.removeItem('pb-paper-id')}catch(e){}}
-function isPro(){if(!SB)return true;return !!(PROF&&PROF.pro_until&&new Date(PROF.pro_until)>new Date())}
+const isAdmin=()=>!!(PROF&&PROF.is_admin);
+function isPro(){if(!SB)return true;return isAdmin()||!!(PROF&&PROF.pro_until&&new Date(PROF.pro_until)>new Date())}
 function stdAllowed(id){return isPro()||FREE.includes(id)}
 function needsWm(){return !!SB&&!isPro()}
 function watermark(d){const n=d.getNumberOfPages(),W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight();
@@ -880,16 +1325,21 @@ async function google(){try{
 }catch(err){const m=$('#aMsg');if(m){m.className='err';m.textContent=friendly(err)}}}
 
 /* ---- Pro / payments ---- */
+const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return ''}})();
+let CUR=(()=>{try{const c=localStorage.getItem('pb-cur');if(c==='INR'||c==='USD')return c}catch(e){}return /^Asia\/(Kolkata|Calcutta)$/.test(TZ)?'INR':'USD'})();
+const PRICE={INR:{monthly:'₹99',yearly:'₹799'},USD:{monthly:'$4.99',yearly:'$39.99'}};
+const fromPrice=()=>PRICE[CUR].monthly;
 function openUpgrade(reason){if(!SB){toast('Pro isn’t available yet.');return}if(reason!==undefined)upReason=reason;
-  const m=planSel==='monthly';
+  const m=planSel==='monthly',P=PRICE[CUR];
   openSheet('Upgrade to Pro',`${upReason?`<p class="note">${esc(upReason)}</p>`:''}
-  <ul class="feat"><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Unlimited saved papers</li><li>No “Made with Paper Build” line on your PDFs</li></ul>
+  <ul class="feat"><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, and no “Made with Paper Build” line</li></ul>
   <div class="plans" role="radiogroup" aria-label="Plan">
-    <button type="button" class="plan" role="radio" data-plan="monthly" aria-checked="${m}"><span>Monthly</span><b>₹99</b><span>per month</span></button>
-    <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>₹799</b><span>per year</span></button>
+    <button type="button" class="plan" role="radio" data-plan="monthly" aria-checked="${m}"><span>Monthly</span><b>${P.monthly}</b><span>per month</span></button>
+    <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>${P.yearly}</b><span>per year</span></button>
   </div>
-  <button class="btn cta" type="button" data-a="pay">Pay ₹${m?99:799}${USER?'':' · sign in first'}</button>
-  <p class="hint">Secure payment by Razorpay: UPI, cards or net banking. Pro doesn’t renew automatically, so you’re never charged without paying yourself.</p>
+  <button class="btn cta" type="button" data-a="pay">Pay ${m?P.monthly:P.yearly}${USER?'':' · sign in first'}</button>
+  <p class="hint">${CUR==='INR'?'Secure payment by Razorpay: UPI, cards or net banking.':'Secure card payment by Razorpay, charged in US dollars.'} Pro doesn’t renew automatically, so you’re never charged without paying yourself.
+  <button class="mini" type="button" data-a="cur" style="padding:0 6px;min-height:30px">${CUR==='INR'?'Paying from outside India?':'Paying from India? Pay in ₹'}</button></p>
   <p class="err" id="aMsg" role="status"></p>`)}
 function loadScript(src){return new Promise((res,rej)=>{if(window.Razorpay)return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Could not open the payment page. Check your connection.'));document.head.appendChild(s)})}
 async function fnErr(error){try{const j=await error.context.json();return new Error(j.error||error.message)}catch(_){return error}}
@@ -897,10 +1347,10 @@ async function pay(){
   if(!USER){openAuth('Sign in or create a free account, then you can upgrade.',()=>openUpgrade());return}
   const b=$('[data-a=pay]'),m=$('#aMsg');if(b)b.disabled=true;
   try{
-    const {data,error}=await SB.functions.invoke('create-order',{body:{plan:planSel}});
+    const {data,error}=await SB.functions.invoke('create-order',{body:{plan:planSel,currency:CUR}});
     if(error)throw await fnErr(error);if(!data||data.error)throw new Error((data&&data.error)||'Could not start the payment.');
     await loadScript('https://checkout.razorpay.com/v1/checkout.js');
-    const rz=new window.Razorpay({key:data.key_id,amount:data.amount,currency:'INR',order_id:data.order_id,name:'Paper Build',description:data.label,
+    const rz=new window.Razorpay({key:data.key_id,amount:data.amount,currency:data.currency||'INR',order_id:data.order_id,name:'Paper Build',description:data.label,
       prefill:{name:(USER.user_metadata||{}).full_name||'',email:USER.email||'',contact:USER.phone||''},theme:{color:'#f47a3c'},
       handler:async resp=>{try{const r=await SB.functions.invoke('verify-payment',{body:{order_id:resp.razorpay_order_id,payment_id:resp.razorpay_payment_id,signature:resp.razorpay_signature}});
           if(r.error)throw await fnErr(r.error);if(!r.data||r.data.error)throw new Error(r.data&&r.data.error);
@@ -911,7 +1361,11 @@ async function pay(){
     rz.open();
   }catch(e){if(m)m.textContent=friendly(e);if(b)b.disabled=false}
 }
-function proChanged(){renderAcct();renderStd();changed(true)}
+function proChanged(){renderAcct();renderStd();renderLists();renderProState();changed(true)}
+function renderProState(){const el=$('#proState'),b=$('#proBtn'),g=$('#gNow');if(!el)return;
+  if(!SB){el.hidden=true;if(b)b.hidden=true;if(g)g.textContent='';return}
+  const pro=isPro();el.hidden=!USER;el.textContent=isAdmin()?'Admin account: every Pro feature is free for you.':pro?`You’re on Pro until ${fmtDate(PROF.pro_until)}.`:'You’re on the Free plan.';
+  if(b){b.hidden=isAdmin();b.textContent=pro?'Add more Pro time':'See Pro plans · from '+fromPrice()}if(g)g.textContent=pro?'':'Pro'}
 
 /* ---- account & papers ---- */
 async function loadProfile(){if(!SB||!USER)return;const {data}=await SB.from('profiles').select('*').eq('id',USER.id).maybeSingle();PROF=data||{}}
@@ -924,8 +1378,8 @@ async function newPaper(){if(!isPro()&&(PAPERS||[]).length>=1){openUpgrade('Free
   undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};setPaperId(null);all();closeSheet();await saveNow();toast('New paper started')}
 async function openAccount(){if(!USER){openAuth();return}const pro=isPro(),meta=USER.user_metadata||{},name=meta.full_name||'';
   openSheet('Your account',`<div><b>${esc(name||USER.email||USER.phone||'')}</b>${name?`<div class="hint">${esc(USER.email||USER.phone||'')}</div>`:''}</div>
-  <p class="note">${pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free plan · IEEE and APA standards, 1 saved paper'}</p>
-  ${pro?'<button class="btn" type="button" data-a="upgrade">Add more Pro time</button>':'<button class="btn cta" type="button" data-a="upgrade">Upgrade to Pro · from ₹99</button>'}
+  <p class="note">${isAdmin()?'Admin account · every Pro feature, free, no subscription':pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free plan · IEEE and APA standards, 1 saved paper'}</p>
+  ${isAdmin()?'':pro?'<button class="btn" type="button" data-a="upgrade">Add more Pro time</button>':'<button class="btn cta" type="button" data-a="upgrade">Upgrade to Pro · from ${fromPrice()}</button>'}
   <div class="ph"><h3>My papers</h3><button class="mini" type="button" data-a="newpaper">+ New paper</button></div>
   <div class="plist" id="plist"><p class="hint">Loading…</p></div>
   <button class="btn" type="button" data-a="signout">Sign out</button>`);
@@ -949,9 +1403,9 @@ async function syncOnLogin(){try{const L=await listPapers();
   setSync('Saved on this device only · free accounts keep 1 paper online');
   toast('Your account already has a saved paper. Open it from your account, or upgrade to save more.');
 }catch(e){setSync('Saved on this device')}}
-async function afterAuth(){if(USER){await loadProfile();renderAcct();renderStd();changed(true);await syncOnLogin();fetchFigs().then(g=>{if(g){renderLists();renderPreview()}});
+async function afterAuth(){if(USER){await loadProfile();renderAcct();renderStd();renderLists();renderProState();changed(true);await syncOnLogin();fetchFigs().then(g=>{if(g){renderLists();renderPreview()}});
     const f=sheetAfter;sheetAfter=null;if(f)setTimeout(f,50)}
-  else{PROF=null;PAPERS=null;setPaperId(null);setSync('');renderAcct();renderStd();changed(true)}}
+  else{PROF=null;PAPERS=null;setPaperId(null);setSync('');renderAcct();renderStd();renderLists();renderProState();changed(true)}}
 
 /* ---- figure images in the account's storage ---- */
 function dataUrlBlob(u){const [h,b]=u.split(',');const bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:(h.match(/data:([^;]+)/)||[])[1]||'image/jpeg'})}
@@ -974,10 +1428,14 @@ $('#sheetB').addEventListener('click',async e=>{
     case 'google':google();break;
     case 'pay':pay();break;
     case 'upgrade':openUpgrade('');break;
+    case 'cur':CUR=CUR==='INR'?'USD':'INR';try{localStorage.setItem('pb-cur',CUR)}catch(e){}openUpgrade();break;
     case 'signout':await SB.auth.signOut();closeSheet();toast('Signed out');break;
     case 'open':openPaper(b.dataset.id);break;
     case 'del':if(b.dataset.sure)delPaper(b.dataset.id);else{b.dataset.sure='1';b.textContent='Tap again to delete'}break;
     case 'newpaper':newPaper();break;
+    case 'tpaste':{const rows=parseTable(($('#tpBox')||{}).value);if(!rows){$('#aMsg').textContent='Paste at least one row.';break}const [i,j]=pasteTarget||[];const t=S.sections[i]&&(S.sections[i].tables||[])[j];if(t){t.rows=rows;renderLists();changed(true)}closeSheet();toast(`Table filled: ${rows.length} rows`);break}
+    case 'wmfree':closeSheet();download(null,true);break;
+    case 'gtoggle':{const el=$('#gBand');el.open=true;el.scrollIntoView({behavior:'smooth'});closeSheet();break}
   }});
 $('#sheetB').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,v=n=>((f.elements[n]&&f.elements[n].value)||'').trim(),btn=f.querySelector('button[type=submit]'),msg=$('#aMsg');
   if(btn)btn.disabled=true;if(msg){msg.className='err';msg.textContent=''}
@@ -993,9 +1451,13 @@ $('#sheetB').addEventListener('submit',async e=>{e.preventDefault();const f=e.ta
   }catch(err){const m=$('#aMsg');if(m){m.className='err';m.textContent=friendly(err)}}
   finally{if(btn&&document.body.contains(btn))btn.disabled=false}});
 
-async function gateDownload(){if(!SB)return true;
-  if(!USER){openAuth('Create a free account to download your PDF. It takes less than a minute.',()=>download());return false}
+const PROWORDS={tables:'tables',equations:'equations',subsections:'subsections'};
+async function gateDownload(strip){if(!SB)return true;
+  if(!USER){openAuth('Create a free account to download your PDF. It takes less than a minute.',()=>download(null,strip));return false}
   if(!stdAllowed(S.std)){openUpgrade(`${STD(S.std).name} is a Pro standard. Free accounts can download IEEE and APA papers.`);return false}
+  const u=proUses();
+  if(!strip&&u.length&&!isPro()){upReason=`This paper uses ${andList(u.map(x=>PROWORDS[x]))}, which are part of Pro.`;openUpgrade();
+    const pb=$('[data-a=pay]');if(pb)pb.insertAdjacentHTML('afterend','<button class="btn" type="button" data-a="wmfree">Download PDF without them</button>');return false}
   return true}
 
 if(SB){
@@ -1004,7 +1466,7 @@ if(SB){
     if((u&&u.id)!==was)setTimeout(afterAuth,0);else renderAcct()});
 }
 renderAcct();
-const pb=$('#proBtn');if(pb){pb.hidden=!SB;pb.addEventListener('click',()=>openUpgrade(''))}
+const pb=$('#proBtn');if(pb){pb.addEventListener('click',()=>openUpgrade(''))}renderProState();
 
 const q=new URLSearchParams(location.search).get('std');if(q&&STDS.some(s=>s.id===q))S.std=q;
 let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(pvT);pvT=setTimeout(renderPreview,300)});ro.observe($('#pv'));

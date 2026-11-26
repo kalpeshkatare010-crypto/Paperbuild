@@ -1,5 +1,5 @@
-const CACHE = 'paperbuild-v2';
-const CORE = ['./', 'index.html', 'app.html', 'manifest.webmanifest',
+const CACHE = 'paperbuild-v3';
+const CORE = ['./', 'index.html', 'app.html', 'signup.html', 'manifest.webmanifest', 'assets/config.js', 'fonts/pbmath.js', 'vendor/docx.min.js', 'vendor/supabase.js',
   'assets/icon.svg', 'assets/icon-192.png', 'assets/icon-512.png',
   'fonts/LibertinusSerif-Regular.woff2', 'fonts/LibertinusSerif-Italic.woff2', 'fonts/LibertinusSerif-Semibold.woff2', 'fonts/fonts.css',
   'fonts/inter-tight-latin-400-normal.woff2', 'fonts/inter-tight-latin-500-normal.woff2', 'fonts/inter-tight-latin-600-normal.woff2',

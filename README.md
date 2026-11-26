@@ -8,7 +8,8 @@ Write a research paper once and format it for any of 8 standards, with a live pr
 | File | What it is |
 |---|---|
 | `index.html` | Landing website (standards list, how it works, pricing, app install) |
-| `app.html` | The editor: standard gallery, form bands, live PDF preview, PDF download |
+| `app.html` | The editor: standard gallery, form bands, live PDF preview, PDF and Word download, grammar check |
+| `signup.html` | Sign-up and sign-in page with the Free and Pro plans |
 | `manifest.webmanifest`, `sw.js` | Makes it an installable app (PWA) that also works offline |
 | `assets/` | Logo (Libertinus Serif small caps), app icons |
 | `fonts/` | Libertinus Serif (SIL Open Font License, see `fonts/OFL.txt`) |
@@ -20,6 +21,9 @@ Write a research paper once and format it for any of 8 standards, with a live pr
 - Page & text settings (page size, font, size, line spacing, margins, indent, alignment, columns, page numbers) start from each standard's defaults and can be changed.
 - Figures: upload images into any section; they are numbered and captioned per standard. Images are kept in the browser (IndexedDB).
 - Two-column layouts balance the columns on the last page.
+- Subsections (`## `, `### `), numbered equations (`$$ … $$`) and maths in sentences (`$x_i$`) use a small LaTeX-style reader; equations are drawn with Libertinus Serif (`fonts/pbmath.js`) in PDFs and become real Word equations in .docx files.
+- Tables with captions follow each standard's caption style. Word export uses the docx library (`vendor/docx.min.js`, MIT).
+- Grammar and spelling come from the LanguageTool public API; clarity tips (wordy phrases, long sentences, contractions) run on the device.
 - Drafts are saved in the browser's local storage. No server.
 
 ## Run locally

@@ -6,10 +6,12 @@ export const cors = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-export const PLANS: Record<string, { amount: number; days: number; label: string }> = {
-  monthly: { amount: 9900, days: 30, label: "Paper Build Pro · 1 month" },
-  yearly: { amount: 79900, days: 365, label: "Paper Build Pro · 1 year" },
+export const PLANS: Record<string, { days: number; label: string; price: Record<string, number> }> = {
+  // Amounts in the smallest unit: paise for INR, cents for USD.
+  monthly: { days: 30, label: "Paper Build Pro · 1 month", price: { INR: 9900, USD: 499 } },
+  yearly: { days: 365, label: "Paper Build Pro · 1 year", price: { INR: 79900, USD: 3999 } },
 };
+export const CURRENCIES = ["INR", "USD"];
 
 export function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
