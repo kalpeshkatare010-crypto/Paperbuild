@@ -55,8 +55,8 @@ Keep **Authentication → Providers → Email → Confirm email** switched on, s
 - Prices live in `supabase/functions/_shared/common.ts` (what is charged) and in `app.html`, `signup.html` and `index.html` (what is shown).
 
 ## How the plans work
-- **Free** (account needed to download): IEEE and APA, 1 paper saved online, small "Made with Paper Build" line on PDFs.
+- **Try / free account**: anyone can write and see the live preview in IEEE and APA, with no account. A free account also keeps 1 paper saved online. **No downloads.**
 - **Pro**: 30 or 365 days, paid once through Razorpay (no auto-renewal). All 8 standards, Word (.docx) export, tables, subsections and equations, grammar & clarity suggestions, unlimited papers, no credit line.
-- Free users can see Pro parts in the preview; when downloading, they can upgrade or download the PDF without them.
+- Downloading a PDF or Word file needs Pro (admins included automatically).
 - The 1-paper limit is enforced by the database. The other limits are checked in the app.
 - Until `assets/config.js` is filled in, the app runs without accounts and everything is unlocked.

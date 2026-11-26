@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Create your account · Paper Build</title>
-<meta name="description" content="Create a free Paper Build account to download your research paper as a PDF, save it online and upgrade to Pro.">
+<meta name="description" content="Create your Paper Build account to save your papers online and get Pro to download them as PDF and Word.">
 <meta name="theme-color" content="#f6efe1">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -76,7 +76,7 @@ input{font:16px/1.5 "Inter Tight",system-ui,sans-serif;color:var(--ink);backgrou
 </div></nav>
 <main><div class="wrap">
   <h1 id="h1">Create your account</h1>
-  <p class="lead" id="lead">Free to start. Download your paper as a PDF, keep it saved online, and upgrade to Pro whenever you need more.</p>
+  <p class="lead" id="lead">Your account keeps your paper saved online. Writing and preview are free; get Pro to download your paper as PDF or Word.</p>
   <div class="grid">
     <div class="card" id="card">
       <div class="tabs" role="tablist" aria-label="Account">
@@ -92,17 +92,17 @@ input{font:16px/1.5 "Inter Tight",system-ui,sans-serif;color:var(--ink);backgrou
         <label>Email<input name="email" type="email" autocomplete="email" inputmode="email" required></label>
         <label id="pwL">Password<span class="pw"><input name="password" type="password" autocomplete="new-password" minlength="6" required><button type="button" id="showPw" aria-label="Show password">Show</button></span></label>
         <label class="chk" id="agreeL"><input type="checkbox" name="agree" required><span>I agree to use Paper Build for my own work and to receive emails about my account.</span></label>
-        <button class="btn cta" type="submit" id="go">Create free account</button>
+        <button class="btn cta" type="submit" id="go">Create account</button>
         <p class="msg" id="m" role="status"></p>
         <div class="row"><button class="link" type="button" id="swap">I already have an account</button><button class="link" type="button" id="forgot" hidden>Forgot password?</button></div>
       </form>
       <p class="fine">We use your email only for your account: sign-in, password resets and payment receipts. <a href="privacy.html">Privacy policy</a></p>
     </div>
     <div class="plans" aria-label="Plans">
-      <div class="plan free"><div class="hd">Free<small>0</small></div>
-        <ul><li>IEEE and APA standards</li><li>Live PDF preview and PDF downloads</li><li>Figures, references and citations</li><li>Page, font, spacing and margin settings</li><li>1 paper saved to your account</li></ul></div>
+      <div class="plan free"><div class="hd">Free account<small>0</small></div>
+        <ul><li>Write in IEEE and APA style</li><li>Live preview of your pages</li><li>Figures, references and citations</li><li>1 paper saved to your account</li><li>No downloads</li></ul></div>
       <div class="plan pro"><div class="hd">Pro<small id="proPrice"></small></div>
-        <ul><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago, Harvard</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, no “Made with Paper Build” line</li></ul></div>
+        <ul><li>Download your paper as PDF</li><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago, Harvard</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, no “Made with Paper Build” line</li></ul></div>
       <p class="cur" id="curNote"></p>
     </div>
   </div>
@@ -135,7 +135,7 @@ function render(){const up=mode==='up',rs=mode==='reset';
   $('#tUp').setAttribute('aria-selected',up);$('#tIn').setAttribute('aria-selected',mode==='in');
   $('#nameL').hidden=!up;$('#agreeL').hidden=!up;$('#pwL').hidden=rs;$('#forgot').hidden=mode!=='in';
   $('#f').password.autocomplete=up?'new-password':'current-password';$('#pwL').firstChild.textContent=up?'Password (at least 6 characters)':'Password';
-  $('#go').textContent=up?'Create free account':rs?'Send reset link':'Sign in';$('#swap').textContent=up?'I already have an account':rs?'Back to sign in':'Create a new account';
+  $('#go').textContent=up?'Create account':rs?'Send reset link':'Sign in';$('#swap').textContent=up?'I already have an account':rs?'Back to sign in':'Create a new account';
   $('#h1').textContent=up?(wantPro?'Create your account, then go Pro':'Create your account'):rs?'Reset your password':'Welcome back';
   $('#google').hidden=!(SB&&CFG.google)||rs;$('#msft').hidden=!(SB&&CFG.microsoft)||rs;$('#or').hidden=$('#google').hidden&&$('#msft').hidden;msg('');document.title=(up?'Create your account':rs?'Reset password':'Sign in')+' · Paper Build'}
 $('#tUp').addEventListener('click',()=>{mode='up';render()});$('#tIn').addEventListener('click',()=>{mode='in';render()});

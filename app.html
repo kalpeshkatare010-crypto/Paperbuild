@@ -218,7 +218,7 @@ textarea{resize:vertical}
   <section class="edit" id="form">
     <div class="hero">
       <h1>Your paper</h1>
-      <p>Pick the journal standard, fill in each band, and the pages typeset themselves. The preview is exactly the PDF you download.</p>
+      <p>Pick the journal standard, fill in each band, and the pages typeset themselves. Writing and preview are free; the preview is exactly the PDF you download with Pro.</p>
       <div class="row"><span>Sample content shown.</span><button class="mini" data-act="blank" type="button">Start blank</button></div>
       <p class="hint" id="sync" role="status" style="margin-top:8px"></p>
     </div>
@@ -294,6 +294,7 @@ textarea{resize:vertical}
       <summary><sup>08</sup>Pro<span class="arr" aria-hidden="true">↓</span></summary>
       <div class="body">
         <ul>
+          <li>PDF downloads<span>Pro</span></li>
           <li>All 8 standards<span>Pro</span></li>
           <li>Word (.docx) export<span>Pro</span></li>
           <li>Tables with captions<span>Pro</span></li>
@@ -1342,8 +1343,8 @@ function emailForm(){
   return `<form id="fA" class="body" style="padding:0">${up?'<label>Full name<input name="name" autocomplete="name" required></label>':''}
     <label>Email<input name="email" type="email" autocomplete="email" required></label>
     <label>Password${up?' (at least 6 characters)':''}<input name="password" type="password" autocomplete="${up?'new-password':'current-password'}" minlength="6" required></label>
-    <button class="btn cta" type="submit">${up?'Create free account':'Sign in'}</button>
-    <div class="links">${up?'<button class="mini" type="button" data-a="go-signin">I already have an account</button>':'<button class="mini" type="button" data-a="go-signup">Create a free account</button><button class="mini" type="button" data-a="go-reset">Forgot password?</button>'}</div></form>`}
+    <button class="btn cta" type="submit">${up?'Create account':'Sign in'}</button>
+    <div class="links">${up?'<button class="mini" type="button" data-a="go-signin">I already have an account</button>':'<button class="mini" type="button" data-a="go-signup">Create an account</button><button class="mini" type="button" data-a="go-reset">Forgot password?</button>'}</div></form>`}
 function phoneForm(){return phoneSent?
   `<form id="fA" class="body" style="padding:0"><label>6-digit code sent to ${esc(phoneSent)}<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button class="btn cta" type="submit">Verify and sign in</button><button class="mini" type="button" data-a="phone-change">Use a different number</button></form>`:
   `<form id="fA" class="body" style="padding:0"><label>Mobile number<input name="phone" type="tel" autocomplete="tel" value="+91 " required></label><button class="btn cta" type="submit">Send code</button></form>`}
@@ -1379,7 +1380,7 @@ const fromPrice=()=>PRICE[CUR].monthly;
 function openUpgrade(reason){if(!SB){toast('Pro isn’t available yet.');return}if(reason!==undefined)upReason=reason;
   const m=planSel==='monthly',P=PRICE[CUR];
   openSheet('Upgrade to Pro',`${upReason?`<p class="note">${esc(upReason)}</p>`:''}
-  <ul class="feat"><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, and no “Made with Paper Build” line</li></ul>
+  <ul class="feat"><li>Download your paper as PDF and Word</li><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, and no “Made with Paper Build” line</li></ul>
   <div class="plans" role="radiogroup" aria-label="Plan">
     <button type="button" class="plan" role="radio" data-plan="monthly" aria-checked="${m}"><span>Monthly</span><b>${P.monthly}</b><span>per month</span></button>
     <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>${P.yearly}</b><span>per year</span></button>
@@ -1391,7 +1392,7 @@ function openUpgrade(reason){if(!SB){toast('Pro isn’t available yet.');return}
 function loadScript(src){return new Promise((res,rej)=>{if(window.Razorpay)return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Could not open the payment page. Check your connection.'));document.head.appendChild(s)})}
 async function fnErr(error){try{const j=await error.context.json();return new Error(j.error||error.message)}catch(_){return error}}
 async function pay(){
-  if(!USER){openAuth('Sign in or create a free account, then you can upgrade.',()=>openUpgrade());return}
+  if(!USER){openAuth('Sign in or create an account, then you can upgrade.',()=>openUpgrade());return}
   const b=$('[data-a=pay]'),m=$('#aMsg');if(b)b.disabled=true;
   try{
     const {data,error}=await SB.functions.invoke('create-order',{body:{plan:planSel,currency:CUR}});
@@ -1426,7 +1427,7 @@ async function newPaper(){if(!isPro()&&(PAPERS||[]).length>=1){openUpgrade('Free
   undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};setPaperId(null);all();closeSheet();await saveNow();toast('New paper started')}
 async function openAccount(){if(!USER){openAuth();return}const pro=isPro(),meta=USER.user_metadata||{},name=meta.full_name||'';
   openSheet('Your account',`<div><b>${esc(name||USER.email||USER.phone||'')}</b>${name?`<div class="hint">${esc(USER.email||USER.phone||'')}</div>`:''}</div>
-  <p class="note">${isAdmin()?'Admin account · every Pro feature, free, no subscription':pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free plan · IEEE and APA standards, 1 saved paper'}</p>
+  <p class="note">${isAdmin()?'Admin account · every Pro feature, free, no subscription':pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free account · write and preview. Downloads need Pro.'}</p>
   ${isAdmin()?'':pro?'<button class="btn" type="button" data-a="upgrade">Add more Pro time</button>':'<button class="btn cta" type="button" data-a="upgrade">Upgrade to Pro · from ${fromPrice()}</button>'}
   <div class="ph"><h3>My papers</h3><button class="mini" type="button" data-a="newpaper">+ New paper</button></div>
   <div class="plist" id="plist"><p class="hint">Loading…</p></div>
@@ -1483,7 +1484,6 @@ $('#sheetB').addEventListener('click',async e=>{
     case 'del':if(b.dataset.sure)delPaper(b.dataset.id);else{b.dataset.sure='1';b.textContent='Tap again to delete'}break;
     case 'newpaper':newPaper();break;
     case 'tpaste':{const rows=parseTable(($('#tpBox')||{}).value);if(!rows){$('#aMsg').textContent='Paste at least one row.';break}const [i,j]=pasteTarget||[];const t=S.sections[i]&&(S.sections[i].tables||[])[j];if(t){t.rows=rows;renderLists();changed(true)}closeSheet();toast(`Table filled: ${rows.length} rows`);break}
-    case 'wmfree':closeSheet();download(null,true);break;
     case 'gtoggle':{const el=$('#gBand');el.open=true;el.scrollIntoView({behavior:'smooth'});closeSheet();break}
   }});
 $('#sheetB').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,v=n=>((f.elements[n]&&f.elements[n].value)||'').trim(),btn=f.querySelector('button[type=submit]'),msg=$('#aMsg');
@@ -1502,11 +1502,8 @@ $('#sheetB').addEventListener('submit',async e=>{e.preventDefault();const f=e.ta
 
 const PROWORDS={tables:'tables',equations:'equations',subsections:'subsections'};
 async function gateDownload(strip){if(!SB)return true;
-  if(!USER){openAuth('Create a free account to download your PDF. It takes less than a minute.',()=>download(null,strip));return false}
-  if(!stdAllowed(S.std)){openUpgrade(`${STD(S.std).name} is a Pro standard. Free accounts can download IEEE and APA papers.`);return false}
-  const u=proUses();
-  if(!strip&&u.length&&!isPro()){upReason=`This paper uses ${andList(u.map(x=>PROWORDS[x]))}, which are part of Pro.`;openUpgrade();
-    const pb=$('[data-a=pay]');if(pb)pb.insertAdjacentHTML('afterend','<button class="btn" type="button" data-a="wmfree">Download PDF without them</button>');return false}
+  if(!USER){openAuth('Sign in or create an account to download. Downloads are part of Pro.',()=>download(null,strip));return false}
+  if(!isPro()){openUpgrade('Downloading your paper is part of Pro. You can keep writing and previewing for free.');return false}
   return true}
 
 if(SB){

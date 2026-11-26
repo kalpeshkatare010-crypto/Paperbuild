@@ -138,8 +138,8 @@ footer .wrap{display:grid;gap:10px}
   <div>
     <h1>Write your paper once. Format it for <em>any</em> journal.</h1>
     <p>Fill in simple boxes for your title, sections and references. Paper Build lays it out in IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago or Harvard style and gives you a ready PDF.</p>
-    <div class="row"><a class="btn cta" href="app.html">Start writing, it's free</a><a class="btn web-only" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Get the Android app</a></div>
-    <p class="small web-only">Free account. Works in your browser and on Android.</p>
+    <div class="row"><a class="btn cta" href="app.html">Try it free</a><a class="btn web-only" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Get the Android app</a></div>
+    <p class="small web-only">Write and preview free. Download with Pro.</p>
   </div>
   <div class="stack" aria-label="Example page layouts: IEEE, APA and Springer LNCS" role="img">
     <div class="pg a" id="thA"></div><div class="pg b" id="thB"></div><div class="pg c" id="thC"></div>
@@ -163,10 +163,10 @@ footer .wrap{display:grid;gap:10px}
 </div></section>
 
 <section id="pricing" aria-labelledby="prH"><div class="wrap">
-  <h2 id="prH">Pricing</h2><p class="lead">Start free. Upgrade when you need more standards or papers.</p>
+  <h2 id="prH">Pricing</h2><p class="lead">Try the editor free, no account needed. Go Pro to download your paper.</p>
   <div class="price">
-    <div class="plan"><h3>Free</h3><div class="p" id="pFree">₹0 · with a free account</div><ul><li>IEEE and APA standards</li><li>1 paper saved to your account</li><li>Live PDF preview and downloads</li><li>Images, references and citations</li><li>Page, font, spacing and margin settings</li><li>Small “Made with Paper Build” line on PDFs</li></ul><a class="btn" href="signup.html">Create free account</a></div>
-    <div class="plan pro"><h3>Pro</h3><div class="p" id="pPro">₹99 / month · or ₹799 / year (save 33%)</div><ul><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago, Harvard too</li><li>Word (.docx) export</li><li>Tables with captions</li><li>Subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, no “Made with Paper Build” line</li></ul><a class="btn cta" href="signup.html?plan=pro">Get Pro</a><div class="p" style="font-size:13px" id="pPay">Pay by UPI, card or net banking · no auto-renewal</div></div>
+    <div class="plan"><h3>Try</h3><div class="p" id="pFree">₹0 · no account needed</div><ul><li>Write in IEEE and APA style</li><li>Live preview of your pages</li><li>Images, references and citations</li><li>Page, font, spacing and margin settings</li><li>No downloads: upgrade to Pro to get your PDF</li></ul><a class="btn" href="app.html">Try the editor</a></div>
+    <div class="plan pro"><h3>Pro</h3><div class="p" id="pPro">₹99 / month · or ₹799 / year (save 33%)</div><ul><li>Download your paper as PDF</li><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago, Harvard too</li><li>Word (.docx) export</li><li>Tables with captions</li><li>Subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, no “Made with Paper Build” line</li></ul><a class="btn cta" href="signup.html?plan=pro">Get Pro</a><div class="p" style="font-size:13px" id="pPay">Pay by UPI, card or net banking · no auto-renewal</div></div>
   </div>
 </div></section>
 
@@ -188,7 +188,7 @@ footer .wrap{display:grid;gap:10px}
   <div class="faq">
     <details><summary>Is this accepted by journals?</summary><p>Paper Build follows the general layout of each standard. Journals and conferences often add their own rules, such as page limits or figure formats, so always read their author guidelines before you submit.</p></details>
     <details><summary>Where is my paper saved?</summary><p>On your device as you type, and in your Paper Build account when you're signed in, so you can open it on your phone or laptop. Free accounts keep 1 paper online; Pro keeps unlimited papers.</p></details>
-    <details><summary>How does Pro billing work?</summary><p id="faqBill">You pay once for a month (₹99) or a year (₹799) through Razorpay. It doesn't renew automatically; when it ends you go back to Free and keep your papers.</p></details>
+    <details><summary>How does Pro billing work?</summary><p id="faqBill">You pay once for a month (₹99) or a year (₹799) through Razorpay. It doesn't renew automatically; when it ends you can still write and preview, and your papers stay saved.</p></details>
     <details><summary>Can I switch standards after writing?</summary><p>Yes. Your text stays the same; the layout, headings, citations and reference list are rebuilt for the new standard instantly.</p></details>
     <details class="web-only"><summary>Is the APK safe to install?</summary><p>It's built automatically from this project's public source code on GitHub. Android asks for permission only because it doesn't come from the Play Store. The app asks for no special permissions.</p></details>
     <details><summary>Does it write the paper for me?</summary><p>No. Paper Build formats your own writing. Colleges treat AI-written papers as plagiarism, so the writing stays yours.</p></details>
@@ -216,8 +216,8 @@ const STDS=[
 ];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 {const tz=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return ''}})();let cur='';try{cur=localStorage.getItem('pb-cur')||''}catch(e){}
-  if(cur!=='INR'&&(cur==='USD'||!/^Asia\/(Kolkata|Calcutta)$/.test(tz))){$('#pFree').textContent='$0 · with a free account';$('#pPro').textContent='$4.99 / month · or $39.99 / year (save 33%)';$('#pPay').textContent='Pay by card · charged in US dollars · no auto-renewal';
-    $('#faqBill').textContent="You pay once for a month ($4.99) or a year ($39.99) through Razorpay. In India it's ₹99 or ₹799. It doesn't renew automatically; when it ends you go back to Free and keep your papers."}}
+  if(cur!=='INR'&&(cur==='USD'||!/^Asia\/(Kolkata|Calcutta)$/.test(tz))){$('#pFree').textContent='$0 · no account needed';$('#pPro').textContent='$4.99 / month · or $39.99 / year (save 33%)';$('#pPay').textContent='Pay by card · charged in US dollars · no auto-renewal';
+    $('#faqBill').textContent="You pay once for a month ($4.99) or a year ($39.99) through Razorpay. In India it's ₹99 or ₹799. It doesn't renew automatically; when it ends you can still write and preview, and your papers stay saved."}}
 $('#bands').innerHTML=STDS.map((s,i)=>`<a class="bandrow c${i%4}" href="app.html?std=${s.id}"><sup>${String(i+1).padStart(2,'0')}</sup><b>${esc(s.name)}<small>${esc(s.org)}</small></b><span class="u">${esc(s.use)}</span><span class="s">${esc(s.spec)}</span><span class="go" aria-hidden="true">→</span></a>`).join('');
 
 function thumb(t){const w=100,h=Math.round(w*t.r),L=[];const m=t.narrow?20:t.student?12:9,cw=w-2*m;let y=t.student?h*0.3:10;
