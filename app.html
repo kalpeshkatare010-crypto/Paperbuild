@@ -1477,6 +1477,11 @@ let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Mat
 if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.PaperBuildAndroid){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 renderStd();renderLists();renderPreview();
 loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
+/* if sign-in came back with an error (in ?query or #hash), show it instead of failing silently */
+{const q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.replace(/^#/,''));const er=q.get('error_description')||h.get('error_description')||q.get('error')||h.get('error');
+  if(er&&SB){const txt=decodeURIComponent(String(er).replace(/\+/g,' '));try{history.replaceState(null,'',location.pathname)}catch(e){}
+    setTimeout(()=>{openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: '+txt}},400)}
+  else if(q.get('code')&&SB){setTimeout(()=>{if(!USER){openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: the login link couldn’t be completed on this page. Start sign-in again from kalpeshkatare.in/Paperbuild/app.html in this same browser.'}}},4000)}}
 if(location.hash==='#signin')setTimeout(()=>openAuth(),300);else if(location.hash==='#upgrade')setTimeout(()=>openUpgrade(''),300);
 }
 </script>
