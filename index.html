@@ -6,7 +6,6 @@
 <title>Paper Build · Research papers in any journal format</title>
 <meta name="description" content="Write your research paper once and get it formatted for IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago or Harvard. Live preview and PDF download.">
 <meta name="theme-color" content="#f6efe1">
-<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script>if(window.PaperBuildAndroid)document.documentElement.classList.add("in-app");try{document.documentElement.dataset.theme=localStorage.getItem("pb-theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
@@ -139,8 +138,8 @@ footer .wrap{display:grid;gap:10px}
   <div>
     <h1>Write your paper once. Format it for <em>any</em> journal.</h1>
     <p>Fill in simple boxes for your title, sections and references. Paper Build lays it out in IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago or Harvard style and gives you a ready PDF.</p>
-    <div class="row"><a class="btn cta" href="app.html">Start writing, it's free</a><a class="btn web-only" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Get the Android app</a><button class="btn" id="install" type="button" hidden>Install web app</button></div>
-    <p class="small web-only">No sign-up. Works on phone and laptop.</p>
+    <div class="row"><a class="btn cta" href="app.html">Start writing, it's free</a><a class="btn web-only" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Get the Android app</a></div>
+    <p class="small web-only">Free account. Works in your browser and on Android.</p>
   </div>
   <div class="stack" aria-label="Example page layouts: IEEE, APA and Springer LNCS" role="img">
     <div class="pg a" id="thA"></div><div class="pg b" id="thB"></div><div class="pg c" id="thC"></div>
@@ -175,9 +174,9 @@ footer .wrap{display:grid;gap:10px}
   <div class="app">
     <div>
       <h2 id="appH">Get the Android app</h2>
-      <p class="lead" style="margin-bottom:16px">The Paper Build app works fully offline and saves your PDFs straight to your phone's Downloads folder.</p>
+      <p class="lead" style="margin-bottom:16px">Write anywhere, even offline, and save your PDFs and Word files straight to your phone's Downloads folder.</p>
       <ol><li>Tap <b>Download APK</b> below on your Android phone.</li><li>Open the downloaded file. If asked, allow your browser to <b>install unknown apps</b>.</li><li>Tap <b>Install</b>, then open Paper Build from your home screen.</li></ol>
-      <div class="row" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px"><a class="btn cta" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Download APK</a><button class="btn" id="install2" type="button" hidden>Install web app</button><a class="btn" href="app.html">Open in browser</a></div>
+      <div class="row" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px"><a class="btn cta" href="https://github.com/kalpeshkatare010-crypto/Paperbuild/releases/latest/download/PaperBuild.apk">Download APK</a><a class="btn" href="app.html">Open in browser</a></div>
       <p style="font:13px 'DM Mono',monospace;color:var(--mute);margin-top:12px">Android 7 or newer · about 3 MB · new versions install over the old one and keep your drafts.</p>
     </div>
     <div class="phone" aria-hidden="true"><div class="bar"><img src="assets/icon-192.png" alt=""><span>Paper Build</span></div><div class="pv" id="thP"></div></div>
@@ -237,11 +236,8 @@ function setTheme(t){document.documentElement.dataset.theme=t;const b=$('#theme'
 $('#theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
 setTheme(document.documentElement.dataset.theme==='dark'?'dark':'light');
 
-let deferred=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('#install').hidden=false;$('#install2').hidden=false});
-const inst=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;$('#install').hidden=true;$('#install2').hidden=true};
-$('#install').addEventListener('click',inst);$('#install2').addEventListener('click',inst);
-if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+/* no installable web app: remove any old offline copy */
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})}
 }
 
 /* motion: typeset the hero pages line by line, and reveal sections as they scroll in */

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Paper Build · Editor</title>
 <meta name="theme-color" content="#f6efe1">
-<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script>try{document.documentElement.dataset.theme=localStorage.getItem("pb-theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
@@ -1520,7 +1519,7 @@ const pb=$('#proBtn');if(pb){pb.addEventListener('click',()=>openUpgrade(''))}re
 
 const q=new URLSearchParams(location.search).get('std');if(q&&STDS.some(s=>s.id===q))S.std=q;
 let lastW=0;const ro=new ResizeObserver(()=>{const w=$('#pv').clientWidth;if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(pvT);pvT=setTimeout(renderPreview,300)});ro.observe($('#pv'));
-if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.PaperBuildAndroid){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})}
 renderStd();renderLists();renderPreview();
 loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
 /* if sign-in came back with an error (in ?query or #hash), show it instead of failing silently */
