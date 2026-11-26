@@ -1,4 +1,4 @@
-const CACHE = 'paperbuild-v6';
+const CACHE = 'paperbuild-v7';
 const CORE = ['./', 'index.html', 'app.html', 'signup.html', 'manifest.webmanifest', 'assets/config.js', 'fonts/pbmath.js', 'vendor/docx.min.js', 'vendor/supabase.js',
   'assets/icon.svg', 'assets/icon-192.png', 'assets/icon-512.png',
   'fonts/LibertinusSerif-Regular.woff2', 'fonts/LibertinusSerif-Italic.woff2', 'fonts/LibertinusSerif-Semibold.woff2', 'fonts/fonts.css',

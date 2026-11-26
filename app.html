@@ -145,6 +145,48 @@ textarea{resize:vertical}
 .toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
 .toast button{min-height:34px;background:transparent;color:inherit;border-color:currentColor}
 @media(prefers-reduced-motion:reduce){.toast,.arr{transition:none}}
+/* compact standard bar: chosen once per paper, so it stays quiet until you want to change it */
+.stdband summary{background:var(--paper2);color:var(--ink);border-left:6px solid var(--orange);border-bottom:var(--bw) solid var(--soft);padding:10px max(3vw,14px);gap:12px;align-items:center;font-size:inherit;letter-spacing:0}
+.stdband[open] summary{background:var(--bg)}
+.sthumb{width:34px;height:44px;flex:none;border-radius:3px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.18);background:#fff;line-height:0}.sthumb svg{width:100%;height:100%}
+.stxt{display:grid;min-width:0;gap:1px}
+.stxt small{font:11px "DM Mono",monospace;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.stxt b{font:400 21px/1.15 "Libertinus Serif",Georgia,serif}
+.stxt em{font:12px "DM Mono",monospace;font-style:normal;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chg{margin-left:auto;flex:none;font:500 14px "Inter Tight",sans-serif;border:var(--bw) solid var(--soft);border-radius:999px;padding:6px 14px;background:var(--field)}
+.chg .c2,.stdband[open] .chg .c1{display:none}.stdband[open] .chg .c2{display:inline}
+.stdband .body{background:var(--bg)}
+
+/* ---- motion: quick and subtle, and off when the phone asks for reduced motion ---- */
+@media(prefers-reduced-motion:no-preference){
+  :root{interpolate-size:allow-keywords}
+  details.band::details-content{height:0;overflow:clip;transition:height .32s cubic-bezier(.2,.7,.2,1),content-visibility .32s allow-discrete}
+  details.band[open]::details-content{height:auto}
+  details.band[open]>.body{animation:bodyIn .38s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes bodyIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  summary{transition:filter .15s}summary:hover{filter:brightness(1.03)}
+  button,.btn,.std,.plan{transition:transform .12s ease,box-shadow .2s ease,background-color .2s ease,border-color .2s ease}
+  button:not(:disabled):active,.btn:active{transform:scale(.97)}
+  .std:hover{transform:translateY(-2px)}
+  .std[aria-checked=true]{animation:pick .35s ease}
+  @keyframes pick{40%{transform:scale(1.03)}}
+  .sheetwrap:not([hidden]) .sheetbg{animation:fadeIn .2s ease both}
+  .sheetwrap:not([hidden]) .panel{animation:sheetUp .32s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes fadeIn{from{opacity:0}}
+  @keyframes sheetUp{from{opacity:0;transform:translateY(28px) scale(.98)}}
+  .frame canvas.pin{animation:pageIn .5s cubic-bezier(.2,.7,.2,1) both}
+  .frame canvas.pin:nth-child(2){animation-delay:.06s}.frame canvas.pin:nth-child(3){animation-delay:.12s}.frame canvas.pin:nth-child(n+4){animation-delay:.18s}
+  @keyframes pageIn{from{opacity:0;transform:translateY(10px)}}
+  .frame.upd{animation:pulse .45s ease}
+  @keyframes pulse{0%{opacity:.82}100%{opacity:1}}
+  .new{animation:cardIn .4s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.985)}}
+  .hero h1{animation:heroIn .6s cubic-bezier(.2,.7,.2,1) both}.hero p,.hero .row{animation:heroIn .6s .08s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes heroIn{from{opacity:0;transform:translateY(12px)}}
+  .iss{animation:cardIn .3s ease both}
+  .sthumb{transition:transform .25s ease}.stdband summary:hover .sthumb{transform:rotate(-3deg) scale(1.05)}
+}
+
 @media(max-width:900px){
   main{display:block}
   header .cta,header select{display:none}
@@ -181,8 +223,8 @@ textarea{resize:vertical}
       <div class="row"><span>Sample content shown.</span><button class="mini" data-act="blank" type="button">Start blank</button></div>
       <p class="hint" id="sync" role="status" style="margin-top:8px"></p>
     </div>
-    <details class="band b0" open>
-      <summary><sup>01</sup>Standard<span class="now" id="stdNow"></span><span class="arr" aria-hidden="true">↓</span></summary>
+    <details class="band b0 stdband" id="stdBand">
+      <summary><span class="sthumb" id="stdThumb" aria-hidden="true"></span><span class="stxt"><small>Standard</small><b id="stdNow"></b><em id="stdSpec"></em></span><span class="chg" aria-hidden="true"><span class="c1">Change</span><span class="c2">Done</span></span></summary>
       <div class="body">
         <div class="gal" id="gal" role="radiogroup" aria-label="Paper standard"></div>
         <div class="galnav"><button class="mini" id="gPrev" type="button" aria-label="Previous standards">←</button><button class="mini" id="gNext" type="button" aria-label="Next standards">→</button></div>
@@ -850,7 +892,7 @@ function renderStd(){
   const cur=STD(S.std);
   $('#gal').innerHTML=STDS.map(s=>`<button type="button" class="std" role="radio" aria-checked="${s.id===cur.id}" data-std="${s.id}">${stdAllowed(s.id)?'':'<em class="lock">Pro</em>'}<div class="th">${thumb(s.thumb)}</div><b>${esc(s.name)}</b><span>${esc(s.use)}</span><small>${esc(s.spec)}</small></button>`).join('');
   $('#stdSel').innerHTML=STDS.map(s=>`<option value="${s.id}" ${s.id===cur.id?'selected':''}>${esc(s.name)}</option>`).join('');
-  $('#stdNow').textContent=cur.name;$('#stdNote').textContent=cur.note;$('#pvName').textContent=cur.name+' · '+cur.org;
+  $('#stdNow').textContent=cur.name;$('#stdSpec').textContent=cur.spec;$('#stdThumb').innerHTML=thumb(cur.thumb);$('#stdNote').textContent=cur.note;$('#pvName').textContent=cur.name+' · '+cur.org;
   $('#student').hidden=!['apa','mla','chicago','harvard'].includes(cur.id);
   $('#absNote').hidden=cur.id!=='mla';
   renderFmt();
@@ -980,12 +1022,15 @@ async function renderPreview(){
     for(let p=1;p<=doc.numPages;p++){const page=await doc.getPage(p);if(tok!==pvTok)return;const vp0=page.getViewport({scale:1}),sc=wpx/vp0.width*dpr,vp=page.getViewport({scale:sc});
       const c=document.createElement('canvas');c.width=Math.floor(vp.width);c.height=Math.floor(vp.height);c.setAttribute('aria-label',`Page ${p}`);c.setAttribute('role','img');
       await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;if(tok!==pvTok)return;canv.push(c)}
+    if(PIN)canv.forEach(c=>c.classList.add('pin'));else{box.classList.remove('upd');void box.offsetWidth;box.classList.add('upd')}PIN=false;
     box.replaceChildren(...canv);doc.destroy();
   }catch(e){if(tok===pvTok)$('#pv').innerHTML='<div class="msg">Preview unavailable here, but Download PDF still works.</div>'}
 }
 function changed(fast){S._ts=Date.now();save();if(typeof queueSave==='function'&&USER)queueSave();clearTimeout(pvT);pvT=setTimeout(renderPreview,fast?0:450)}
 function all(){renderStd();renderLists();save();changed(true)}
-function setStd(id){if(S.std===id)return;if(!stdAllowed(id)){openUpgrade(`${STD(id).name} is part of Pro. Free accounts can use IEEE and APA.`);return}S.std=id;renderStd();S.refs.forEach((r,i)=>{const el=$('#rf'+i);if(el)el.innerHTML=refPreview(r)});save();changed(true);toast(STD(id).name+' selected')}
+const closeStdSoon=()=>{try{localStorage.setItem('pb-std-seen','1')}catch(e){}setTimeout(()=>{const b=$('#stdBand');if(b&&b.open){b.open=false;b.scrollIntoView({block:'nearest',behavior:'smooth'})}},450)};
+let PIN=true;
+function setStd(id){if(S.std===id){closeStdSoon();return}if(!stdAllowed(id)){openUpgrade(`${STD(id).name} is part of Pro. Free accounts can use IEEE and APA.`);return}S.std=id;renderStd();S.refs.forEach((r,i)=>{const el=$('#rf'+i);if(el)el.innerHTML=refPreview(r)});save();PIN=true;changed(true);closeStdSoon();toast(STD(id).name+' selected')}
 
 $('#form').addEventListener('input',e=>{
   const t=e.target;
@@ -1006,7 +1051,7 @@ $('#form').addEventListener('click',e=>{
   const act=b.dataset.act,L=S[b.dataset.list],i=+b.dataset.i;
   if(act==='fmtreset'){const std=STD(S.std).id;if(S.fmt)delete S.fmt[std];renderFmt();changed(true);toast('Settings reset');return}
   if(act==='addfig'){figTarget=i;$('#figFile').click();return}
-  if(act==='addtbl'){if(needPro('Tables'))return;const sec=S.sections[i];(sec.tables=sec.tables||[]).push({id:'t'+Date.now().toString(36),cap:'',after:0,rows:[['Column 1','Column 2','Column 3'],['','',''],['','','']]});renderLists();changed(true);toast('Table added');return}
+  if(act==='addtbl'){if(needPro('Tables'))return;const sec=S.sections[i];(sec.tables=sec.tables||[]).push({id:'t'+Date.now().toString(36),cap:'',after:0,rows:[['Column 1','Column 2','Column 3'],['','',''],['','','']]});renderLists();const tb=[...document.querySelectorAll('.tbl')].filter(x=>x.querySelector(`[data-tbl="${i}"]`)).pop();if(tb){tb.classList.add('new');tb.scrollIntoView({block:'nearest',behavior:'smooth'})}changed(true);toast('Table added');return}
   if(act==='addsub'){if(needPro('Subsections'))return;insertAt(i,'## New subsection',3,14);return}
   if(act==='addeq'){if(needPro('Equations'))return;insertAt(i,'$$ y = mx + c $$',3,10);return}
   if(['deltbl','trow','trowx','tcol','tcolx','tpaste'].includes(act)){const T=S.sections[i].tables||[],j=+b.dataset.j,t=T[j];if(!t)return;t.rows=t.rows&&t.rows.length?t.rows:[['']];const nc=Math.max(1,...t.rows.map(r=>r.length));
@@ -1019,13 +1064,13 @@ $('#form').addEventListener('click',e=>{
 A	11.2"></textarea></label><button class="btn cta" type="button" data-a="tpaste">Use this table</button><p class="err" id="aMsg"></p>`);return}
     renderLists();changed(true);return}
   if(act==='delfig'){undoState=clone(S);S.sections[i].figs.splice(+b.dataset.j,1);renderLists();changed(true);toast('Figure removed',true);return}
-  if(act==='blank'){undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};all();toast('Started a blank paper',true);return}
+  if(act==='blank'){undoState=clone(S);const std=S.std,fm=S.fmt;S=clone(BLANK);S.std=std;S.fmt=fm||{};PIN=true;all();const sb=$('#stdBand');if(sb)sb.open=true;toast('Started a blank paper. Pick your standard first.',true);return}
   if(act==='add'){L.push(NEW[b.dataset.list]())}
   else if(act==='del'){undoState=clone(S);L.splice(i,1);all();toast('Removed',true);return}
   else if(act==='up'&&i>0){[L[i-1],L[i]]=[L[i],L[i-1]]}
   else if(act==='down'&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]]}
   renderLists();changed(true);
-  if(act==='add'){const box=$('#'+b.dataset.list);const f=box.lastElementChild&&box.lastElementChild.querySelector('input,textarea');if(f)f.focus()}
+  if(act==='add'){const box=$('#'+b.dataset.list);if(box.lastElementChild)box.lastElementChild.classList.add('new');const f=box.lastElementChild&&box.lastElementChild.querySelector('input,textarea');if(f)f.focus({preventScroll:false})}
 });
 $('#gal').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const k=STDS.findIndex(s=>s.id===S.std)+(e.key==='ArrowRight'?1:-1);const s=STDS[(k+STDS.length)%STDS.length];setStd(s.id);const el=$(`[data-std="${s.id}"]`);el.focus();el.scrollIntoView({block:'nearest',inline:'nearest'});e.preventDefault()});
 $('#gPrev').addEventListener('click',()=>$('#gal').scrollBy({left:-$('#gal').clientWidth*.8,behavior:'smooth'}));
@@ -1364,7 +1409,8 @@ async function pay(){
     rz.open();
   }catch(e){if(m)m.textContent=friendly(e);if(b)b.disabled=false}
 }
-function proChanged(){renderAcct();renderStd();renderLists();renderProState();changed(true)}
+function proChanged(){renderAcct();renderStd();renderLists();renderProState();
+try{if(!localStorage.getItem('pb-std-seen'))$('#stdBand').open=true}catch(e){}changed(true)}
 function renderProState(){const el=$('#proState'),b=$('#proBtn'),g=$('#gNow');if(!el)return;
   if(!SB){el.hidden=true;if(b)b.hidden=true;if(g)g.textContent='';return}
   const pro=isPro();el.hidden=!USER;el.textContent=isAdmin()?'Admin account: every Pro feature is free for you.':pro?`You’re on Pro until ${fmtDate(PROF.pro_until)}.`:'You’re on the Free plan.';

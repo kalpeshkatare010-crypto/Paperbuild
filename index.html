@@ -99,6 +99,29 @@ section{padding:clamp(40px,6vw,80px) 0}
 footer{border-top:var(--bw) solid var(--soft);padding:28px 0 40px;font-size:14px;color:var(--mute)}
 footer .wrap{display:grid;gap:10px}
 @media(prefers-reduced-motion:reduce){.pg,.go{transition:none}}
+/* ---- motion: off when the device asks for reduced motion ---- */
+@media(prefers-reduced-motion:no-preference){
+  .hero h1{animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero p{animation:up .7s .1s cubic-bezier(.2,.7,.2,1) both}
+  .hero .row,.hero .small{animation:up .7s .18s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes up{from{opacity:0;transform:translateY(16px)}}
+  .pg{animation:deal .9s cubic-bezier(.2,.8,.2,1) both}
+  .pg.a{animation-delay:.25s}.pg.b{animation-delay:.4s}.pg.c{animation-delay:.55s}
+  @keyframes deal{from{opacity:0;translate:0 40px;scale:.92}}
+  .pg.b{animation:deal .9s .4s cubic-bezier(.2,.8,.2,1) both,float 6s 1.6s ease-in-out infinite}
+  @keyframes float{50%{translate:0 -6px}}
+  .pg svg rect.ln{transform-box:fill-box;transform-origin:left center;animation:type .5s cubic-bezier(.3,.7,.3,1) both}
+  @keyframes type{from{transform:scaleX(0)}}
+  .tag{animation:pop .45s cubic-bezier(.3,1.5,.5,1) both}
+  .tag.t1{animation-delay:1.2s}.tag.t2{animation-delay:1.35s}.tag.t3{animation-delay:1.5s}
+  @keyframes pop{from{opacity:0;scale:.6}}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .btn{transition:transform .12s ease,background-color .2s,border-color .2s}.btn:active{transform:scale(.97)}
+  .plan{transition:transform .25s ease,box-shadow .25s ease}.plan:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.08)}
+  .step{transition:transform .25s ease}.step:hover{transform:translateY(-3px)}
+}
+
 @media(max-width:900px){.hero .wrap,.app{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:minmax(0,1fr)}.bandrow{grid-template-columns:36px minmax(0,1fr) auto}.bandrow .u,.bandrow .s{grid-column:2/3}.bandrow .go{grid-row:1;grid-column:3}.links .hide{display:none}}
 @media(max-width:600px){.price{grid-template-columns:minmax(0,1fr)}.links{display:none}nav.top .wrap{flex-wrap:nowrap;gap:8px}nav.top .logo svg{height:19px}nav.top .cta{padding:0 12px;font-size:15px}nav.top .theme{margin-left:auto}.stack{aspect-ratio:1/1.05}.pg{width:46%}.pg.a{left:3%}.pg.c{left:51%}}
 </style>
@@ -219,6 +242,16 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;
 const inst=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;$('#install').hidden=true;$('#install2').hidden=true};
 $('#install').addEventListener('click',inst);$('#install2').addEventListener('click',inst);
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+}
+
+/* motion: typeset the hero pages line by line, and reveal sections as they scroll in */
+if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
+  ['#thA','#thB','#thC'].forEach((id,k)=>{const el=document.querySelector(id);if(!el)return;const rs=[...el.querySelectorAll('svg rect')].slice(1);
+    rs.forEach((r,i)=>{r.classList.add('ln');r.style.animationDelay=(0.75+k*.15+i*.018).toFixed(3)+'s'})});
+  const els=document.querySelectorAll('section h2,section .lead,.bandrow,.step,.plan,.app,.faq');
+  els.forEach(e=>e.classList.add('rv'));
+  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const t=en.target;const sib=[...t.parentElement.children].filter(x=>x.classList.contains('rv'));t.style.transitionDelay=Math.min(.3,Math.max(0,sib.indexOf(t))*.07)+'s';t.classList.add('in');io.unobserve(t)}}),{rootMargin:'0px 0px -8% 0px'});els.forEach(e=>io.observe(e))}
+  else els.forEach(e=>e.classList.add('in'));
 }
 </script>
 </body>
