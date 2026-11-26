@@ -53,8 +53,8 @@ jobs:
           [ -n "$RAZORPAY_KEY_ID" ] && args="$args RAZORPAY_KEY_ID=$RAZORPAY_KEY_ID"
           [ -n "$RAZORPAY_KEY_SECRET" ] && args="$args RAZORPAY_KEY_SECRET=$RAZORPAY_KEY_SECRET"
           [ -n "$RAZORPAY_WEBHOOK_SECRET" ] && args="$args RAZORPAY_WEBHOOK_SECRET=$RAZORPAY_WEBHOOK_SECRET"
-          if [ -n "$args" ]; then supabase secrets set --project-ref "$PROJECT_REF" $args; else echo "No Razorpay keys yet"; fi
+          if [ -n "$args" ]; then supabase secrets set --project-ref "$PROJECT_REF" $args --yes || supabase secrets set --project-ref "$PROJECT_REF" $args; else echo "No Razorpay keys yet"; fi
 
       - name: Deploy functions
         if: steps.check.outputs.ready == 'true'
-        run: supabase functions deploy --project-ref "$PROJECT_REF"
+        run: supabase functions deploy --project-ref "$PROJECT_REF" --yes
