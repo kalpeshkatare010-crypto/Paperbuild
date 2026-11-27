@@ -144,6 +144,24 @@ textarea{resize:vertical}
 .toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
 .toast button{min-height:34px;background:transparent;color:inherit;border-color:currentColor}
 @media(prefers-reduced-motion:reduce){.toast,.arr{transition:none}}
+/* ---- full-screen Go Pro promo (first open, then every 2nd visit; closes only with the X) ---- */
+.promo{position:fixed;inset:0;z-index:40;background:linear-gradient(180deg,#fde3cc 0%,#f6efe1 55%);color:#2a2620;overflow:auto;display:grid;place-items:center;padding:20px}
+:root[data-theme=dark] .promo{background:linear-gradient(180deg,#4a3324 0%,#25221c 60%);color:#efe8d8}
+.promo .px{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;width:48px;height:48px;min-height:0;padding:0;border-radius:50%;font-size:20px;background:var(--field);border:var(--bw) solid var(--soft);color:var(--ink);z-index:2}
+.promo .pc{width:min(440px,100%);display:grid;gap:14px;justify-items:center;text-align:center;padding:30px 0 10px}
+.promo .pm{width:min(230px,62vw)}
+.promo .kick{font:500 12px "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;background:var(--orange);color:#2a1004;border-radius:999px;padding:5px 12px}
+.promo h2{margin:0;font:400 clamp(36px,10vw,52px)/1.02 "Libertinus Serif",Georgia,serif;letter-spacing:-.01em}
+.promo h2 em{color:var(--orange)}
+.promo p{margin:0;font-size:17px;opacity:.85;max-width:34ch}
+.promo ul{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:8px;text-align:left;width:100%}
+.promo li{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:9px 12px;font-size:15px}
+:root[data-theme=dark] .promo li{background:rgba(255,255,255,.06)}
+.promo li b{font:600 13px "DM Mono",monospace;color:var(--orange);min-width:20px}
+.promo .btn{width:100%;min-height:54px;font-size:17px}
+.promo .fine{font:12px "DM Mono",monospace;opacity:.7}
+@media(prefers-reduced-motion:no-preference){.promo:not([hidden]){animation:promoIn .45s cubic-bezier(.2,.8,.2,1) both}@keyframes promoIn{from{opacity:0;transform:scale(1.03)}}.promo:not([hidden]) .pc>*{animation:up .5s cubic-bezier(.2,.8,.2,1) both}.promo .pc>*:nth-child(2){animation-delay:.05s}.promo .pc>*:nth-child(3){animation-delay:.1s}.promo .pc>*:nth-child(4){animation-delay:.15s}.promo .pc>*:nth-child(5){animation-delay:.2s}.promo .pc>*:nth-child(6){animation-delay:.25s}@keyframes up{from{opacity:0;transform:translateY(14px)}}}
+
 /* ---- Pia, the mascot: nudge bar, Pro screen, success and failure ---- */
 .mascot{display:block;width:100%;height:auto;overflow:visible}
 .mascot *{transform-box:view-box}
@@ -367,6 +385,18 @@ textarea{resize:vertical}
 <div class="sheetwrap" id="sheet" hidden><div class="sheetbg" data-close></div>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetT"><div class="ph"><h2 id="sheetT"></h2><button class="mini" type="button" data-close aria-label="Close">✕</button></div><div id="sheetB" class="sb"></div></div></div>
 <input type="file" id="figFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+<div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promoT" hidden>
+  <button class="px" id="promoX" type="button" aria-label="Close">✕</button>
+  <div class="pc">
+    <div class="pm" id="promoM"></div>
+    <span class="kick">Paper Build Pro</span>
+    <h2 id="promoT">Submit your paper <em>like a pro.</em></h2>
+    <p>Stop fighting with margins and citations. Get a journal-ready paper you can download in seconds.</p>
+    <ul><li><b>01</b>Download as PDF and Word</li><li><b>02</b>All 8 standards: IEEE, ACM, Springer, Elsevier, APA, MLA, Chicago, Harvard</li><li><b>03</b>Tables, numbered equations and subsections</li><li><b>04</b>Grammar &amp; clarity check before you submit</li></ul>
+    <button class="btn cta" id="promoGo" type="button">Go Pro · from <span id="promoP"></span>/month</button>
+    <span class="fine">One-time payment · no auto-renewal</span>
+  </div>
+</div>
 <div class="nudge" id="nudge" role="dialog" aria-label="Upgrade to Pro" hidden><div class="nm" id="nudgeM"></div><div class="nt"><b id="nudgeQ"></b><span id="nudgeS"></span></div><div class="na"><button class="btn cta" id="nudgeGo" type="button">See Pro</button><button class="mini" id="nudgeX" type="button">Not now</button></div></div>
 <div class="toast" id="toast" role="status"><span class="ti" id="tIcon" hidden></span><span id="tMsg"></span><button id="tUndo" type="button" hidden>Undo</button></div>
 
@@ -1604,6 +1634,21 @@ loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
   if(er&&SB){const txt=decodeURIComponent(String(er).replace(/\+/g,' '));try{history.replaceState(null,'',location.pathname)}catch(e){}
     setTimeout(()=>{openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: '+txt}},400)}
   else if(q.get('code')&&SB){setTimeout(()=>{if(!USER){openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: the login link couldn’t be completed on this page. Start sign-in again from kalpeshkatare.in/Paperbuild/app.html in this same browser.'}}},4000)}}
+
+/* ---- Go Pro promo: first open, then every 2nd visit, only for people without Pro ---- */
+function promoVisit(){let n=0;try{n=Number(localStorage.getItem('pb-visits')||0)+1;localStorage.setItem('pb-visits',String(n))}catch(e){n=1}return n}
+function promoDue(n){return n===1||n%2===0}
+function showPromo(){if(!SB||isPro()||!$('#sheet').hidden||!$('#promo').hidden)return;
+  const q=new URLSearchParams(location.search);if(q.get('code')||q.get('pb_paid')||q.get('error'))return;
+  $('#promoM').innerHTML=window.mascot?mascot('cheer','Pia cheering'):'';$('#promoP').textContent=fromPrice();
+  hideNudge();$('#promo').hidden=false;document.body.style.overflow='hidden';setTimeout(()=>$('#promoX').focus(),60)}
+function hidePromo(){$('#promo').hidden=true;if($('#sheet').hidden)document.body.style.overflow=''}
+$('#promoX').addEventListener('click',hidePromo);
+$('#promoGo').addEventListener('click',()=>{hidePromo();openUpgrade('','Submit your paper like a pro?','point')});
+$('#promo').addEventListener('keydown',e=>{if(e.key!=='Tab')return;const f=[$('#promoX'),$('#promoGo')];const i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?f.length-1:1))%f.length].focus()});
+{const n=promoVisit();if(promoDue(n))setTimeout(()=>{if(!USER||PROF)showPromo();else setTimeout(showPromo,1800)},2200)}
+let LEFT_AT=0;document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){LEFT_AT=Date.now();return}
+  if(LEFT_AT&&Date.now()-LEFT_AT>60000){LEFT_AT=0;const n=promoVisit();if(promoDue(n))setTimeout(showPromo,700)}});
 /* back from paying in the browser (Android app): wait for Pro to switch on */
 let PAYCHK=false;
 async function afterPayReturn(){if(PAYCHK)return;PAYCHK=true;try{await afterPayReturn0()}finally{PAYCHK=false}}
