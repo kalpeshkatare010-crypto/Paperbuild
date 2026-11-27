@@ -7,5 +7,6 @@ window.PB_CONFIG = {
   siteUrl: 'https://kalpeshkatare.in/Paperbuild/app.html', // where email links send people back
   google: true,             // set true after enabling Google in Supabase → Authentication → Providers
   microsoft: false,         // set true after enabling Azure (Microsoft) in Supabase → Authentication → Providers
+  intlPay: false,           // set true once US-dollar payments (Dodo Payments) are connected
   phone: false              // set true after adding an SMS provider in Supabase → Authentication → Providers → Phone
 };

@@ -1476,7 +1476,7 @@ $('#sheetB').addEventListener('click',async e=>{
     case 'phone-change':phoneSent='';renderAuth();break;
     case 'google':google();break;
     case 'microsoft':oauth('azure');break;
-    case 'pay':pay();break;
+    case 'pay':if(CUR==='USD'&&!(CFG.intlPay)){const m=$('#aMsg');if(m){m.className='err';m.textContent='Card payments from outside India open very soon. In India? Tap “Paying from India? Pay in ₹” below.'}break}pay();break;
     case 'upgrade':openUpgrade('');break;
     case 'cur':CUR=CUR==='INR'?'USD':'INR';try{localStorage.setItem('pb-cur',CUR)}catch(e){}openUpgrade();break;
     case 'signout':await SB.auth.signOut();closeSheet();toast('Signed out');break;
