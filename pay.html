@@ -9,6 +9,8 @@
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link href="fonts/fonts.css" rel="stylesheet">
 <style>
+.mascot{display:block;width:100%;height:auto;overflow:visible}.mascot *{transform-box:view-box}
+@media(prefers-reduced-motion:no-preference){.m-cheer .mb{animation:hop .7s ease-in-out infinite}@keyframes hop{50%{transform:translateY(-7px)}}.m-cheer .cf{animation:fall 1.4s ease-in infinite}@keyframes fall{0%{transform:translateY(-8px);opacity:0}15%{opacity:1}100%{transform:translateY(60px) rotate(140deg);opacity:0}}.m-sad .tear{animation:tear 1.8s ease-in infinite}@keyframes tear{0%{opacity:0}20%{opacity:1}100%{transform:translateY(16px);opacity:0}}}
 :root{--bg:#f6efe1;--ink:#2a2620;--mute:#6f6756;--soft:#d6ccb6;--orange:#f47a3c}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--ink);font:17px/1.55 "Inter Tight",system-ui,sans-serif;padding:24px}
@@ -22,28 +24,31 @@ p{margin:0;color:var(--mute)}
 </head>
 <body>
 <div class="card" id="c">
+  <div id="pm" style="width:170px;margin:0 auto -4px"></div>
   <h1 id="h">Paper Build Pro</h1>
   <p class="amt" id="amt"></p>
   <p id="t">Opening secure payment by Razorpay…</p>
   <button class="btn cta" id="go" type="button" hidden>Pay now</button>
   <a class="btn" id="back" href="paperbuild://paid?pb_paid=0" hidden>Back to Paper Build</a>
 </div>
+<script src="assets/mascot.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 {
 const q=new URLSearchParams(location.search),$=s=>document.querySelector(s);
+const pose=p=>{const el=$('#pm');if(el&&window.mascot)el.innerHTML=mascot(p)};pose('point');
 const o=q.get('o'),k=q.get('k'),a=Number(q.get('a')),c=q.get('c')||'INR',l=q.get('l')||'Paper Build Pro';
 const money=c==='INR'?'₹'+(a/100).toLocaleString('en-IN'):(c+' '+(a/100).toFixed(2));
 $('#amt').textContent=l+' · '+money;
 function done(ok){$('#go').hidden=true;$('#back').hidden=false;
-  if(ok){$('#h').textContent='Payment done';$('#t').textContent='Thank you! Pro is switching on in your account. Taking you back to the app…';$('#back').href='paperbuild://paid?pb_paid=1';$('#back').className='btn cta';setTimeout(()=>{location.href='paperbuild://paid?pb_paid=1'},1200)}
-  else{$('#t').textContent='The payment was not completed. You have not been charged.'}}
+  if(ok){pose('cheer');$('#h').textContent='You’re Pro!';$('#t').textContent='Thank you! Pro is switching on in your account. Taking you back to the app…';$('#back').href='paperbuild://paid?pb_paid=1';$('#back').className='btn cta';setTimeout(()=>{location.href='paperbuild://paid?pb_paid=1'},1200)}
+  else{pose('sad');$('#t').textContent='The payment was not completed. You have not been charged.'}}
 if(!o||!k||!a||!window.Razorpay){$('#t').textContent='This payment link is not valid. Go back to the app and tap Pay again.';$('#back').hidden=false}
 else{
   const rz=new Razorpay({key:k,amount:a,currency:c,order_id:o,name:'Paper Build',description:l,
     prefill:{name:q.get('n')||'',email:q.get('e')||'',contact:q.get('p')||''},theme:{color:'#f47a3c'},
-    handler:()=>done(true),modal:{ondismiss:()=>{$('#t').textContent='Payment window closed.';$('#go').hidden=false;$('#back').hidden=false}}});
-  rz.on('payment.failed',()=>{$('#t').textContent='The payment failed. You can try again, or go back to the app.';$('#go').hidden=false;$('#back').hidden=false});
+    handler:()=>done(true),modal:{ondismiss:()=>{pose('think');$('#t').textContent='Payment window closed. Changed your mind, or want to try again?';$('#go').hidden=false;$('#back').hidden=false}}});
+  rz.on('payment.failed',()=>{pose('sad');$('#h').textContent='Oh no';$('#t').textContent='The payment failed. You can try again, or go back to the app.';$('#go').hidden=false;$('#back').hidden=false});
   $('#go').addEventListener('click',()=>rz.open());
   try{rz.open()}catch(e){$('#go').hidden=false}
   setTimeout(()=>{$('#go').hidden=false},2500);
