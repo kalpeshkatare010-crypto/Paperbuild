@@ -1411,7 +1411,7 @@ async function pay(){
       handler:async resp=>{try{const r=await SB.functions.invoke('verify-payment',{body:{order_id:resp.razorpay_order_id,payment_id:resp.razorpay_payment_id,signature:resp.razorpay_signature}});
           if(r.error)throw await fnErr(r.error);if(!r.data||r.data.error)throw new Error(r.data&&r.data.error);
           PROF=Object.assign(PROF||{},{pro_until:r.data.pro_until});proChanged();closeSheet();toast('You’re on Pro. Thank you!')}
-        catch(e){closeSheet();toast('Payment received. Pro will switch on within a minute.');setTimeout(async()=>{await loadProfile();proChanged()},8000)}},
+        catch(e){closeSheet();toast('Payment received. Checking…');setTimeout(async()=>{try{await SB.functions.invoke('verify-payment',{body:{}})}catch(_){}await loadProfile();proChanged()},3000)}},
       modal:{ondismiss:()=>{const x=$('[data-a=pay]');if(x)x.disabled=false}}});
     rz.on('payment.failed',r=>{const x=$('#aMsg');if(x)x.textContent='Payment failed: '+((r&&r.error&&r.error.description)||'please try again.')});
     rz.open();
@@ -1436,6 +1436,7 @@ async function newPaper(){if(!isPro()&&(PAPERS||[]).length>=1){openUpgrade('Free
 async function openAccount(){if(!USER){openAuth();return}const pro=isPro(),meta=USER.user_metadata||{},name=meta.full_name||'';
   openSheet('Your account',`<div><b>${esc(name||USER.email||USER.phone||'')}</b>${name?`<div class="hint">${esc(USER.email||USER.phone||'')}</div>`:''}</div>
   <p class="note">${isAdmin()?'Admin account · every Pro feature, free, no subscription':pro?`Pro until ${esc(fmtDate(PROF.pro_until))}`:'Free account · write and preview. Downloads need Pro.'}</p>
+  ${!pro&&!isAdmin()?'<button class="mini" type="button" data-a="paychk">Paid but don’t see Pro? Check my payment</button>':''}
   ${isAdmin()?'':pro?'<button class="btn" type="button" data-a="upgrade">Add more Pro time</button>':'<button class="btn cta" type="button" data-a="upgrade">Upgrade to Pro · from ${fromPrice()}</button>'}
   <div class="ph"><h3>My papers</h3><button class="mini" type="button" data-a="newpaper">+ New paper</button></div>
   <div class="plist" id="plist"><p class="hint">Loading…</p></div>
@@ -1486,6 +1487,7 @@ $('#sheetB').addEventListener('click',async e=>{
     case 'microsoft':oauth('azure');break;
     case 'pay':if(CUR==='USD'&&!(CFG.intlPay)){const m=$('#aMsg');if(m){m.className='err';m.textContent='Card payments from outside India open very soon. In India? Tap “Paying from India? Pay in ₹” below.'}break}pay();break;
     case 'upgrade':openUpgrade('');break;
+    case 'paychk':(async()=>{toast('Checking your payment…');try{await SB.functions.invoke('verify-payment',{body:{}})}catch(e){}await loadProfile();proChanged();closeSheet();toast(isPro()?'You’re on Pro. Thank you!':'No completed payment found yet. If money left your account, email kalpeshkatare010@gmail.com.')})();break;
     case 'cur':CUR=CUR==='INR'?'USD':'INR';try{localStorage.setItem('pb-cur',CUR)}catch(e){}openUpgrade();break;
     case 'signout':await SB.auth.signOut();closeSheet();toast('Signed out');break;
     case 'open':openPaper(b.dataset.id);break;
@@ -1533,12 +1535,14 @@ loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
     setTimeout(()=>{openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: '+txt}},400)}
   else if(q.get('code')&&SB){setTimeout(()=>{if(!USER){openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: the login link couldn’t be completed on this page. Start sign-in again from kalpeshkatare.in/Paperbuild/app.html in this same browser.'}}},4000)}}
 /* back from paying in the browser (Android app): wait for Pro to switch on */
-async function afterPayReturn(){let paying=0;try{paying=Number(localStorage.getItem('pb-paying')||0)}catch(e){}
+let PAYCHK=false;
+async function afterPayReturn(){if(PAYCHK)return;PAYCHK=true;try{await afterPayReturn0()}finally{PAYCHK=false}}
+async function afterPayReturn0(){let paying=0;try{paying=Number(localStorage.getItem('pb-paying')||0)}catch(e){}
   const q=new URLSearchParams(location.search);const flag=q.get('pb_paid');if(flag==null&&!(paying&&Date.now()-paying<30*60e3))return;
   try{history.replaceState(null,'',location.pathname)}catch(e){}
   if(flag==='0'){try{localStorage.removeItem('pb-paying')}catch(e){}toast('Payment not completed. You were not charged.');return}
   if(!SB||!USER)return;toast('Checking your payment…');
-  for(let i=0;i<12;i++){await loadProfile();if(isPro()){try{localStorage.removeItem('pb-paying')}catch(e){}proChanged();closeSheet();toast('You’re on Pro. Thank you!');return}await new Promise(r=>setTimeout(r,2500))}
+  for(let i=0;i<12;i++){try{await SB.functions.invoke('verify-payment',{body:{}})}catch(e){}try{await loadProfile()}catch(e){}if(isPro()){try{localStorage.removeItem('pb-paying')}catch(e){}proChanged();closeSheet();toast('You’re on Pro. Thank you!');return}await new Promise(r=>setTimeout(r,2500))}
   toast('If you paid, Pro will switch on in a minute. Pull to refresh or reopen the app.')}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&window.PaperBuildAndroid){let p=0;try{p=Number(localStorage.getItem('pb-paying')||0)}catch(e){}if(p&&USER&&!isPro())afterPayReturn()}});
 if(location.hash==='#signin')setTimeout(()=>openAuth(),300);else if(location.hash==='#upgrade')setTimeout(()=>openUpgrade(''),300);
