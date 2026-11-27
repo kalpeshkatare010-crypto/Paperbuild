@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     if (!keyId) return json({ error: "Payments are not set up yet." }, 503);
     const since = new Date(Date.now() - 3 * 864e5).toISOString();
     const { data: open } = await db.from("payments").select("razorpay_order_id")
-      .eq("user_id", user.id).neq("status", "paid").gte("created_at", since)
+      .eq("user_id", user.id).eq("status", "created").gte("created_at", since)
       .order("created_at", { ascending: false }).limit(5);
     const auth = "Basic " + btoa(`${keyId}:${secret}`);
     let proUntil: string | null = null, found = 0;

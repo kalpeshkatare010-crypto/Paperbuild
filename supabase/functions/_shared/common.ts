@@ -55,7 +55,7 @@ export async function grantPro(db: SupabaseClient, orderId: string, paymentId: s
   if (!pay) throw new Error("Unknown order");
   const { data: claimed } = await db.from("payments")
     .update({ status: "paid", razorpay_payment_id: paymentId, paid_at: new Date().toISOString() })
-    .eq("id", pay.id).neq("status", "paid").select("id");
+    .eq("id", pay.id).eq("status", "created").select("id");
   const { data: prof } = await db.from("profiles").select("pro_until").eq("id", pay.user_id).maybeSingle();
   if (!claimed || claimed.length === 0) return { user_id: pay.user_id, pro_until: prof?.pro_until ?? null };
   const now = new Date();
@@ -63,4 +63,22 @@ export async function grantPro(db: SupabaseClient, orderId: string, paymentId: s
   from.setDate(from.getDate() + (PLANS[pay.plan]?.days ?? 30));
   await db.from("profiles").update({ pro_until: from.toISOString() }).eq("id", pay.user_id);
   return { user_id: pay.user_id, pro_until: from.toISOString() };
+}
+
+/**
+ * A payment was refunded: take back the Pro time it added. Safe to call twice.
+ */
+export async function revokePro(db: SupabaseClient, paymentId: string) {
+  const { data: claimed } = await db.from("payments")
+    .update({ status: "refunded", refunded_at: new Date().toISOString() })
+    .eq("razorpay_payment_id", paymentId).eq("status", "paid").select("user_id, plan");
+  if (!claimed || claimed.length === 0) return null;
+  const pay = claimed[0];
+  const { data: prof } = await db.from("profiles").select("pro_until").eq("id", pay.user_id).maybeSingle();
+  if (!prof?.pro_until) return null;
+  const until = new Date(prof.pro_until);
+  until.setDate(until.getDate() - (PLANS[pay.plan]?.days ?? 30));
+  const now = new Date();
+  await db.from("profiles").update({ pro_until: (until > now ? until : now).toISOString() }).eq("id", pay.user_id);
+  return pay.user_id;
 }

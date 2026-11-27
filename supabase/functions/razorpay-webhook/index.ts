@@ -1,6 +1,6 @@
-// Razorpay webhook (events: payment.captured, order.paid). Turns on Pro even if the
-// user closed the app before the in-app check finished.
-import { admin, grantPro, hmacHex, json, sameText } from "../_shared/common.ts";
+// Razorpay webhook (events: payment.captured, order.paid, refund.processed). Turns on Pro even if the
+// user closed the app before the in-app check finished, and takes it back when a payment is refunded.
+import { admin, grantPro, hmacHex, json, revokePro, sameText } from "../_shared/common.ts";
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
@@ -18,6 +18,14 @@ Deno.serve(async (req) => {
       await grantPro(admin(), payment.order_id, payment.id);
     } catch (_e) {
       // Orders not created by Paper Build are ignored.
+    }
+  }
+  const refund = event?.payload?.refund?.entity;
+  if (event?.event === "refund.processed" && refund?.payment_id) {
+    try {
+      await revokePro(admin(), refund.payment_id);
+    } catch (_e) {
+      // Refunds for payments Paper Build doesn't know about are ignored.
     }
   }
   return json({ ok: true });

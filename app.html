@@ -364,7 +364,6 @@ textarea{resize:vertical}
           <li>Subsections and equations<span>Pro</span></li>
           <li>Grammar &amp; clarity suggestions<span>Pro</span></li>
           <li>Unlimited saved papers<span>Pro</span></li>
-          <li>PDFs without the “Made with Paper Build” line<span>Pro</span></li>
         </ul>
         <p class="note" id="proState" hidden></p>
         <button class="btn cta" type="button" id="proBtn">See Pro plans</button>
@@ -788,7 +787,7 @@ function Engine(C,cap){
     const n=++E.eqN,lab=`(${n})`;d.setFont(E.fam,'normal');d.setFontSize(C.size);const nw=d.getTextWidth(lab);
     const avail=E.cw()-2*nw-12;let fs=C.size*1.05,tree;try{tree=mparse(src)}catch(e){tree={t:'row',c:[{t:'sym',v:src,up:true}]}}
     let B=mbox(E,tree,fs,0);if(B.w>avail&&B.w>0){fs*=Math.max(.55,avail/B.w);B=mbox(E,tree,fs,0)}
-    const pad=C.size*(STU?.3:.45);E.need(B.a+B.d+pad*2);E.y+=pad+B.a;
+    const pad=C.size*(STU?.35+.65*(C.spacing-1):.45);E.need(B.a+B.d+pad*2);E.y+=pad+B.a;
     B.draw(E.x()+(E.cw()-B.w)/2,E.y);d.setFont(E.fam,'normal');d.setFontSize(C.size);d.text(lab,E.x()+E.cw(),E.y,{align:'right'});
     E.y+=B.d+pad};
   E.table=t=>{
@@ -808,6 +807,7 @@ function Engine(C,cap){
     const capLines=tc.lines(n,String(t.cap||'').trim());
     E.need(capLines.length*capS*1.6+rh[0]+(rh[1]||0)+16);E.space(STU?C.size*.4:6);
     capLines.forEach((L,j)=>E.text(L,{size:capS,lead:STU?C.size*C.spacing:capS*1.25,align:tc.align,fam:tc.capFam||E.fam,after:j===capLines.length-1?3:0}));
+    E.y+=capS*(STU?.45:.3);
     const x0=()=>E.x()+(STU?0:(E.cw()-tw)/2);
     const rule=w=>{d.setLineWidth(w);d.setDrawColor(0);d.line(x0(),E.y,x0()+tw,E.y)};
     const drawRow=ri=>{let x=x0();lines[ri].forEach((L,c)=>{d.setFont(fam,ri===0?'bold':'normal');d.setFontSize(cs);const w=wd[c];
@@ -1480,7 +1480,7 @@ let UPH='',UPP='point';
 function openUpgrade(reason,headline,pose){if(!SB){toast('Pro isn’t available yet.');return}if(reason!==undefined)upReason=reason;if(headline!==undefined){UPH=headline;UPP=pose||'point'}else if(reason!==undefined){UPH='';UPP='point'}
   const m=planSel==='monthly',P=PRICE[CUR];
   openSheet('Go Pro',`<div class="phero">${window.mascot?mascot(UPP,'Pia presenting Pro'):''}<p>${esc(UPH||'Ready to submit your paper like a pro?')}<small>Join students formatting papers in minutes, not hours.</small></p></div>${upReason?`<p class="note">${esc(upReason)}</p>`:''}
-  <ul class="feat"><li>Download your paper as PDF and Word</li><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers, and no “Made with Paper Build” line</li></ul>
+  <ul class="feat"><li>Download your paper as PDF and Word</li><li>All 8 standards: ACM, Springer, Elsevier, MLA, Chicago and Harvard too</li><li>Word (.docx) export</li><li>Tables, subsections and numbered equations</li><li>Grammar &amp; clarity suggestions</li><li>Unlimited saved papers</li></ul>
   <div class="plans" role="radiogroup" aria-label="Plan">
     <button type="button" class="plan" role="radio" data-plan="monthly" aria-checked="${m}"><span>Monthly</span><b>${P.monthly}</b><span>per month</span></button>
     <button type="button" class="plan" role="radio" data-plan="yearly" aria-checked="${!m}"><span>Yearly · save 33%</span><b>${P.yearly}</b><span>per year</span></button>
