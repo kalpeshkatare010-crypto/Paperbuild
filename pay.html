@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pay · Paper Build</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f6efe1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+:root{--bg:#f6efe1;--ink:#2a2620;--mute:#6f6756;--soft:#d6ccb6;--orange:#f47a3c}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--ink);font:17px/1.55 "Inter Tight",system-ui,sans-serif;padding:24px}
+.card{max-width:420px;width:100%;text-align:center;display:grid;gap:14px}
+h1{font:400 40px/1.05 "Libertinus Serif",Georgia,serif;margin:0}
+p{margin:0;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:6px;border:1.5px solid var(--soft);background:#fffcf5;color:var(--ink);font:600 17px "Inter Tight",sans-serif;text-decoration:none;cursor:pointer}
+.cta{background:var(--orange);border-color:var(--orange);color:#2a1004}
+.amt{font:500 14px "DM Mono",monospace;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="card" id="c">
+  <h1 id="h">Paper Build Pro</h1>
+  <p class="amt" id="amt"></p>
+  <p id="t">Opening secure payment by Razorpay…</p>
+  <button class="btn cta" id="go" type="button" hidden>Pay now</button>
+  <a class="btn" id="back" href="paperbuild://paid?pb_paid=0" hidden>Back to Paper Build</a>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+{
+const q=new URLSearchParams(location.search),$=s=>document.querySelector(s);
+const o=q.get('o'),k=q.get('k'),a=Number(q.get('a')),c=q.get('c')||'INR',l=q.get('l')||'Paper Build Pro';
+const money=c==='INR'?'₹'+(a/100).toLocaleString('en-IN'):(c+' '+(a/100).toFixed(2));
+$('#amt').textContent=l+' · '+money;
+function done(ok){$('#go').hidden=true;$('#back').hidden=false;
+  if(ok){$('#h').textContent='Payment done';$('#t').textContent='Thank you! Pro is switching on in your account. Taking you back to the app…';$('#back').href='paperbuild://paid?pb_paid=1';$('#back').className='btn cta';setTimeout(()=>{location.href='paperbuild://paid?pb_paid=1'},1200)}
+  else{$('#t').textContent='The payment was not completed. You have not been charged.'}}
+if(!o||!k||!a||!window.Razorpay){$('#t').textContent='This payment link is not valid. Go back to the app and tap Pay again.';$('#back').hidden=false}
+else{
+  const rz=new Razorpay({key:k,amount:a,currency:c,order_id:o,name:'Paper Build',description:l,
+    prefill:{name:q.get('n')||'',email:q.get('e')||'',contact:q.get('p')||''},theme:{color:'#f47a3c'},
+    handler:()=>done(true),modal:{ondismiss:()=>{$('#t').textContent='Payment window closed.';$('#go').hidden=false;$('#back').hidden=false}}});
+  rz.on('payment.failed',()=>{$('#t').textContent='The payment failed. You can try again, or go back to the app.';$('#go').hidden=false;$('#back').hidden=false});
+  $('#go').addEventListener('click',()=>rz.open());
+  try{rz.open()}catch(e){$('#go').hidden=false}
+  setTimeout(()=>{$('#go').hidden=false},2500);
+}
+}
+</script>
+</body>
+</html>

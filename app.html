@@ -1397,6 +1397,14 @@ async function pay(){
   try{
     const {data,error}=await SB.functions.invoke('create-order',{body:{plan:planSel,currency:CUR}});
     if(error)throw await fnErr(error);if(!data||data.error)throw new Error((data&&data.error)||'Could not start the payment.');
+    if(window.PaperBuildAndroid&&window.PaperBuildAndroid.openExternal){
+      /* the app's own pages aren't a registered website for Razorpay, so pay on kalpeshkatare.in in the browser */
+      const base=String(CFG.siteUrl||'https://kalpeshkatare.in/Paperbuild/app.html').replace(/[^/]*$/,'');
+      const u=new URLSearchParams({o:data.order_id,k:data.key_id,a:String(data.amount),c:data.currency||'INR',l:data.label||'Paper Build Pro',n:(USER.user_metadata||{}).full_name||'',e:USER.email||'',p:USER.phone||''});
+      try{localStorage.setItem('pb-paying',String(Date.now()))}catch(e){}
+      window.PaperBuildAndroid.openExternal(base+'pay.html?'+u.toString());
+      if(m){m.className='note';m.textContent='Finish the payment in your browser. You’ll come back here automatically.'}
+      if(b)b.disabled=false;return}
     await loadScript('https://checkout.razorpay.com/v1/checkout.js');
     const rz=new window.Razorpay({key:data.key_id,amount:data.amount,currency:data.currency||'INR',order_id:data.order_id,name:'Paper Build',description:data.label,
       prefill:{name:(USER.user_metadata||{}).full_name||'',email:USER.email||'',contact:USER.phone||''},theme:{color:'#f47a3c'},
@@ -1452,7 +1460,7 @@ async function syncOnLogin(){try{const L=await listPapers();
   setSync('Saved on this device only · free accounts keep 1 paper online');
   toast('Your account already has a saved paper. Open it from your account, or upgrade to save more.');
 }catch(e){setSync('Saved on this device')}}
-async function afterAuth(){if(USER){await loadProfile();renderAcct();renderStd();renderLists();renderProState();changed(true);await syncOnLogin();fetchFigs().then(g=>{if(g){renderLists();renderPreview()}});
+async function afterAuth(){if(USER){await loadProfile();renderAcct();renderStd();renderLists();renderProState();changed(true);await syncOnLogin();afterPayReturn();fetchFigs().then(g=>{if(g){renderLists();renderPreview()}});
     const f=sheetAfter;sheetAfter=null;if(f)setTimeout(f,50)}
   else{PROF=null;PAPERS=null;setPaperId(null);setSync('');renderAcct();renderStd();renderLists();renderProState();changed(true)}}
 
@@ -1524,6 +1532,15 @@ loadImgs().then(n=>{if(n){renderLists();renderPreview()}});
   if(er&&SB){const txt=decodeURIComponent(String(er).replace(/\+/g,' '));try{history.replaceState(null,'',location.pathname)}catch(e){}
     setTimeout(()=>{openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: '+txt}},400)}
   else if(q.get('code')&&SB){setTimeout(()=>{if(!USER){openAuth();const m=$('#aMsg');if(m){m.className='err';m.textContent='Sign-in didn’t finish: the login link couldn’t be completed on this page. Start sign-in again from kalpeshkatare.in/Paperbuild/app.html in this same browser.'}}},4000)}}
+/* back from paying in the browser (Android app): wait for Pro to switch on */
+async function afterPayReturn(){let paying=0;try{paying=Number(localStorage.getItem('pb-paying')||0)}catch(e){}
+  const q=new URLSearchParams(location.search);const flag=q.get('pb_paid');if(flag==null&&!(paying&&Date.now()-paying<30*60e3))return;
+  try{history.replaceState(null,'',location.pathname)}catch(e){}
+  if(flag==='0'){try{localStorage.removeItem('pb-paying')}catch(e){}toast('Payment not completed. You were not charged.');return}
+  if(!SB||!USER)return;toast('Checking your payment…');
+  for(let i=0;i<12;i++){await loadProfile();if(isPro()){try{localStorage.removeItem('pb-paying')}catch(e){}proChanged();closeSheet();toast('You’re on Pro. Thank you!');return}await new Promise(r=>setTimeout(r,2500))}
+  toast('If you paid, Pro will switch on in a minute. Pull to refresh or reopen the app.')}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&window.PaperBuildAndroid){let p=0;try{p=Number(localStorage.getItem('pb-paying')||0)}catch(e){}if(p&&USER&&!isPro())afterPayReturn()}});
 if(location.hash==='#signin')setTimeout(()=>openAuth(),300);else if(location.hash==='#upgrade')setTimeout(()=>openUpgrade(''),300);
 }
 </script>
